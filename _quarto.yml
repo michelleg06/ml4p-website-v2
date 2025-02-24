@@ -1,0 +1,32 @@
+project:
+  type: website
+
+website:
+  title: "Machine Learning for Public Policy"
+  navbar:
+    logo: "/assets/ML4PP.png"
+    left:
+      - href: index.qmd
+        text: Home
+      - about.qmd
+      - text: "Content"
+        menu:
+        - predictionpolicy.qmd 
+    tools:
+      - icon: github
+        href: "https://github.com/michelleg06/Machine-Learning-for-Public-Policy"
+  body-footer: |
+   <div class="footer">
+      Copyright &copy; 2025 Michelle González Amador & Stephan Dietrich. All rights reserved.<br>
+      [![GitHub](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/michelleg06/Machine-Learning-for-Public-Policy)
+    </div>
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+
+editor: visual
+
+
