@@ -11,6 +11,7 @@ website:
       - about.qmd
       - text: "Content"
         menu:
+        - introduction.qmd
         - predictionpolicy.qmd 
     tools:
       - icon: github
@@ -26,6 +27,7 @@ format:
     theme: cosmo
     css: styles.css
     toc: true
+    highlight-style: github-dark
 
 editor: visual
 

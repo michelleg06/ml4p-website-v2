@@ -8,3 +8,20 @@
     border-top: 1px solid lightgrey;
     margin-top: 40px;
 }
+
+/* Code block styles */
+
+.cell-output {
+    background-color: #f3f3f3;
+    border-left: 2px solid gray;
+    padding-left: 6px;
+}
+
+.sourceCode {
+    padding: 6px 4px;
+    border-radius: 4px;
+}
+
+#disqus_thread {
+    margin-top: 80px;
+}

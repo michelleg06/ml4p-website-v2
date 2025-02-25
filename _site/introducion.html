@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>An Introduction to Machine Learning for Public Policy – Machine Learning for Public Policy</title>
+<title>Introduction – Machine Learning for Public Policy</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -67,11 +67,40 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="nav-fixed fullcontent">
+<body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -92,7 +121,7 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
+    <a class="nav-link" href="./index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
@@ -123,13 +152,22 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#about-this-course" id="toc-about-this-course" class="nav-link active" data-scroll-target="#about-this-course">About this course</a></li>
+  <li><a href="#a-general-introduction-to-machine-learning-for-public-policy" id="toc-a-general-introduction-to-machine-learning-for-public-policy" class="nav-link" data-scroll-target="#a-general-introduction-to-machine-learning-for-public-policy">A general introduction to Machine learning for Public Policy</a></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">An Introduction to Machine Learning for Public Policy</h1>
+<h1 class="title">Introduction</h1>
 </div>
 
 
@@ -146,128 +184,64 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<p>At its core, machine learning is primarily interested in making sense of complex data. A machine learning algorithm’s job is to read data and identify patterns that can be used for: prediction, feature-relevance detection, model-free classification, among other actions.</p>
+<section id="about-this-course" class="level2">
+<h2 class="anchored" data-anchor-id="about-this-course">About this course</h2>
+<p><strong>Please watch our Welcome video to meet the organisers and hear from Alex Hunns about the dynamics of the course.In case you do not make it until the end, here are some highlights:</strong></p>
+<ul>
+<li><p>It is a (mostly) self-paced and fully online course.</p></li>
+<li><p>We provide a non-exhaustive way to go about using the R and Python languages for basic Machine Learning purposes. Some of you may be able to optimise a few lines of code, and we encourage that!</p></li>
+<li><p>There are social hours in gather.town. Join so that you can meet other Machine Learners around the globe!</p></li>
+<li><p>There are no grades to this course. If you attend the Collaborative Policy Event, you may be eligible for some form of certification.</p></li>
+<li><p>The content is introductory.</p></li>
+<li><p>Be respectful and kind to other participants!</p></li>
+</ul>
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/sILhz3dqfqM?si=ni7aYqoJ9VXUQyN0" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+</section>
+<section id="a-general-introduction-to-machine-learning-for-public-policy" class="level2">
+<h2 class="anchored" data-anchor-id="a-general-introduction-to-machine-learning-for-public-policy">A general introduction to Machine learning for Public Policy</h2>
+<p>Empirical Public Policy research is primarily concerned with causality and understanding counterfactuals. What is the impact of Policy or Programme X on Population Outcome Y? What would have happened in the absence of such a policy? However, there are policy problems that may be solved without necessarily looking for a causal link. We call these `prediction policy problems’ (<a href="https://www.aeaweb.org/articles?id=10.1257/aer.p20151023">Kleinberg et al.&nbsp;2015</a>). Some examples include:</p>
+<ul>
+<li><p>Allocating fire and health inspectors in cities (<a href="https://www.aeaweb.org/articles?id=10.1257/aer.p20161027">Glaeser et al.&nbsp;2016</a>).</p></li>
+<li><p>Predicting unemployment spell length to help workers decide on savings rates and job search strategies.</p></li>
+<li><p>Predicting highest risk youth for targeting interventions (<a href="https://www.aeaweb.org/articles?id=10.1257/aer.101.3.288">Chandler,Levitt, and List 2011</a>).</p></li>
+</ul>
+<p><strong><em>How does a Machine Learn?</em></strong></p>
+<p>Machine learning is classified in three major branches:</p>
+<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; grid-column-gap: 8px">
+<div>
+<p><strong>Supervised Learning</strong>:</p>
+<p>This course will be primarily concerned with supervised learning. Supervised learning is analogous to statistical learning: suppose that we observe a quantitative response <span class="math inline">\(Y\)</span> and <span class="math inline">\(p\)</span> predictors, <span class="math inline">\(X_1, X_2,..., X_p\)</span>.</p>
+<p>We can rewrite this in a general linear form as:</p>
+<p><span class="math display">\[Y = f(X) + u\]</span> where <span class="math inline">\(u\)</span> is an error term.</p>
+</div>
+<div>
+<p><strong>Unsupervised Learning</strong>:</p>
+<p>Unsupervised learning is known for reading data without labels; it is more computationally complex than supervised learning (because it will look for all possible patterns in the data), but it is also more flexible than supervised learning. You can think of clustering, anomaly detection, neural networks, etc.</p>
+</div>
+<div>
+<p><strong>Reinforcement Learning</strong>:</p>
+<p>Reinforcement learning is categorised as Artificial Intelligence. It is more focused on goal-directed learning from interaction than are other approaches to machine learning. As per <a href="https://web.stanford.edu/class/psych209/Readings/SuttonBartoIPRLBook2ndEd.pdf">Sutton and Barto (2015)</a>, the three most distinguishing features of reinforcement learning are:</p>
+<ol type="1">
+<li><p>Being closed-loop; i.e.&nbsp;the learning system’s actions influence its later inputs.</p></li>
+<li><p>Does not have direct instructions as to what actions to take; instead it must discover which actions yield the most reward by trying them out.</p></li>
+<li><p>Not knowing where the consequences of actions, including reward signals, play out over extended time periods.</p></li>
+</ol>
+</div>
+</div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="assets/ML4PP.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+<p><img src="assets/sup_unsup_re.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
 </figure>
 </div>
-<section id="preamble" class="level1">
-<h1>Preamble</h1>
-<p>Machine learning has become an increasingly integral part of public policies. It is applied for policy problems that do not require causal inference but instead require predictive inference. Solving these prediction policy problems requires tools that are tuned to minimizing prediction errors, but also frameworks to ensure that models are efficient and fair. ML4PP will introduce the theory and applications of machine learning algorithms with a focus on policy applications and issues. The goals of this course include:</p>
+<p><strong>Relevant trade-offs in Machine Learning</strong></p>
 <ul>
-<li>Developing a basic understanding of the statistical theory underlying common supervised machine learning algorithms</li>
-<li>Developing skills necessary to train and assess the performance of selected popular machine learning algorithms for solving public policy problems</li>
-<li>Gaining an understanding of the benefits and risks of applying machine learning algorithms to public policy problems</li>
+<li><p>Flexibility vs.&nbsp;interpretability: not all found patterns are directly interpretable.</p></li>
+<li><p>Prediction vs.&nbsp;inference: high predictive power does not allow for proper inference.</p></li>
+<li><p>Goodness-of-fit vs.&nbsp;over-fitting: how do we know <em>when</em> the fit is good?</p></li>
 </ul>
-<p>The course consists of 6 sessions each consisting of a technical introductory lecture and a hands-on application of the topics to a real-world policy problem. Students will be working with the programming language R, but coding is not the primary focus of the course.</p>
-<p>To end the course, we will meet online for a <strong>Collaborative Policy Challenge</strong>, which will be delivered by a colleague from an International Organisation. In groups of interdisciplinary teams, we will provide a possible solution to the challenge, and get feedback from our peers and policy experts.</p>
-<p><strong>Course textbook (e-book available for free):</strong></p>
-<p>James, G., Witten, D., Hastie, T., &amp; Tibshirani, R. (2021). <a href="https://www.statlearning.com/">An Introduction to Statistical Learning</a></p>
-</section>
-<section id="course-contents" class="level1">
-<h1>Course contents</h1>
-<section id="gentle-introduction-to-r-and-rstudio-and-python." class="level2">
-<h2 class="anchored" data-anchor-id="gentle-introduction-to-r-and-rstudio-and-python.">1. Gentle Introduction to R and Rstudio, and Python.</h2>
-<ul>
-<li>Introduction to the course</li>
-<li>Introduction to the R statistical programming language with the Rstudio IDE</li>
-<li>Introduction to the Python programming language with Visual Studio Code</li>
-</ul>
-<p><strong>Instructors:</strong> Stephan, Alex and Michelle (who will give you a warm welcome!)</p>
-</section>
-<section id="introduction-to-machine-learning-for-public-policy" class="level2">
-<h2 class="anchored" data-anchor-id="introduction-to-machine-learning-for-public-policy">2. Introduction to Machine Learning for Public Policy</h2>
-<ul>
-<li>Prediction Policy problems</li>
-<li>Inference vs.&nbsp;prediction for policy analysis</li>
-<li>Assessing accuracy: bias-variance tradeoff</li>
-<li>Training error vs.&nbsp;test error</li>
-<li>Feature selection: brief introduction to Lasso</li>
-</ul>
-<p><strong>Instructors:</strong> <a href="https://www.m-gonzalezamador.com/">Michelle González Amador</a></p>
-<p><strong>Readings:</strong></p>
-<p><em>Mandatory</em></p>
-<ul>
-<li><p>An introduction to Statistical learning, Chapter 2, 3 (Regression), 5 (Cross-validation) and 6 (for more about Lasso).</p></li>
-<li><p>Athey, S. (2017). <a href="https://www.science.org/doi/10.1126/science.aal4321">Beyond prediction: Using big data for policy problems</a>. Science, 355(6324), 483-485.</p></li>
-<li><p>Kleinberg, J., Ludwig, J., Mullainathan, S. and Obermeyer, Z., 2015. <a href="https://www.aeaweb.org/articles?id=10.1257/aer.p20151023">Prediction policy problems. American Economic Review</a>, 105(5), pp.491-95.</p></li>
-</ul>
-<p><em>Optional readings</em></p>
-<ul>
-<li><p>Kleinberg, J., Lakkaraju, H., Leskovec, J., Ludwig, J. and Mullainathan, S., 2017. <a href="https://academic.oup.com/qje/article-abstract/133/1/237/4095198?redirectedFrom=fulltext">Human decisions and machine predictions.</a> The Quarterly Journal of Economics, 133(1), pp.237-293.</p></li>
-<li><p>Hanna, R., &amp; Olken, B. A. (2018). <a href="https://www.aeaweb.org/articles?id=10.1257/jep.32.4.201">Universal basic incomes versus targeted transfers: Anti-poverty programs in developing countries.</a> Journal of Economic Perspectives, 32(4), 201-26. (exercise application)</p></li>
-<li><p>McBride, L., &amp; Nichols, A. (2018). <a href="https://academic.oup.com/wber/article-abstract/32/3/531/2447896?redirectedFrom=fulltext">Retooling poverty targeting using out-of-sample validation and machine learning.</a> The World Bank Economic Review, 32(3), 531-550.pter 5.1</p></li>
-</ul>
-</section>
-<section id="classification" class="level2">
-<h2 class="anchored" data-anchor-id="classification">3. Classification</h2>
-<ul>
-<li>Logistic regression</li>
-<li>Confusion matrix</li>
-<li>Performance metrics: Accuracy, Recall, Precision (…)</li>
-</ul>
-<p><strong>Instructor:</strong> <a href="https://www.merit.unu.edu/about-us/profile/?staff_id=2283">Dr.&nbsp;Stephan Dietrich</a></p>
-<p><strong>Readings:</strong></p>
-<ul>
-<li><p>An introduction to Statistical learning Chapter 4</p></li>
-<li><p>Athey, S., &amp; Imbens, G. W. (2019). <a href="https://www.annualreviews.org/doi/abs/10.1146/annurev-economics-080217-053433">Machine learning methods that economists should know about.</a> Annual Review of Economics, 11, 685-725.</p></li>
-<li><p>McBride, L., &amp; Nichols, A. (2018). <a href="https://academic.oup.com/wber/article-abstract/32/3/531/2447896?redirectedFrom=fulltext">Retooling poverty targeting using out-of-sample validation and machine learning.</a> The World Bank Economic Review, 32(3), 531-550.pter 5.1</p></li>
-</ul>
-<p><em>Optional Readings</em></p>
-<ul>
-<li>Bondi-Kelly et al.&nbsp;(2023)- <a href="https://onlinelibrary.wiley.com/doi/10.1002/aaai.12080">Predicting micronutrient deficiency with publicly available satellite data.</a> In AI Magazine.</li>
-</ul>
-</section>
-<section id="tree-based-methods" class="level2">
-<h2 class="anchored" data-anchor-id="tree-based-methods">4. Tree-based methods</h2>
-<ul>
-<li>Decision Trees: a classification approach</li>
-<li>Ensemble learning: bagging and boosting.</li>
-</ul>
-<p><strong>Instructor:</strong> <a href="https://www.linkedin.com/in/fraroma/">Dr.&nbsp;Francisco Rosales</a></p>
-<p><strong>Readings:</strong></p>
-<ul>
-<li>An introduction to Statistical Learning, Chapter 8.</li>
-</ul>
-<p><em>Optional Readings</em></p>
-<ul>
-<li>Dietrich et al.&nbsp;(2022) - <a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0271373">Economic Development, weather shocks, and child marriage in South Asia: A machine learning approach.</a></li>
-</ul>
-</section>
-<section id="fair-machine-learning-ethics" class="level2">
-<h2 class="anchored" data-anchor-id="fair-machine-learning-ethics">5. Fair Machine Learning / Ethics</h2>
-<ul>
-<li>Common Machine Learning algorithms in (public policy) action</li>
-<li>Black box algorithms</li>
-<li>Biases</li>
-<li>Ethical challenges</li>
-</ul>
-<p><strong>Readings:</strong></p>
-<ul>
-<li><p><a href="https://colab.research.google.com/github/fastai/fastbook/blob/master/03_ethics.ipynb">Fast AI: Deep Learning for Coders with Fastai and PyTorch: AI Applications Without a PhD, Chapter 4.</a></p></li>
-<li><p>Kasy, M., &amp; Abebe, R. (2021, March). <a href="https://maxkasy.github.io/home/files/papers/fairness_equality_power.pdf">Fairness, equality, and power in algorithmic decision-making.</a> In Proceedings of the 2021 ACM Conference on Fairness, Accountability, and Transparency (pp.&nbsp;576-586).</p></li>
-<li><p><a href="https://fairmlbook.org/">Fairness and Machine Learning: Limitations and Opportunities</a>, Chapter 4.</p></li>
-</ul>
-<p><strong>Instructor:</strong> <a href="https://www.isye.gatech.edu/users/juba-ziani">Dr.&nbsp;Juba Ziani</a></p>
-</section>
-<section id="neural-networks" class="level2">
-<h2 class="anchored" data-anchor-id="neural-networks">6. Neural Networks</h2>
-<ul>
-<li>Neural Network Architecture: neurons and layers</li>
-<li>Inputs and output: the activation function (sigmoid, tahn…)</li>
-</ul>
-<p><strong>Instructor:</strong> <a href="https://ideas.repec.org/e/pco61.html">Prof.&nbsp;Dr.&nbsp;Robin Cowan</a></p>
-<p><strong>Optional Readings</strong></p>
-<ul>
-<li>Chatsiou and Mikhaylov (2020). <a href="https://arxiv.org/pdf/2005.06540.pdf">Deep Learning for Political Science</a>. Arxiv preprint.</li>
-</ul>
-<p><br></p>
-<center>
-<p><a href="https://www.ml4publicpolicy.com/PolicyChallenge.html"><img src="./assets/policy_challenge_banner.png" class="img-fluid"></a></p>
-</center>
 
 
-</section>
 </section>
 
 <div class="footer">
