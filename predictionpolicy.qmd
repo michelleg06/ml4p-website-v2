@@ -1,6 +1,7 @@
 ---
 title: "Prediction Policy Problems: Linear Models and Lasso Regression"
 format: html
+include-after-body: disqus.html
 ---
 
 ## Introducing the Prediction Policy Framework
@@ -9,16 +10,15 @@ In the video-lecture below you'll be given a brief introduction to the predictio
 
 {{< video https://youtu.be/sFbKe4O0tEQ >}}
 
-Are you still wondering what the difference is between Machine Learning and Econometrics? Take a few minutes to watch the video below. 
+Are you still wondering what the difference is between Machine Learning and Econometrics? Take a few minutes to watch the video below.
 
 {{< video https://youtu.be/gx_MBxMu0m4 >}}
 
 After watching the videos, we have a practical exercise.
 
-### Predicting social assistance beneficiaries 
+### Predicting social assistance beneficiaries
 
-A key problem in the design of Social Policies is the identification of people in need of social assistance.
-Social policies usually work with tight budgets and limited fiscal space. To allocate resources efficiently, benefits need to be targeted to those who need them most. Yet, identifying needs isn’t easy and misclassifications can have severe and irreversible effects on people in need.
+A key problem in the design of Social Policies is the identification of people in need of social assistance. Social policies usually work with tight budgets and limited fiscal space. To allocate resources efficiently, benefits need to be targeted to those who need them most. Yet, identifying needs isn’t easy and misclassifications can have severe and irreversible effects on people in need.
 
 Think of a social protection programme that allocates food vouchers to families with children at risk of malnutrition, or a programme that establishes needs-based school grants. What happens when these limited and finite resources are given to people that could do without, and those who need them most are excluded from them?
 
@@ -26,19 +26,30 @@ In this block we'll work with real-world data from the country of Malawi to pred
 
 **Discussion Points**
 
-The points below are meant to help you think critically about why we're about to embark on a machine learning - targeting exercise.
-<br>
+The points below are meant to help you think critically about why we're about to embark on a machine learning - targeting exercise. <br>
 
 <ul>
-<li> Why is this a prediction policy problem? What would be a causal inference problem in this setting? Is it a regression or a classification problem? </li>
-<li> Which variables and characteristics that we include in the prediction model can make a big difference?
-    <ul>
-    <li>Programmatically and conceptually, which type of characteristics do we want to consider for the prediction model?</li>
-    <li>Technically, how do we select which variables to include in a prediction model? How is this different from a causal inference problem?</li>
-    </ul>
-</li>    
-<li> What are the practical implications of the bias-variance tradeoff in this application? </li>
-<li> What are potential risks of such a data driven targeting approach? </li>
+
+<li>Why is this a prediction policy problem? What would be a causal inference problem in this setting? Is it a regression or a classification problem?</li>
+
+<li>
+
+Which variables and characteristics that we include in the prediction model can make a big difference?
+
+<ul>
+
+<li>Programmatically and conceptually, which type of characteristics do we want to consider for the prediction model?</li>
+
+<li>Technically, how do we select which variables to include in a prediction model? How is this different from a causal inference problem?</li>
+
+</ul>
+
+</li>
+
+<li>What are the practical implications of the bias-variance tradeoff in this application?</li>
+
+<li>What are potential risks of such a data driven targeting approach?</li>
+
 </ul>
 
 <br>
@@ -53,11 +64,15 @@ The points below are meant to help you think critically about why we're about to
 
 You can download the dataset by clicking on the button below.
 
-<button type="button" class="btn btn-primary" download="https://github.com/michelleg06/Machine-Learning-for-Public-Policy/blob/main/malawi.csv">Download Malawi.csv</button>
+<button type="button" class="btn btn-primary" download="https://github.com/michelleg06/Machine-Learning-for-Public-Policy/blob/main/malawi.csv">
+
+Download Malawi.csv
+
+</button>
+
 <br>
 
 The script below is a step by step on how to go about coding a predictive model using a *linear regression*. Despite its simplicity and transparency, i.e. the ease with which we can interpret its results, a linear model is not without challenges in machine learning.
-
 
 ### 1. Preliminaries: working directory, libraries, data upload
 
@@ -86,3 +101,35 @@ library(stargazer) # a package to visualise model output
 data_malawi <- read_csv("malawi.csv") # the file is directly read from the working directory/folder previously set
 
 ```
+
+### 2. Get to know your data: visualisation and pre-processing
+
+```{r}
+
+skim(data_malawi) # describes the dataset in a nice format 
+```
+<br>
+
+- The dataset contains 38 variables and 11,280 observations.
+
+- Not all of these variables are relevant for our prediction model.
+
+- To find the labels and description of the variables, you can refer to the [paper](https://academic.oup.com/wber/article-abstract/32/3/531/2447896). 
+<br>
+
+
+[hhsize, hhsize2, age_head, age_head2, regions, rural, never married, share_of_adults_without_education, share_of_adults_who_can_read, number of rooms, cement floor, electricity, flush toilet, soap, bed, bike, music player, coffee table, iron, garden, goats]
+
+
+- Luckily for us, we have no missing values (n_missing in summary output)!
+
+    A) Many machine learning models cannot be trained when missing values are present (some exceptions exist).
+
+    B) Dealing with missingness is a non-trivial task: 
+    
+First and foremost, we should assess whether there is a pattern to missingness and if so, 
+what that means to what we can learn from our (sub)population. If there is no discernible pattern, 
+we can proceed to delete the missing values or impute them. A more detailed explanation and course of action
+can be found [here](https://stefvanbuuren.name/fimd/sec-MCAR.html).
+
+#### Feature selection: subsetting the dataset

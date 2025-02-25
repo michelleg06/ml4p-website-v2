@@ -168,6 +168,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#r-practical" id="toc-r-practical" class="nav-link" data-scroll-target="#r-practical">R Practical</a>
   <ul class="collapse">
   <li><a href="#preliminaries-working-directory-libraries-data-upload" id="toc-preliminaries-working-directory-libraries-data-upload" class="nav-link" data-scroll-target="#preliminaries-working-directory-libraries-data-upload">1. Preliminaries: working directory, libraries, data upload</a></li>
+  <li><a href="#get-to-know-your-data-visualisation-and-pre-processing" id="toc-get-to-know-your-data-visualisation-and-pre-processing" class="nav-link" data-scroll-target="#get-to-know-your-data-visualisation-and-pre-processing">2. Get to know your data: visualisation and pre-processing</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -213,7 +214,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 Why is this a prediction policy problem? What would be a causal inference problem in this setting? Is it a regression or a classification problem?
 </li>
 <li>
-Which variables and characteristics that we include in the prediction model can make a big difference?
+<p>Which variables and characteristics that we include in the prediction model can make a big difference?</p>
 <ul>
 <li>
 Programmatically and conceptually, which type of characteristics do we want to consider for the prediction model?
@@ -240,7 +241,7 @@ What are potential risks of such a data driven targeting approach?
 <h2 class="anchored" data-anchor-id="r-practical">R Practical</h2>
 <p>You can download the dataset by clicking on the button below.</p>
 <button type="button" class="btn btn-primary" download="https://github.com/michelleg06/Machine-Learning-for-Public-Policy/blob/main/malawi.csv">
-Download Malawi.csv
+<p>Download Malawi.csv</p>
 </button>
 <p><br></p>
 <p>The script below is a step by step on how to go about coding a predictive model using a <em>linear regression</em>. Despite its simplicity and transparency, i.e.&nbsp;the ease with which we can interpret its results, a linear model is not without challenges in machine learning.</p>
@@ -270,14 +271,649 @@ Download Malawi.csv
 <span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>data_malawi <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"malawi.csv"</span>) <span class="co"># the file is directly read from the working directory/folder previously set</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</section>
+<section id="get-to-know-your-data-visualisation-and-pre-processing" class="level3">
+<h3 class="anchored" data-anchor-id="get-to-know-your-data-visualisation-and-pre-processing">2. Get to know your data: visualisation and pre-processing</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">skim</span>(data_malawi) <span class="co"># describes the dataset in a nice format </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Name</td>
+<td style="text-align: left;">data_malawi</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Number of rows</td>
+<td style="text-align: left;">11280</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Number of columns</td>
+<td style="text-align: left;">38</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">_______________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Column type frequency:</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">character</td>
+<td style="text-align: left;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">numeric</td>
+<td style="text-align: left;">36</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">________________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Group variables</td>
+<td style="text-align: left;">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 13%">
+<col style="width: 19%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 8%">
+<col style="width: 12%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">min</th>
+<th style="text-align: right;">max</th>
+<th style="text-align: right;">empty</th>
+<th style="text-align: right;">n_unique</th>
+<th style="text-align: right;">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">region</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">eatype</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 11%">
+<col style="width: 7%">
+<col style="width: 10%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 8%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 4%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: right;">sd</th>
+<th style="text-align: right;">p0</th>
+<th style="text-align: right;">p25</th>
+<th style="text-align: right;">p50</th>
+<th style="text-align: right;">p75</th>
+<th style="text-align: right;">p100</th>
+<th style="text-align: left;">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">lnexp_pc_month</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">7.360000e+00</td>
+<td style="text-align: right;">6.800000e-01</td>
+<td style="text-align: right;">4.7800e+00</td>
+<td style="text-align: right;">6.890000e+00</td>
+<td style="text-align: right;">7.310000e+00</td>
+<td style="text-align: right;">7.760000e+00</td>
+<td style="text-align: right;">1.106000e+01</td>
+<td style="text-align: left;">▁▇▇▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">hhsize</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4.550000e+00</td>
+<td style="text-align: right;">2.340000e+00</td>
+<td style="text-align: right;">1.0000e+00</td>
+<td style="text-align: right;">3.000000e+00</td>
+<td style="text-align: right;">4.000000e+00</td>
+<td style="text-align: right;">6.000000e+00</td>
+<td style="text-align: right;">2.700000e+01</td>
+<td style="text-align: left;">▇▂▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">hhsize2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2.613000e+01</td>
+<td style="text-align: right;">2.799000e+01</td>
+<td style="text-align: right;">1.0000e+00</td>
+<td style="text-align: right;">9.000000e+00</td>
+<td style="text-align: right;">1.600000e+01</td>
+<td style="text-align: right;">3.600000e+01</td>
+<td style="text-align: right;">7.290000e+02</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">agehead</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4.246000e+01</td>
+<td style="text-align: right;">1.636000e+01</td>
+<td style="text-align: right;">1.0000e+01</td>
+<td style="text-align: right;">2.900000e+01</td>
+<td style="text-align: right;">3.900000e+01</td>
+<td style="text-align: right;">5.400000e+01</td>
+<td style="text-align: right;">1.040000e+02</td>
+<td style="text-align: left;">▅▇▅▂▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">agehead2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2.070610e+03</td>
+<td style="text-align: right;">1.618600e+03</td>
+<td style="text-align: right;">1.0000e+02</td>
+<td style="text-align: right;">8.410000e+02</td>
+<td style="text-align: right;">1.521000e+03</td>
+<td style="text-align: right;">2.916000e+03</td>
+<td style="text-align: right;">1.081600e+04</td>
+<td style="text-align: left;">▇▃▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">north</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.500000e-01</td>
+<td style="text-align: right;">3.600000e-01</td>
+<td style="text-align: right;">0.0000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: left;">▇▁▁▁▂</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">central</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3.800000e-01</td>
+<td style="text-align: right;">4.900000e-01</td>
+<td style="text-align: right;">0.0000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: left;">▇▁▁▁▅</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">rural</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">8.700000e-01</td>
+<td style="text-align: right;">3.300000e-01</td>
+<td style="text-align: right;">0.0000e+00</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: left;">▁▁▁▁▇</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">nevermarried</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3.000000e-02</td>
+<td style="text-align: right;">1.700000e-01</td>
+<td style="text-align: right;">0.0000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sharenoedu</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.700000e-01</td>
+<td style="text-align: right;">2.600000e-01</td>
+<td style="text-align: right;">0.0000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">2.500000e-01</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: left;">▇▂▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">shareread</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">6.100000e-01</td>
+<td style="text-align: right;">3.800000e-01</td>
+<td style="text-align: right;">0.0000e+00</td>
+<td style="text-align: right;">3.300000e-01</td>
+<td style="text-align: right;">6.700000e-01</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: left;">▅▁▅▂▇</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">nrooms</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2.500000e+00</td>
+<td style="text-align: right;">1.300000e+00</td>
+<td style="text-align: right;">0.0000e+00</td>
+<td style="text-align: right;">2.000000e+00</td>
+<td style="text-align: right;">2.000000e+00</td>
+<td style="text-align: right;">3.000000e+00</td>
+<td style="text-align: right;">1.600000e+01</td>
+<td style="text-align: left;">▇▂▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">floor_cement</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2.000000e-01</td>
+<td style="text-align: right;">4.000000e-01</td>
+<td style="text-align: right;">0.0000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: left;">▇▁▁▁▂</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">electricity</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">6.000000e-02</td>
+<td style="text-align: right;">2.300000e-01</td>
+<td style="text-align: right;">0.0000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">flushtoilet</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3.000000e-02</td>
+<td style="text-align: right;">1.700000e-01</td>
+<td style="text-align: right;">0.0000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">soap</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.400000e-01</td>
+<td style="text-align: right;">3.400000e-01</td>
+<td style="text-align: right;">0.0000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">bed</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3.200000e-01</td>
+<td style="text-align: right;">4.700000e-01</td>
+<td style="text-align: right;">0.0000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: left;">▇▁▁▁▃</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">bike</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3.600000e-01</td>
+<td style="text-align: right;">4.800000e-01</td>
+<td style="text-align: right;">0.0000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: left;">▇▁▁▁▅</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">musicplayer</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.600000e-01</td>
+<td style="text-align: right;">3.700000e-01</td>
+<td style="text-align: right;">0.0000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: left;">▇▁▁▁▂</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">coffeetable</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.200000e-01</td>
+<td style="text-align: right;">3.200000e-01</td>
+<td style="text-align: right;">0.0000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">iron</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2.100000e-01</td>
+<td style="text-align: right;">4.000000e-01</td>
+<td style="text-align: right;">0.0000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: left;">▇▁▁▁▂</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dimbagarden</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3.200000e-01</td>
+<td style="text-align: right;">4.700000e-01</td>
+<td style="text-align: right;">0.0000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: left;">▇▁▁▁▃</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">goats</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2.100000e-01</td>
+<td style="text-align: right;">4.100000e-01</td>
+<td style="text-align: right;">0.0000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: left;">▇▁▁▁▂</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dependratio</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.120000e+00</td>
+<td style="text-align: right;">9.500000e-01</td>
+<td style="text-align: right;">0.0000e+00</td>
+<td style="text-align: right;">5.000000e-01</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: right;">1.500000e+00</td>
+<td style="text-align: right;">9.000000e+00</td>
+<td style="text-align: left;">▇▂▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">hfem</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2.300000e-01</td>
+<td style="text-align: right;">4.200000e-01</td>
+<td style="text-align: right;">0.0000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: left;">▇▁▁▁▂</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">grassroof</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">7.400000e-01</td>
+<td style="text-align: right;">4.400000e-01</td>
+<td style="text-align: right;">0.0000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: left;">▃▁▁▁▇</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">mortarpestle</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5.000000e-01</td>
+<td style="text-align: right;">5.000000e-01</td>
+<td style="text-align: right;">0.0000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: left;">▇▁▁▁▇</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">table</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3.600000e-01</td>
+<td style="text-align: right;">4.800000e-01</td>
+<td style="text-align: right;">0.0000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: left;">▇▁▁▁▅</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">clock</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2.000000e-01</td>
+<td style="text-align: right;">4.000000e-01</td>
+<td style="text-align: right;">0.0000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">1.000000e+00</td>
+<td style="text-align: left;">▇▁▁▁▂</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ea</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">7.606000e+01</td>
+<td style="text-align: right;">1.885500e+02</td>
+<td style="text-align: right;">1.0000e+00</td>
+<td style="text-align: right;">8.000000e+00</td>
+<td style="text-align: right;">1.900000e+01</td>
+<td style="text-align: right;">4.525000e+01</td>
+<td style="text-align: right;">9.010000e+02</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EA</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2.372322e+07</td>
+<td style="text-align: right;">7.241514e+06</td>
+<td style="text-align: right;">1.0101e+07</td>
+<td style="text-align: right;">2.040204e+07</td>
+<td style="text-align: right;">2.090352e+07</td>
+<td style="text-align: right;">3.053301e+07</td>
+<td style="text-align: right;">3.120209e+07</td>
+<td style="text-align: left;">▂▁▆▁▇</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">hhwght</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2.387900e+02</td>
+<td style="text-align: right;">7.001000e+01</td>
+<td style="text-align: right;">7.9000e+01</td>
+<td style="text-align: right;">2.076000e+02</td>
+<td style="text-align: right;">2.471000e+02</td>
+<td style="text-align: right;">2.913000e+02</td>
+<td style="text-align: right;">3.587000e+02</td>
+<td style="text-align: left;">▂▁▇▇▂</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">psu</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2.372322e+07</td>
+<td style="text-align: right;">7.241514e+06</td>
+<td style="text-align: right;">1.0101e+07</td>
+<td style="text-align: right;">2.040204e+07</td>
+<td style="text-align: right;">2.090352e+07</td>
+<td style="text-align: right;">3.053301e+07</td>
+<td style="text-align: right;">3.120209e+07</td>
+<td style="text-align: left;">▂▁▆▁▇</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">strataid</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.560000e+01</td>
+<td style="text-align: right;">8.090000e+00</td>
+<td style="text-align: right;">1.0000e+00</td>
+<td style="text-align: right;">9.000000e+00</td>
+<td style="text-align: right;">1.500000e+01</td>
+<td style="text-align: right;">2.200000e+01</td>
+<td style="text-align: right;">3.000000e+01</td>
+<td style="text-align: left;">▅▇▇▆▅</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">lnzline</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">7.550000e+00</td>
+<td style="text-align: right;">0.000000e+00</td>
+<td style="text-align: right;">7.5500e+00</td>
+<td style="text-align: right;">7.550000e+00</td>
+<td style="text-align: right;">7.550000e+00</td>
+<td style="text-align: right;">7.550000e+00</td>
+<td style="text-align: right;">7.550000e+00</td>
+<td style="text-align: left;">▁▁▇▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">case_id</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2.372322e+10</td>
+<td style="text-align: right;">7.241514e+09</td>
+<td style="text-align: right;">1.0101e+10</td>
+<td style="text-align: right;">2.040204e+10</td>
+<td style="text-align: right;">2.090352e+10</td>
+<td style="text-align: right;">3.053301e+10</td>
+<td style="text-align: right;">3.120209e+10</td>
+<td style="text-align: left;">▂▁▆▁▇</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><br></p>
+<ul>
+<li><p>The dataset contains 38 variables and 11,280 observations.</p></li>
+<li><p>Not all of these variables are relevant for our prediction model.</p></li>
+<li><p>To find the labels and description of the variables, you can refer to the <a href="https://academic.oup.com/wber/article-abstract/32/3/531/2447896">paper</a>. <br></p></li>
+</ul>
+<p>[hhsize, hhsize2, age_head, age_head2, regions, rural, never married, share_of_adults_without_education, share_of_adults_who_can_read, number of rooms, cement floor, electricity, flush toilet, soap, bed, bike, music player, coffee table, iron, garden, goats]</p>
+<ul>
+<li><p>Luckily for us, we have no missing values (n_missing in summary output)!</p>
+<ol type="A">
+<li><p>Many machine learning models cannot be trained when missing values are present (some exceptions exist).</p></li>
+<li><p>Dealing with missingness is a non-trivial task:</p></li>
+</ol></li>
+</ul>
+<p>First and foremost, we should assess whether there is a pattern to missingness and if so, what that means to what we can learn from our (sub)population. If there is no discernible pattern, we can proceed to delete the missing values or impute them. A more detailed explanation and course of action can be found <a href="https://stefvanbuuren.name/fimd/sec-MCAR.html">here</a>.</p>
+<section id="feature-selection-subsetting-the-dataset" class="level4">
+<h4 class="anchored" data-anchor-id="feature-selection-subsetting-the-dataset">Feature selection: subsetting the dataset</h4>
 
 
+</section>
 </section>
 </section>
 
 <div class="footer">
 Copyright © 2025 Michelle González Amador &amp; Stephan Dietrich. All rights reserved.<br> <a href="https://github.com/michelleg06/Machine-Learning-for-Public-Policy"><img src="https://img.shields.io/badge/GitHub-Repository-blue?logo=github.png" class="img-fluid" alt="GitHub"></a>
 </div></main> <!-- /main -->
+<div id="disqus_thread"></div>
+<script>
+    /**
+    *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+    *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
+    /*
+    var disqus_config = function () {
+    this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    
+    (function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+    s.src = 'https://unu-merit.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();
+    */
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
