@@ -64,11 +64,9 @@ Which variables and characteristics that we include in the prediction model can 
 
 You can download the dataset by clicking on the button below.
 
-<button type="button" class="btn btn-primary" download="https://github.com/michelleg06/Machine-Learning-for-Public-Policy/blob/main/malawi.csv">
-
-Download Malawi.csv
-
-</button>
+<a class="btn btn-primary" download href="data/malawi.csv">
+  Download Malawi.csv
+</a>
 
 <br>
 
@@ -567,3 +565,98 @@ Having cross-validated our model with 10 folds, we can see that the results are 
 **NOTE:** k-fold cross-validation replaces our original 80/20 split (we don't need to do that anymore!) Therefore, we use the full dataset in the train() function. Using the train, test and full datasets in the example above was just for pedagogical purposes but it is no longer necessary and we can use the reported estimates of R^2 (close to 1!), RMSE (close to 0!) and MAE (let's go low!) for model assessment without comparing them to another set of predictions. These reported parameters are estimated as the average of the R^2, RMSE, and MAE for all the folds. 
 
 ### 4. Feature selection with Lasso linear regression
+
+An OLS regression is not the only model that can be written in the form of $Y_i = \alpha + \beta_1X_{1i}, \beta_2X_{2i},..., \beta_pX_{pi}+ u_i$. In this section we will discuss 'penalised' models, which can also be expressed as a linear relationship between parameters. Penalised regression models are also known as regression shrinkage methods, and they take their name after the colloquial term for coefficient regularisation, 'shrinkage' of estimated coefficients. The goal of penalised models, as opposed to a traditional linear model, is not to minimise bias (least squares approach), but to reduce variance by adding a constraint to the equation and effectively pushing coefficient parameters towards 0. This results in the the worse model predictors having a coefficient of zero or close to zero. 
+
+Consider a scenario where you have hundreds of predictors. Which covariates are truly important for our known outcome? Including all of the predictors leads to *over-fitting*. We'll find that the R^2 value is high, and conclude that our in-sample fit is good. However, this may lead to bad out-of-sample predictions. *Model selection* is a particularly challenging endeavour  when we encounter high-dimensional data; i.e. when the number of variables is close to or larger than the number of observations. Some examples where you may encounter high-dimensional data include:
+
+1. Cross-country analyses: we have a small and finite number of countries, but we may collect/observe as many variables as we want. 
+
+2. Cluster-population analyses: we wish to understand the outcome of some unique population $n$, e.g. all students from classroom A. We collect plenty of information on these students, but the sample and the population are analogous $n = N$, and thus the sample number of observations is small and finite. 
+
+The LASSO - Least Absolute Shrinkage and Selection Operator imposes a shrinking penalty to those predictors that do not actually belong in the model, and reduces the size of the estimated $\beta$ coefficients towards and including zero (when the tuning parameter/ shrinkage penalty $\lambda$ is sufficiently large). Note that $lambda$ is the penalty term called *L1-norm*, and corresponds to the sum of the absolute coefficients.
+
+What does this mean for our case? Well, McBride and Nichols (2018) used two sources to compile their final dataset (which we are using). One of those sources is the Living Standards Measurement Study ([LSMS](https://www.worldbank.org/en/programs/lsms)) from the World Bank Group. These surveys collect more than 500 variables/ features per country case. You can subset the dataset with critical reasoning: using your knowledge of the phenomenon, which features might best describe it? But even then, we might still end up with a large number of features. Perhaps a LASSO approach could work here. 
+
+Our own data is not ideal for the approach, because it has a small number of features ($29$), compared to the large number of observations ($11,280$). But let's run a lasso regression and see if my statement holds. How would I know if it holds? If the Lasso regression returns the same values for the performance assessment parameters as the OLS regression; this means that the penalisation parameter was either zero (leading back to an OLS) or too small to make a difference.
+
+```{r, message=FALSE}
+### small detour ... 
+summary(model1)
+# notice that region dummies are repeated and therefore return NA in the output. We should clean this before proceeding.
+# these guys are troublesome (recall our conversation about zero-variance predictors?)
+data_malawi2 <- data_malawi[,-which(colnames(data_malawi)=="region")]
+summary(lm(lnexp_pc_month~., data = data_malawi2)) # no more excluded categorical variables (recall this happened in our original linear model due to repeated measures?)
+
+set.seed(12345)
+cv_10fold <- trainControl(
+    method = "cv", 
+    number = 10 
+)
+set.seed(12345)
+model_lasso <- caret::train(
+    lnexp_pc_month ~ .,
+    data = data_malawi,
+    method = 'lasso',
+    preProcess = c("center", "scale"), #This will first center and then scale all relevant variables in the model
+    trControl = cv_10fold # use 10 folds to cross-validate // we already know this fine-tuning may not be needed!
+    )
+
+print(model_lasso) # best R^2 and RMSE is similar to the one using a linear regression...( and so is the MAE!)
+
+```
+#### Parameter-tuning in our Lasso regression
+
+Let's start with centering and scaling variables; why do we do that?
+
+*Centering and Scaling in Lasso*: Recall that the L1-norm puts constraints on the size of the coefficients of the Lasso regression. 
+The size, of course, differs based on the different scales the variables are measured. Having $1$ and up to $55$ electric gadgets at home is not the same as earning between $1000$ and $100,000$ monthly (of whichever currency you want to imagine here). There are two immediate consequences of centering and scaling (or normalising). 1) There is no longer an intercept. 2) It is easier to rank the relative magnitude of the coefficients post-shrinkage.
+
+*Cross-validation in Lasso:* Beyond training and testing dataframes, what a k-fold (commonly 10-fold) cross validation does is resample the data to find an optimal (λ) lambda/penalisation for the lasso model and assess its predictive error. Recall: The optimal λ (lambda)/penalisation minimizes the out-of-sample (or test) mean prediction error.
+
+This tuning is already included in the chunk of code above. 
+
+```{r, message=FALSE}
+
+# Let's visualise our lasso model:
+plot(model_lasso)
+cat("The x-axis is the fraction of the full solution (i.e., ordinary least squares with no penalty)")
+
+```   
+It seems that the fraction used (0.9) is close to the non-penalised model (or OLS/linear). Our original claim that this particular set-up does not call for a Lasso approach was correct. We may want to try other machine learning algorithms to see if we can improve our initial predictions! 
+
+A final note: there is some discussion over whether k-fold or really any cross-validation technique is optimal for choosing the lambda parameter in Lasso models (see for example, this Coursera [video](https://www.coursera.org/lecture/ml-regression/choosing-the-penalty-strength-and-other-practical-issues-with-lasso-SPr8p)). 
+It is true that cross-validation is something that we want to do for ALL our machine learning models. Just make sure to make an informed choice of which cv technique you'll implement in your model. 
+
+**A setup with multiple categorical variables is problematic with Lasso!**
+
+Lasso models do not perform well with multiple categorical variables. As is our case. Primarily because, in order to work with categorical data in lasso models we encode them as dummies (for example, north = $1$ and $0$ otherwise, center = $1$ and $0$ otherwise). Lasso will thus only consider the dummy, and not the concept of the 'region'). An alternative to that is a Group Lasso. If you'd like to read more on that, you can have a look at this [Towards Data Science Post](https://towardsdatascience.com/beyond-linear-regression-467a7fc3bafb#:~:text=Lasso%20feature%20selection%20works%20well,with%20few%20non%2Dzero%20coefficients.). 
+
+## Conclusion
+
+At this point, our best predictions are made with a linear regression algorithm, which bested a lasso model. As we progress, we will explore other common machine learning algorithms to see whether our prediction capabilities improve!.
+
+
+## Practice at home
+
+You can replicate the exercises in Python or R using the Malawi dataset. However, if you'd like a challenge, you can also try running a Linear and a Lasso Linear model using a similar dataset for the country of Bolivia. The dataset was put together by McBride and Nichols for the same paper for which they used the Malawi dataset. 
+
+<a class="btn btn-primary" download href="data/bolivia.csv">
+  Download Bolivia df CSV
+</a>
+
+<div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    this.page.identifier = "predictionpolicy.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+
+    
+    (function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+    s.src = 'https://unu-merit.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
