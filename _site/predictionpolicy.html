@@ -101,6 +101,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -169,6 +198,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#preliminaries-working-directory-libraries-data-upload" id="toc-preliminaries-working-directory-libraries-data-upload" class="nav-link" data-scroll-target="#preliminaries-working-directory-libraries-data-upload">1. Preliminaries: working directory, libraries, data upload</a></li>
   <li><a href="#get-to-know-your-data-visualisation-and-pre-processing" id="toc-get-to-know-your-data-visualisation-and-pre-processing" class="nav-link" data-scroll-target="#get-to-know-your-data-visualisation-and-pre-processing">2. Get to know your data: visualisation and pre-processing</a></li>
+  <li><a href="#model-fit-data-partition-and-performance-evaluation-parameters" id="toc-model-fit-data-partition-and-performance-evaluation-parameters" class="nav-link" data-scroll-target="#model-fit-data-partition-and-performance-evaluation-parameters">3. Model fit: data partition and performance evaluation parameters</a></li>
+  <li><a href="#feature-selection-with-lasso-linear-regression" id="toc-feature-selection-with-lasso-linear-regression" class="nav-link" data-scroll-target="#feature-selection-with-lasso-linear-regression">4. Feature selection with Lasso linear regression</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -249,14 +280,14 @@ What are potential risks of such a data driven targeting approach?
 <h3 class="anchored" data-anchor-id="preliminaries-working-directory-libraries-data-upload">1. Preliminaries: working directory, libraries, data upload</h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>()) <span class="co"># this line cleans your Global Environment.</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">"/Users/lucas/Documents/UNU-CDO/courses/ml4p/ml4p-website-v2/data"</span>) <span class="co"># set your working directory</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">"/Users/lucas/Documents/UNU-CDO/courses/ml4p/ml4p-website-v2"</span>) <span class="co"># set your working directory</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Libraries</span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># If this is your first time using R, you need to install the libraries before loading them. </span></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># To do that, you can uncomment the line that starts with install.packages(...) by removing the # symbol.    </span></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("dplyr", "tidyverse", "caret", "corrplot", "Hmisc", "modelsummary", "plyr", "gt", "stargazer", elasticnet")</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("dplyr", "tidyverse", "caret", "corrplot", "Hmisc", "modelsummary", "plyr", "gt", "stargazer", "elasticnet", "sandwich")</span></span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr) <span class="co"># core package for dataframe manipulation. Usually installed and loaded with the tidyverse, but sometimes needs to be loaded in conjunction to avoid warnings.</span></span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># a large collection of packages for data manipulation and visualisation.  </span></span>
@@ -269,7 +300,7 @@ What are potential risks of such a data driven targeting approach?
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt) <span class="co"># a package to edit modelsummary (and other) tables</span></span>
 <span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stargazer) <span class="co"># a package to visualise model output</span></span>
 <span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>data_malawi <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"malawi.csv"</span>) <span class="co"># the file is directly read from the working directory/folder previously set</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>data_malawi <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/malawi.csv"</span>) <span class="co"># the file is directly read from the working directory/folder previously set</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="get-to-know-your-data-visualisation-and-pre-processing" class="level3">
@@ -885,9 +916,1948 @@ What are potential risks of such a data driven targeting approach?
 <p>First and foremost, we should assess whether there is a pattern to missingness and if so, what that means to what we can learn from our (sub)population. If there is no discernible pattern, we can proceed to delete the missing values or impute them. A more detailed explanation and course of action can be found <a href="https://stefvanbuuren.name/fimd/sec-MCAR.html">here</a>.</p>
 <section id="feature-selection-subsetting-the-dataset" class="level4">
 <h4 class="anchored" data-anchor-id="feature-selection-subsetting-the-dataset">Feature selection: subsetting the dataset</h4>
-
-
+<p>As part of our data pre-processing we will subset the dataframe, such that only relevant variables are left. * Relevant: variables/features about a household that could help us determine whether they are in poverty. That way, we save some memory space; but also, we can call the full set of variables in a dataframe in one go!</p>
+<pre><code>variables to delete (not included in the identified set above):
+[ea, EA, hhwght, psu, strataid, lnzline, case_id, eatype] </code></pre>
+<p><br></p>
+<p><strong>N/B</strong>: Feature selection is a <em>critical process</em> (and we normally don’t have a paper to guide us through it): from a practical point of view, a model with less predictors may be easier to interpret. Also, some models may be negatively affected by non-informative predictors. This process is similar to traditional econometric modelling, but we should not conflate predictive and explanatory modelling. Importantly, please note that we are not interested in knowing why something happens, but rather in what is likely to happen given some known data. Hence:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># object:vector that contains the names of the variables that we want to get rid of</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>cols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"ea"</span>, <span class="st">"EA"</span>, <span class="st">"psu"</span>,<span class="st">"hhwght"</span>, <span class="st">"strataid"</span>, <span class="st">"lnzline"</span>, <span class="st">"case_id"</span>,<span class="st">"eatype"</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co"># subset of the data_malawi object:datframe</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>data_malawi <span class="ot">&lt;-</span> data_malawi[,<span class="sc">-</span><span class="fu">which</span>(<span class="fu">colnames</span>(data_malawi) <span class="sc">%in%</span> cols)] <span class="co"># the minus sign indicates deletion of cols</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>A few notes for you:</p>
+<ul>
+<li><p>a dataframe follows the form data[rows,colums]</p></li>
+<li><p>colnames() is a function that identifies the column names of an object of class dataframe</p></li>
+<li><p>which() is an R base function that gives you the position of some value</p></li>
+<li><p>a minus sign will delete either the identified position in the row or the column space</p></li>
+</ul>
 </section>
+<section id="data-visualisation" class="level4">
+<h4 class="anchored" data-anchor-id="data-visualisation">Data visualisation</h4>
+<p>A quick and effective way to take a first glance at our data is to plot histograms of relevant (numeric) features.</p>
+<p>Recall (from the skim() dataframe summary output) that only two variables are non-numeric. However, we need to make a distinction between class factor and class numeric/numeric.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># identify categorical variables to transform from class numeric to factor</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># using a for-loop: print the number of unique values by variable</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(data_malawi)) { <span class="co"># iterate over the length of columns in the data_malawi df</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># store the number of unique values in column.i </span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    x <span class="ot">&lt;-</span> <span class="fu">length</span>(<span class="fu">unique</span>(data_malawi[[i]]))</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># print the name of column.i</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(<span class="fu">colnames</span>(data_malawi[i]))</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># print the number of unique values in column.i</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(x)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "lnexp_pc_month"
+[1] 11266
+[1] "hhsize"
+[1] 19
+[1] "hhsize2"
+[1] 19
+[1] "agehead"
+[1] 88
+[1] "agehead2"
+[1] 88
+[1] "north"
+[1] 2
+[1] "central"
+[1] 2
+[1] "rural"
+[1] 2
+[1] "nevermarried"
+[1] 2
+[1] "sharenoedu"
+[1] 47
+[1] "shareread"
+[1] 28
+[1] "nrooms"
+[1] 16
+[1] "floor_cement"
+[1] 2
+[1] "electricity"
+[1] 2
+[1] "flushtoilet"
+[1] 2
+[1] "soap"
+[1] 2
+[1] "bed"
+[1] 2
+[1] "bike"
+[1] 2
+[1] "musicplayer"
+[1] 2
+[1] "coffeetable"
+[1] 2
+[1] "iron"
+[1] 2
+[1] "dimbagarden"
+[1] 2
+[1] "goats"
+[1] 2
+[1] "dependratio"
+[1] 62
+[1] "hfem"
+[1] 2
+[1] "grassroof"
+[1] 2
+[1] "mortarpestle"
+[1] 2
+[1] "table"
+[1] 2
+[1] "clock"
+[1] 2
+[1] "region"
+[1] 3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># If you want to optimise your code, using for loops is not ideal. In R, there exists a family of functions called Apply whose purpose is to apply some function to all the elements in an object. For the time being, iterating over 38 columns is fast enough and we don't need to think about optimising our code. We'll also see an example later on on how to use one of the functions from the apply family. You can also refer to this blog (https://www.r-bloggers.com/2021/05/apply-family-in-r-apply-lapply-sapply-mapply-and-tapply/) if you want to learn more about it. </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><br></p>
+<p>Notice that we have a few variables with 2 unique values and one variable with 3 unique values. We should transform these into factor() class. Recall from the introduction tab that in object-oriented programming correctly identifying the variable type (vector class) is crucial for data manipulation and arithmetic operations. We can do this one by one, or in one shot. I’ll give an example of both:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># == One by one == # </span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># transform a variable in df to factor, and pass it on to the df to keep the change</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># first, sneak peak at the first 5 observations (rows) of the vector</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(data_malawi<span class="sc">$</span>north) <span class="co"># returns 1 = North </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1 1 1 1 1 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>data_malawi<span class="sc">$</span>north <span class="ot">&lt;-</span> <span class="fu">factor</span>(data_malawi<span class="sc">$</span>north, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"NotNorth"</span>, <span class="st">"North"</span>))</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(data_malawi<span class="sc">$</span>north) <span class="co"># returns 2?</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Factor w/ 2 levels "NotNorth","North": 2 2 2 2 2 2 2 2 2 2 ...</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(data_malawi<span class="sc">$</span>north) <span class="co"># returns north (which was = 1 before), hooray!</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] North North North North North North
+Levels: NotNorth North</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># R stores factors as 1...n; but the label remains the initial numeric value assigned (1 for true, 0 false)</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># We have also explicityly told 0 is NotNorth and 1 is North (by the order that follows the line of code)</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co"># transform all binary/categorical data into factor class</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>min_count <span class="ot">&lt;-</span> <span class="dv">3</span> <span class="co"># vector: 3 categories is our max number of categories found</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="co"># == Apply family: function apply and lapply==#</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co"># apply a length(unique(x)) function to all the columns (rows = 1, columns = 2) of the data_malawi dataframe, then</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="co"># store boolean (true/false) if the number of unique values is lower or equal to the min_count vector</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>n_distinct2 <span class="ot">&lt;-</span> <span class="fu">apply</span>(data_malawi, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="fu">length</span>(<span class="fu">unique</span>(x))) <span class="sc">&lt;=</span> min_count</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="co"># print(n_distinct2) # prints boolean indicator object (so you know what object you have created)</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="co"># select the identified categorical variables and transform them into factors</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>data_malawi[n_distinct2] <span class="ot">&lt;-</span> <span class="fu">lapply</span>(data_malawi[n_distinct2], factor) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Visualise your data: histograms, bar plots, tables</strong></p>
+<p>Let’s start with histograms of numeric (continuous) variables.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># == HISTOGRAMS == #</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Select all variables in the dataframe which are numeric, and can therefore be plotted as a histogram.</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>malawi_continuous <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(data_malawi <span class="sc">%&gt;%</span> <span class="fu">select_if</span>(<span class="sc">~</span><span class="fu">is.numeric</span>(.))) </span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co"># a quick glance at the summary statistics of our continuous variables</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="fu">datasummary_skim</span>(malawi_continuous) <span class="co"># from modelsummary pkg, output as plot in Plot Viewer</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<!-- preamble start -->
+
+    <script>
+
+      function styleCell_cys30xxg9231e05y5pyt(i, j, css_id) {
+          var table = document.getElementById("tinytable_cys30xxg9231e05y5pyt");
+          var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
+          if (cell) {
+              console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
+              cell.classList.add(css_id);
+          } else {
+              console.warn(`Cell at (${i}, ${j}) not found.`);
+          }
+      }
+      function insertSpanRow(i, colspan, content) {
+        var table = document.getElementById('tinytable_cys30xxg9231e05y5pyt');
+        var newRow = table.insertRow(i);
+        var newCell = newRow.insertCell(0);
+        newCell.setAttribute("colspan", colspan);
+        // newCell.innerText = content;
+        // this may be unsafe, but innerText does not interpret <br>
+        newCell.innerHTML = content;
+      }
+      function spanCell_cys30xxg9231e05y5pyt(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_cys30xxg9231e05y5pyt");
+        const targetRow = table.rows[i];
+        const targetCell = targetRow.cells[j];
+        for (let r = 0; r < rowspan; r++) {
+          // Only start deleting cells to the right for the first row (r == 0)
+          if (r === 0) {
+            // Delete cells to the right of the target cell in the first row
+            for (let c = colspan - 1; c > 0; c--) {
+              if (table.rows[i + r].cells[j + c]) {
+                table.rows[i + r].deleteCell(j + c);
+              }
+            }
+          }
+          // For rows below the first, delete starting from the target column
+          if (r > 0) {
+            for (let c = colspan - 1; c >= 0; c--) {
+              if (table.rows[i + r] && table.rows[i + r].cells[j]) {
+                table.rows[i + r].deleteCell(j);
+              }
+            }
+          }
+        }
+        // Set rowspan and colspan of the target cell
+        targetCell.rowSpan = rowspan;
+        targetCell.colSpan = colspan;
+      }
+      // tinytable span after
+      window.addEventListener('load', function () {
+          var cellsToStyle = [
+            // tinytable style arrays after
+          { positions: [ { i: 9, j: 2 }, { i: 9, j: 3 }, { i: 9, j: 7 }, { i: 9, j: 1 }, { i: 9, j: 5 }, { i: 9, j: 6 }, { i: 9, j: 0 }, { i: 9, j: 4 }, { i: 9, j: 8 },  ], css_id: 'tinytable_css_uovm4t4trdmuklt1atoh',}, 
+          { positions: [ { i: 2, j: 2 }, { i: 6, j: 0 }, { i: 3, j: 0 }, { i: 2, j: 1 }, { i: 3, j: 1 }, { i: 1, j: 0 }, { i: 2, j: 0 }, { i: 6, j: 1 }, { i: 4, j: 0 }, { i: 5, j: 0 }, { i: 2, j: 3 }, { i: 7, j: 0 }, { i: 8, j: 0 }, { i: 5, j: 3 }, { i: 3, j: 2 }, { i: 1, j: 1 }, { i: 5, j: 2 }, { i: 6, j: 2 }, { i: 4, j: 1 }, { i: 5, j: 1 }, { i: 2, j: 4 }, { i: 7, j: 1 }, { i: 8, j: 1 }, { i: 5, j: 4 }, { i: 3, j: 3 }, { i: 1, j: 2 }, { i: 8, j: 4 }, { i: 6, j: 3 }, { i: 4, j: 2 }, { i: 8, j: 3 }, { i: 2, j: 5 }, { i: 7, j: 2 }, { i: 8, j: 2 }, { i: 5, j: 5 }, { i: 3, j: 4 }, { i: 1, j: 3 }, { i: 8, j: 5 }, { i: 6, j: 4 }, { i: 4, j: 3 }, { i: 1, j: 6 }, { i: 2, j: 6 }, { i: 7, j: 3 }, { i: 1, j: 5 }, { i: 5, j: 6 }, { i: 3, j: 5 }, { i: 1, j: 4 }, { i: 8, j: 6 }, { i: 6, j: 5 }, { i: 4, j: 4 }, { i: 1, j: 7 }, { i: 2, j: 7 }, { i: 7, j: 4 }, { i: 4, j: 7 }, { i: 5, j: 7 }, { i: 3, j: 6 }, { i: 4, j: 6 }, { i: 8, j: 7 }, { i: 6, j: 6 }, { i: 4, j: 5 }, { i: 1, j: 8 }, { i: 2, j: 8 }, { i: 7, j: 5 }, { i: 4, j: 8 }, { i: 5, j: 8 }, { i: 3, j: 7 }, { i: 7, j: 8 }, { i: 8, j: 8 }, { i: 6, j: 7 }, { i: 7, j: 7 }, { i: 6, j: 8 }, { i: 3, j: 8 }, { i: 7, j: 6 },  ], css_id: 'tinytable_css_er4h21a89vwovt8bjlh4',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 4 }, { i: 0, j: 8 }, { i: 0, j: 2 }, { i: 0, j: 3 }, { i: 0, j: 7 }, { i: 0, j: 1 }, { i: 0, j: 5 }, { i: 0, j: 6 },  ], css_id: 'tinytable_css_6bmqlg9ii7gx6rktgr74',}, 
+          ];
+
+          // Loop over the arrays to style the cells
+          cellsToStyle.forEach(function (group) {
+              group.positions.forEach(function (cell) {
+                  styleCell_cys30xxg9231e05y5pyt(cell.i, cell.j, group.css_id);
+              });
+          });
+      });
+    </script>
+
+    <style>
+      /* tinytable css entries after */
+      .table td.tinytable_css_uovm4t4trdmuklt1atoh, .table th.tinytable_css_uovm4t4trdmuklt1atoh { text-align: left; border-bottom: solid #d3d8dc 0.1em; }
+      .table td.tinytable_css_er4h21a89vwovt8bjlh4, .table th.tinytable_css_er4h21a89vwovt8bjlh4 { text-align: left; }
+      .table td.tinytable_css_6bmqlg9ii7gx6rktgr74, .table th.tinytable_css_6bmqlg9ii7gx6rktgr74 { text-align: left; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+    </style>
+    <div class="container">
+      <table class="table table-borderless" id="tinytable_cys30xxg9231e05y5pyt" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+        <thead>
+        
+              <tr>
+                <th scope="col"> </th>
+                <th scope="col">Unique</th>
+                <th scope="col">Missing Pct.</th>
+                <th scope="col">Mean</th>
+                <th scope="col">SD</th>
+                <th scope="col">Min</th>
+                <th scope="col">Median</th>
+                <th scope="col">Max</th>
+                <th scope="col">Histogram</th>
+              </tr>
+        </thead>
+        
+        <tbody>
+                <tr>
+                  <td>lnexp_pc_month</td>
+                  <td>11266</td>
+                  <td>0</td>
+                  <td>7.4</td>
+                  <td>0.7</td>
+                  <td>4.8</td>
+                  <td>7.3</td>
+                  <td>11.1</td>
+                  <td><img src="./tinytable_assets/idrj49wyvld61fj0cncm3n.png" style="height: 1em;"></td>
+                </tr>
+                <tr>
+                  <td>hhsize</td>
+                  <td>19</td>
+                  <td>0</td>
+                  <td>4.5</td>
+                  <td>2.3</td>
+                  <td>1.0</td>
+                  <td>4.0</td>
+                  <td>27.0</td>
+                  <td><img src="./tinytable_assets/idifw2fnf3i81l3xxticsu.png" style="height: 1em;"></td>
+                </tr>
+                <tr>
+                  <td>hhsize2</td>
+                  <td>19</td>
+                  <td>0</td>
+                  <td>26.1</td>
+                  <td>28.0</td>
+                  <td>1.0</td>
+                  <td>16.0</td>
+                  <td>729.0</td>
+                  <td><img src="./tinytable_assets/idhj4ropb4e9ga59mtpco4.png" style="height: 1em;"></td>
+                </tr>
+                <tr>
+                  <td>agehead</td>
+                  <td>88</td>
+                  <td>0</td>
+                  <td>42.5</td>
+                  <td>16.4</td>
+                  <td>10.0</td>
+                  <td>39.0</td>
+                  <td>104.0</td>
+                  <td><img src="./tinytable_assets/idvjtdlrafj5fe48bebq1e.png" style="height: 1em;"></td>
+                </tr>
+                <tr>
+                  <td>agehead2</td>
+                  <td>88</td>
+                  <td>0</td>
+                  <td>2070.6</td>
+                  <td>1618.6</td>
+                  <td>100.0</td>
+                  <td>1521.0</td>
+                  <td>10816.0</td>
+                  <td><img src="./tinytable_assets/idw6jv2od7ikwzm9jgzgdd.png" style="height: 1em;"></td>
+                </tr>
+                <tr>
+                  <td>sharenoedu</td>
+                  <td>47</td>
+                  <td>0</td>
+                  <td>0.2</td>
+                  <td>0.3</td>
+                  <td>0.0</td>
+                  <td>0.0</td>
+                  <td>1.0</td>
+                  <td><img src="./tinytable_assets/idlibjo9sko9vw08vjmg41.png" style="height: 1em;"></td>
+                </tr>
+                <tr>
+                  <td>shareread</td>
+                  <td>28</td>
+                  <td>0</td>
+                  <td>0.6</td>
+                  <td>0.4</td>
+                  <td>0.0</td>
+                  <td>0.7</td>
+                  <td>1.0</td>
+                  <td><img src="./tinytable_assets/idgaqr19ejoczvtjgnanmj.png" style="height: 1em;"></td>
+                </tr>
+                <tr>
+                  <td>nrooms</td>
+                  <td>16</td>
+                  <td>0</td>
+                  <td>2.5</td>
+                  <td>1.3</td>
+                  <td>0.0</td>
+                  <td>2.0</td>
+                  <td>16.0</td>
+                  <td><img src="./tinytable_assets/id5h2bjq5y9gxtffzbqyy1.png" style="height: 1em;"></td>
+                </tr>
+                <tr>
+                  <td>dependratio</td>
+                  <td>62</td>
+                  <td>0</td>
+                  <td>1.1</td>
+                  <td>0.9</td>
+                  <td>0.0</td>
+                  <td>1.0</td>
+                  <td>9.0</td>
+                  <td><img src="./tinytable_assets/idjhhykg6j0zuxpieqyb6a.png" style="height: 1em;"></td>
+                </tr>
+        </tbody>
+      </table>
+    </div>
+<!-- hack to avoid NA insertion in last line -->
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Hmisc package, quick and painless hist.data.frame() function</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co"># but first, make sure to adjust the number of rows and columns to be displayed on your Plot Viewer</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">3</span>)) <span class="co"># 3 rows * 3 columns (9 variables)</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="fu">hist.data.frame</span>(malawi_continuous)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="predictionpolicy_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Now, let’s plot bar graphs and write tables of factor (categorical) variables:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># == BAR GRAPHS == #</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>malawi_factor <span class="ot">&lt;-</span> data_malawi <span class="sc">%&gt;%</span> <span class="fu">select_if</span>(<span class="sc">~</span><span class="fu">is.factor</span>(.)) <span class="co"># subset of the data with all factor variables</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">7</span>)) <span class="co"># 7 rows, 3 columns (21 variables = length of df)</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(malawi_factor)) { <span class="co"># Loop over all the columns in the factor df subset</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># store data in column.i as x</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    x <span class="ot">&lt;-</span> malawi_factor[,i]</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># store name of column.i as x_name</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>    x_name <span class="ot">&lt;-</span> <span class="fu">colnames</span>(malawi_factor[i])</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Plot bar graph of x using Rbase plotting tools</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">barplot</span>(<span class="fu">table</span>(x),</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>            <span class="at">main =</span> <span class="fu">paste</span>(x_name)</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="predictionpolicy_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># == TABLES == #</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co"># We can also show tables of all factor variables (to get precise frequencies not displayed in bar plots)</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="fu">llply</span>(<span class="at">.data=</span>malawi_factor, <span class="at">.fun=</span>table) <span class="co"># create tables of all the variables in dataframe using the plyr package</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$north
+
+NotNorth    North 
+    9600     1680 
+
+$central
+
+   0    1 
+6960 4320 
+
+$rural
+
+   0    1 
+1440 9840 
+
+$nevermarried
+
+    0     1 
+10930   350 
+
+$floor_cement
+
+   0    1 
+9036 2244 
+
+$electricity
+
+    0     1 
+10620   660 
+
+$flushtoilet
+
+    0     1 
+10962   318 
+
+$soap
+
+   0    1 
+9740 1540 
+
+$bed
+
+   0    1 
+7653 3627 
+
+$bike
+
+   0    1 
+7194 4086 
+
+$musicplayer
+
+   0    1 
+9426 1854 
+
+$coffeetable
+
+   0    1 
+9956 1324 
+
+$iron
+
+   0    1 
+8962 2318 
+
+$dimbagarden
+
+   0    1 
+7658 3622 
+
+$goats
+
+   0    1 
+8856 2424 
+
+$hfem
+
+   0    1 
+8697 2583 
+
+$grassroof
+
+   0    1 
+2953 8327 
+
+$mortarpestle
+
+   0    1 
+5635 5645 
+
+$table
+
+   0    1 
+7249 4031 
+
+$clock
+
+   0    1 
+9039 2241 
+
+$region
+
+Centre  North  South 
+  4320   1680   5280 </code></pre>
+</div>
+</div>
+<p><br></p>
+<p>What have we learned from the data visualisation?</p>
+<ol type="a">
+<li><p>Nothing worrying about the data itself. McBride and Nichols did a good job of pre-processing the data for us. No pesky missing values, or unknown categories.</p></li>
+<li><p>From the bar plots, we can see that for the most part, people tend not to own assets. Worryingly, there is a lack of soap, flush toilets and electricity, all of which are crucial for human capital (health and education).</p></li>
+<li><p>From the histograms, we can see log per capita expenditure is normally distributed, but if we remove the log, it’s incredibly skewed. Poverty is endemic. Households tend not to have too many educated individuals, and their size is non-trivially large (with less rooms than people need).</p></li>
+</ol>
+</section>
+<section id="relationships-between-features" class="level4">
+<h4 class="anchored" data-anchor-id="relationships-between-features">Relationships between features</h4>
+<p>To finalise our exploration of the dataset, we should define:</p>
+<ul>
+<li><p>the target variable (a.k.a. outcome of interest)</p></li>
+<li><p>correlational insights</p></li>
+</ul>
+<p>Let’s visualise two distinct correlation matrices; for our numeric dataframe, which includes our target variable, we will plot a Pearson r correlation matrix. For our factor dataframe, to which we will add our continuous target, we will plot a Spearman rho correlation matrix. Both types of correlation coefficients are interpreted the same (0 = no correlation, 1 perfect positive correlation, -1 perfect negative correlation).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># = = PEARSON CORRELATION MATRIX = = #</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>M <span class="ot">&lt;-</span> <span class="fu">cor</span>(malawi_continuous) <span class="co"># create a correlation matrix of the continuous dataset, cor() uses Pearson's correlation coefficient as default. This means we can only take the correlation between continuous variables</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="fu">corrplot</span>(M, <span class="at">method=</span><span class="st">"circle"</span>, <span class="at">addCoef.col =</span><span class="st">"black"</span>, <span class="at">number.cex =</span> <span class="fl">0.8</span>) <span class="co"># visualise it in a nice way</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="predictionpolicy_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We can already tell that the size of the household and dependent ratio are highly negatively correlated to our target variable.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># = = SPEARMAN CORRELATION MATRIX = = #</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>malawi_factorC <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">lapply</span>(malawi_factor,as.numeric)) <span class="co"># coerce dataframe to numeric, as the cor() command only takes in numeric types</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>malawi_factorC<span class="sc">$</span>lnexp_pc_month <span class="ot">&lt;-</span> malawi_continuous<span class="sc">$</span>lnexp_pc_month <span class="co"># include target variable in the dataframe</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>M2 <span class="ot">&lt;-</span> <span class="fu">cor</span>(malawi_factorC, <span class="at">method =</span> <span class="st">"spearman"</span>)</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="fu">corrplot</span>(M2, <span class="at">method=</span><span class="st">"circle"</span>, <span class="at">addCoef.col =</span><span class="st">"black"</span>, <span class="at">number.cex =</span> <span class="fl">0.3</span>) <span class="co"># visualise it in a nice way</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="predictionpolicy_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Ownership of some assets stands out: soap, a cement floor, electricity, a bed… ownership of these (and a couple of other) assets is positively correlated to per capita expenditure. Living in a rural area, on the other hand, is negtively correlated to our target variable.</p>
+<p>We can also spot some correlation coefficients that equal zero. In some situations, the data generating mechanism can create predictors that only have a single unique value (i.e.&nbsp;a “zero-variance predictor”). For many ML models (excluding tree-based models), this may cause the model to crash or the fit to be unstable. Here, the only <span class="math inline">\(0\)</span> we’ve spotted is not in relation to our target variable.</p>
+<p>But we do observe some near-zero-variance predictors. Besides uninformative, these can also create unstable model fits. There’s a few strategies to deal with these; the quickest solution is to remove them. A second option, which is especially interesting in scenarios with a large number of predictors/variables, is to work with penalised models. We’ll discuss this option below.</p>
+</section>
+</section>
+<section id="model-fit-data-partition-and-performance-evaluation-parameters" class="level3">
+<h3 class="anchored" data-anchor-id="model-fit-data-partition-and-performance-evaluation-parameters">3. Model fit: data partition and performance evaluation parameters</h3>
+<p>We now have a general idea of the structure of the data we are working with, and what we’re trying to predict: per capita expenditures, which we believe are a proxy for poverty prevalence. Measured by the log of per capita monthly expenditure in our dataset, the variable is named lnexp_pc_month.</p>
+<p>The next step is create a simple linear model (OLS) to predict per capita expenditure using the variables in our dataset, and introduce the elements with which we will evaluate our model.</p>
+<section id="data-partinioning" class="level4">
+<h4 class="anchored" data-anchor-id="data-partinioning">Data Partinioning</h4>
+<p>When we want to build predictive models for machine learning purposes, it is important to have (at least) two data sets. A training data set from which our model will learn, and a test data set containing the same features as our training data set; we use the second dataset to see how well our predictive model extrapolates to other samples (i.e.&nbsp;is it generalisable?). To split our main data set into two, we will work with an 80/20 split.</p>
+<p>The 80/20 split has its origins in the Pareto Principle, which states that ‘in most cases, 80% of effects from from 20% of causes’. Though there are other test/train splitting options, this partitioning method is a good place to start, and indeed standard in the machine learning field.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># First, set a seed to guarantee replicability of the process</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>) <span class="co"># you can use any number you want, but to replicate the results in this tutorial you need to use this number</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co"># We could split the data manually, but the caret package includes an useful function</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>train_idx <span class="ot">&lt;-</span> <span class="fu">createDataPartition</span>(data_malawi<span class="sc">$</span>lnexp_pc_month, <span class="at">p =</span> .<span class="dv">8</span>, <span class="at">list =</span> <span class="cn">FALSE</span>, <span class="at">times =</span> <span class="dv">1</span>)</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(train_idx) <span class="co"># notice that observation 5 corresponds to resame indicator 7 and so on. We're shuffling and picking!</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Resample1
+[1,]         1
+[2,]         2
+[3,]         4
+[4,]         5
+[5,]         7
+[6,]         8</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>Train_df <span class="ot">&lt;-</span> data_malawi[ train_idx,]</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>Test_df  <span class="ot">&lt;-</span> data_malawi[<span class="sc">-</span>train_idx,]</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Note that we have created training and testing dataframes as an 80/20 split of the original dataset.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="prediction-with-linear-models" class="level4">
+<h4 class="anchored" data-anchor-id="prediction-with-linear-models">Prediction with Linear Models</h4>
+<p>We will start by fitting a predictive model using the training dataset; that is, our target variable <em>log of monthly per capita expenditures</em> or <em>lnexp_pc_month</em> will be a <span class="math inline">\(Y\)</span> dependent variable in a linear model <span class="math inline">\(Y_i = \alpha + x'\beta_i + \epsilon_i\)</span>, and the remaining features in the data frame correspond to the row vectors <span class="math inline">\(x'\beta\)</span>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(lnexp_pc_month <span class="sc">~</span> .,Train_df) <span class="co"># the dot after the squiggle ~ asks the lm() function tu use all other variables in the dataframe as predictors to the dependent variable lnexp_pc_month</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="fu">stargazer</span>(model1, <span class="at">type =</span> <span class="st">"text"</span>) <span class="co"># printed in the console as text</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+===============================================
+                        Dependent variable:    
+                    ---------------------------
+                          lnexp_pc_month       
+-----------------------------------------------
+hhsize                       -0.292***         
+                              (0.006)          
+                                               
+hhsize2                      0.012***          
+                             (0.0005)          
+                                               
+agehead                        0.003           
+                              (0.002)          
+                                               
+agehead2                    -0.00004**         
+                             (0.00002)         
+                                               
+northNorth                   0.080***          
+                              (0.014)          
+                                               
+central1                     0.252***          
+                              (0.010)          
+                                               
+rural1                       -0.055***         
+                              (0.017)          
+                                               
+nevermarried1                0.271***          
+                              (0.028)          
+                                               
+sharenoedu                   -0.105***         
+                              (0.020)          
+                                               
+shareread                    0.075***          
+                              (0.015)          
+                                               
+nrooms                       0.039***          
+                              (0.004)          
+                                               
+floor_cement1                0.102***          
+                              (0.017)          
+                                               
+electricity1                 0.372***          
+                              (0.027)          
+                                               
+flushtoilet1                 0.329***          
+                              (0.033)          
+                                               
+soap1                        0.215***          
+                              (0.014)          
+                                               
+bed1                         0.104***          
+                              (0.013)          
+                                               
+bike1                        0.094***          
+                              (0.011)          
+                                               
+musicplayer1                 0.111***          
+                              (0.015)          
+                                               
+coffeetable1                 0.137***          
+                              (0.019)          
+                                               
+iron1                        0.130***          
+                              (0.014)          
+                                               
+dimbagarden1                 0.102***          
+                              (0.010)          
+                                               
+goats1                       0.080***          
+                              (0.012)          
+                                               
+dependratio                  -0.045***         
+                              (0.006)          
+                                               
+hfem1                        -0.066***         
+                              (0.012)          
+                                               
+grassroof1                   -0.096***         
+                              (0.016)          
+                                               
+mortarpestle1                0.033***          
+                              (0.010)          
+                                               
+table1                       0.051***          
+                              (0.011)          
+                                               
+clock1                       0.058***          
+                              (0.014)          
+                                               
+regionNorth                                    
+                                               
+                                               
+regionSouth                                    
+                                               
+                                               
+Constant                     7.978***          
+                              (0.044)          
+                                               
+-----------------------------------------------
+Observations                   9,024           
+R2                             0.599           
+Adjusted R2                    0.597           
+Residual Std. Error      0.428 (df = 8995)     
+F Statistic         479.041*** (df = 28; 8995) 
+===============================================
+Note:               *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># We can also estimate iid and robust standard errors, using the model output package modelsummary()</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>ms <span class="ot">&lt;-</span> <span class="fu">modelsummary</span>(model1,</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">vcov =</span> <span class="fu">list</span>(<span class="st">"iid"</span>,<span class="st">"robust"</span>), <span class="co"># include iid and HC3 (robust) standard errors</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">statistic =</span> <span class="fu">c</span>(<span class="st">"p = {p.value}"</span>,<span class="st">"s.e. = {std.error}"</span>),</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">stars =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">output =</span> <span class="st">"gt"</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>             ) <span class="co"># plotted as an image / object in "gt" format</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>ms <span class="sc">%&gt;%</span> <span class="fu">tab_header</span>(</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="fu">md</span>(<span class="st">"**Linear Models with iid and robust s.e.**"</span>),</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="fu">md</span>(<span class="st">"Target: (log) per capita monthly expenditure"</span>)</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fwpwqhkfgg" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#fwpwqhkfgg table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#fwpwqhkfgg thead, #fwpwqhkfgg tbody, #fwpwqhkfgg tfoot, #fwpwqhkfgg tr, #fwpwqhkfgg td, #fwpwqhkfgg th {
+  border-style: none;
+}
+
+#fwpwqhkfgg p {
+  margin: 0;
+  padding: 0;
+}
+
+#fwpwqhkfgg .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#fwpwqhkfgg .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#fwpwqhkfgg .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#fwpwqhkfgg .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#fwpwqhkfgg .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#fwpwqhkfgg .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#fwpwqhkfgg .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#fwpwqhkfgg .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#fwpwqhkfgg .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#fwpwqhkfgg .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#fwpwqhkfgg .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#fwpwqhkfgg .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#fwpwqhkfgg .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#fwpwqhkfgg .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#fwpwqhkfgg .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#fwpwqhkfgg .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#fwpwqhkfgg .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#fwpwqhkfgg .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#fwpwqhkfgg .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fwpwqhkfgg .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#fwpwqhkfgg .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#fwpwqhkfgg .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#fwpwqhkfgg .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fwpwqhkfgg .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#fwpwqhkfgg .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#fwpwqhkfgg .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#fwpwqhkfgg .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fwpwqhkfgg .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#fwpwqhkfgg .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#fwpwqhkfgg .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#fwpwqhkfgg .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#fwpwqhkfgg .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#fwpwqhkfgg .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fwpwqhkfgg .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#fwpwqhkfgg .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fwpwqhkfgg .gt_left {
+  text-align: left;
+}
+
+#fwpwqhkfgg .gt_center {
+  text-align: center;
+}
+
+#fwpwqhkfgg .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#fwpwqhkfgg .gt_font_normal {
+  font-weight: normal;
+}
+
+#fwpwqhkfgg .gt_font_bold {
+  font-weight: bold;
+}
+
+#fwpwqhkfgg .gt_font_italic {
+  font-style: italic;
+}
+
+#fwpwqhkfgg .gt_super {
+  font-size: 65%;
+}
+
+#fwpwqhkfgg .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#fwpwqhkfgg .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#fwpwqhkfgg .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#fwpwqhkfgg .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#fwpwqhkfgg .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#fwpwqhkfgg .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#fwpwqhkfgg .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#fwpwqhkfgg .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#fwpwqhkfgg div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_heading header">
+<th colspan="3" class="gt_heading gt_title gt_font_normal"><strong>Linear Models with iid and robust s.e.</strong></th>
+</tr>
+<tr class="gt_heading even">
+<th colspan="3" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border">Target: (log) per capita monthly expenditure</th>
+</tr>
+<tr class="gt_col_headings header">
+<th id="a-" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col"></th>
+<th id="a(1)" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">(1)</th>
+<th id="a(2)" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">(2)</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers=" ">(Intercept)</td>
+<td class="gt_row gt_center" headers="(1)">7.978***</td>
+<td class="gt_row gt_center" headers="(2)">7.978***</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">p = &lt;0.001</td>
+<td class="gt_row gt_center" headers="(2)">p = &lt;0.001</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">s.e. = 0.044</td>
+<td class="gt_row gt_center" headers="(2)">s.e. = 0.069</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" ">hhsize</td>
+<td class="gt_row gt_center" headers="(1)">-0.292***</td>
+<td class="gt_row gt_center" headers="(2)">-0.292***</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">p = &lt;0.001</td>
+<td class="gt_row gt_center" headers="(2)">p = &lt;0.001</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">s.e. = 0.006</td>
+<td class="gt_row gt_center" headers="(2)">s.e. = 0.029</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" ">hhsize2</td>
+<td class="gt_row gt_center" headers="(1)">0.012***</td>
+<td class="gt_row gt_center" headers="(2)">0.012***</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">p = &lt;0.001</td>
+<td class="gt_row gt_center" headers="(2)">p = &lt;0.001</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">s.e. = 0.000</td>
+<td class="gt_row gt_center" headers="(2)">s.e. = 0.003</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" ">agehead</td>
+<td class="gt_row gt_center" headers="(1)">0.003</td>
+<td class="gt_row gt_center" headers="(2)">0.003</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">p = 0.108</td>
+<td class="gt_row gt_center" headers="(2)">p = 0.137</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">s.e. = 0.002</td>
+<td class="gt_row gt_center" headers="(2)">s.e. = 0.002</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" ">agehead2</td>
+<td class="gt_row gt_center" headers="(1)">-0.000*</td>
+<td class="gt_row gt_center" headers="(2)">-0.000*</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">p = 0.015</td>
+<td class="gt_row gt_center" headers="(2)">p = 0.032</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">s.e. = 0.000</td>
+<td class="gt_row gt_center" headers="(2)">s.e. = 0.000</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" ">northNorth</td>
+<td class="gt_row gt_center" headers="(1)">0.080***</td>
+<td class="gt_row gt_center" headers="(2)">0.080***</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">p = &lt;0.001</td>
+<td class="gt_row gt_center" headers="(2)">p = &lt;0.001</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">s.e. = 0.014</td>
+<td class="gt_row gt_center" headers="(2)">s.e. = 0.015</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" ">central1</td>
+<td class="gt_row gt_center" headers="(1)">0.252***</td>
+<td class="gt_row gt_center" headers="(2)">0.252***</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">p = &lt;0.001</td>
+<td class="gt_row gt_center" headers="(2)">p = &lt;0.001</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">s.e. = 0.010</td>
+<td class="gt_row gt_center" headers="(2)">s.e. = 0.010</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" ">rural1</td>
+<td class="gt_row gt_center" headers="(1)">-0.055**</td>
+<td class="gt_row gt_center" headers="(2)">-0.055**</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">p = 0.001</td>
+<td class="gt_row gt_center" headers="(2)">p = 0.001</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">s.e. = 0.017</td>
+<td class="gt_row gt_center" headers="(2)">s.e. = 0.017</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" ">nevermarried1</td>
+<td class="gt_row gt_center" headers="(1)">0.271***</td>
+<td class="gt_row gt_center" headers="(2)">0.271***</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">p = &lt;0.001</td>
+<td class="gt_row gt_center" headers="(2)">p = &lt;0.001</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">s.e. = 0.028</td>
+<td class="gt_row gt_center" headers="(2)">s.e. = 0.037</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" ">sharenoedu</td>
+<td class="gt_row gt_center" headers="(1)">-0.105***</td>
+<td class="gt_row gt_center" headers="(2)">-0.105***</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">p = &lt;0.001</td>
+<td class="gt_row gt_center" headers="(2)">p = &lt;0.001</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">s.e. = 0.020</td>
+<td class="gt_row gt_center" headers="(2)">s.e. = 0.021</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" ">shareread</td>
+<td class="gt_row gt_center" headers="(1)">0.075***</td>
+<td class="gt_row gt_center" headers="(2)">0.075***</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">p = &lt;0.001</td>
+<td class="gt_row gt_center" headers="(2)">p = &lt;0.001</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">s.e. = 0.015</td>
+<td class="gt_row gt_center" headers="(2)">s.e. = 0.015</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" ">nrooms</td>
+<td class="gt_row gt_center" headers="(1)">0.039***</td>
+<td class="gt_row gt_center" headers="(2)">0.039***</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">p = &lt;0.001</td>
+<td class="gt_row gt_center" headers="(2)">p = &lt;0.001</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">s.e. = 0.004</td>
+<td class="gt_row gt_center" headers="(2)">s.e. = 0.004</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" ">floor_cement1</td>
+<td class="gt_row gt_center" headers="(1)">0.102***</td>
+<td class="gt_row gt_center" headers="(2)">0.102***</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">p = &lt;0.001</td>
+<td class="gt_row gt_center" headers="(2)">p = &lt;0.001</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">s.e. = 0.017</td>
+<td class="gt_row gt_center" headers="(2)">s.e. = 0.018</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" ">electricity1</td>
+<td class="gt_row gt_center" headers="(1)">0.372***</td>
+<td class="gt_row gt_center" headers="(2)">0.372***</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">p = &lt;0.001</td>
+<td class="gt_row gt_center" headers="(2)">p = &lt;0.001</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">s.e. = 0.027</td>
+<td class="gt_row gt_center" headers="(2)">s.e. = 0.029</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" ">flushtoilet1</td>
+<td class="gt_row gt_center" headers="(1)">0.329***</td>
+<td class="gt_row gt_center" headers="(2)">0.329***</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">p = &lt;0.001</td>
+<td class="gt_row gt_center" headers="(2)">p = &lt;0.001</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">s.e. = 0.033</td>
+<td class="gt_row gt_center" headers="(2)">s.e. = 0.042</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" ">soap1</td>
+<td class="gt_row gt_center" headers="(1)">0.215***</td>
+<td class="gt_row gt_center" headers="(2)">0.215***</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">p = &lt;0.001</td>
+<td class="gt_row gt_center" headers="(2)">p = &lt;0.001</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">s.e. = 0.014</td>
+<td class="gt_row gt_center" headers="(2)">s.e. = 0.014</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" ">bed1</td>
+<td class="gt_row gt_center" headers="(1)">0.104***</td>
+<td class="gt_row gt_center" headers="(2)">0.104***</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">p = &lt;0.001</td>
+<td class="gt_row gt_center" headers="(2)">p = &lt;0.001</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">s.e. = 0.013</td>
+<td class="gt_row gt_center" headers="(2)">s.e. = 0.013</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" ">bike1</td>
+<td class="gt_row gt_center" headers="(1)">0.094***</td>
+<td class="gt_row gt_center" headers="(2)">0.094***</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">p = &lt;0.001</td>
+<td class="gt_row gt_center" headers="(2)">p = &lt;0.001</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">s.e. = 0.011</td>
+<td class="gt_row gt_center" headers="(2)">s.e. = 0.011</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" ">musicplayer1</td>
+<td class="gt_row gt_center" headers="(1)">0.111***</td>
+<td class="gt_row gt_center" headers="(2)">0.111***</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">p = &lt;0.001</td>
+<td class="gt_row gt_center" headers="(2)">p = &lt;0.001</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">s.e. = 0.015</td>
+<td class="gt_row gt_center" headers="(2)">s.e. = 0.015</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" ">coffeetable1</td>
+<td class="gt_row gt_center" headers="(1)">0.137***</td>
+<td class="gt_row gt_center" headers="(2)">0.137***</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">p = &lt;0.001</td>
+<td class="gt_row gt_center" headers="(2)">p = &lt;0.001</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">s.e. = 0.019</td>
+<td class="gt_row gt_center" headers="(2)">s.e. = 0.019</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" ">iron1</td>
+<td class="gt_row gt_center" headers="(1)">0.130***</td>
+<td class="gt_row gt_center" headers="(2)">0.130***</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">p = &lt;0.001</td>
+<td class="gt_row gt_center" headers="(2)">p = &lt;0.001</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">s.e. = 0.014</td>
+<td class="gt_row gt_center" headers="(2)">s.e. = 0.014</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" ">dimbagarden1</td>
+<td class="gt_row gt_center" headers="(1)">0.102***</td>
+<td class="gt_row gt_center" headers="(2)">0.102***</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">p = &lt;0.001</td>
+<td class="gt_row gt_center" headers="(2)">p = &lt;0.001</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">s.e. = 0.010</td>
+<td class="gt_row gt_center" headers="(2)">s.e. = 0.010</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" ">goats1</td>
+<td class="gt_row gt_center" headers="(1)">0.080***</td>
+<td class="gt_row gt_center" headers="(2)">0.080***</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">p = &lt;0.001</td>
+<td class="gt_row gt_center" headers="(2)">p = &lt;0.001</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">s.e. = 0.012</td>
+<td class="gt_row gt_center" headers="(2)">s.e. = 0.012</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" ">dependratio</td>
+<td class="gt_row gt_center" headers="(1)">-0.045***</td>
+<td class="gt_row gt_center" headers="(2)">-0.045***</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">p = &lt;0.001</td>
+<td class="gt_row gt_center" headers="(2)">p = &lt;0.001</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">s.e. = 0.006</td>
+<td class="gt_row gt_center" headers="(2)">s.e. = 0.009</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" ">hfem1</td>
+<td class="gt_row gt_center" headers="(1)">-0.066***</td>
+<td class="gt_row gt_center" headers="(2)">-0.066***</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">p = &lt;0.001</td>
+<td class="gt_row gt_center" headers="(2)">p = &lt;0.001</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">s.e. = 0.012</td>
+<td class="gt_row gt_center" headers="(2)">s.e. = 0.013</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" ">grassroof1</td>
+<td class="gt_row gt_center" headers="(1)">-0.096***</td>
+<td class="gt_row gt_center" headers="(2)">-0.096***</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">p = &lt;0.001</td>
+<td class="gt_row gt_center" headers="(2)">p = &lt;0.001</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">s.e. = 0.016</td>
+<td class="gt_row gt_center" headers="(2)">s.e. = 0.016</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" ">mortarpestle1</td>
+<td class="gt_row gt_center" headers="(1)">0.033**</td>
+<td class="gt_row gt_center" headers="(2)">0.033**</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">p = 0.001</td>
+<td class="gt_row gt_center" headers="(2)">p = 0.001</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">s.e. = 0.010</td>
+<td class="gt_row gt_center" headers="(2)">s.e. = 0.010</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" ">table1</td>
+<td class="gt_row gt_center" headers="(1)">0.051***</td>
+<td class="gt_row gt_center" headers="(2)">0.051***</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">p = &lt;0.001</td>
+<td class="gt_row gt_center" headers="(2)">p = &lt;0.001</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">s.e. = 0.011</td>
+<td class="gt_row gt_center" headers="(2)">s.e. = 0.012</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" ">clock1</td>
+<td class="gt_row gt_center" headers="(1)">0.058***</td>
+<td class="gt_row gt_center" headers="(2)">0.058***</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" "></td>
+<td class="gt_row gt_center" headers="(1)">p = &lt;0.001</td>
+<td class="gt_row gt_center" headers="(2)">p = &lt;0.001</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" " style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000"></td>
+<td class="gt_row gt_center" headers="(1)" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000">s.e. = 0.014</td>
+<td class="gt_row gt_center" headers="(2)" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000">s.e. = 0.014</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" ">Num.Obs.</td>
+<td class="gt_row gt_center" headers="(1)">9024</td>
+<td class="gt_row gt_center" headers="(2)">9024</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" ">R2</td>
+<td class="gt_row gt_center" headers="(1)">0.599</td>
+<td class="gt_row gt_center" headers="(2)">0.599</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" ">R2 Adj.</td>
+<td class="gt_row gt_center" headers="(1)">0.597</td>
+<td class="gt_row gt_center" headers="(2)">0.597</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" ">AIC</td>
+<td class="gt_row gt_center" headers="(1)">10317.3</td>
+<td class="gt_row gt_center" headers="(2)">10317.3</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" ">BIC</td>
+<td class="gt_row gt_center" headers="(1)">10530.5</td>
+<td class="gt_row gt_center" headers="(2)">10530.5</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" ">Log.Lik.</td>
+<td class="gt_row gt_center" headers="(1)">-5128.658</td>
+<td class="gt_row gt_center" headers="(2)">-5128.658</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers=" ">RMSE</td>
+<td class="gt_row gt_center" headers="(1)">0.43</td>
+<td class="gt_row gt_center" headers="(2)">0.43</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers=" ">Std.Errors</td>
+<td class="gt_row gt_center" headers="(1)">IID</td>
+<td class="gt_row gt_center" headers="(2)">HC3</td>
+</tr>
+</tbody><tfoot class="gt_sourcenotes">
+<tr class="odd">
+<td colspan="3" class="gt_sourcenote">+ p &lt; 0.1, * p &lt; 0.05, ** p &lt; 0.01, *** p &lt; 0.001</td>
+</tr>
+</tfoot>
+
+</table>
+
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># You can see that the variable region was not included in the output (this is because we already have dummies of north (not north = south), and central region). We may need to clean our dataset un some further steps. </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Recall that one of the assumptions of a linear model is that errors are independent and identically distributed. We could run some tests to determine this, but with the contrast of the iid and robust errors (HC3) in the modelsummary output table we can already tell that this is not an issue/something to worry about in our estimations.</p>
+<p>Besides the regression output table, we can can also visualise the magnitude and significance of the coefficients with a plot. The further away the variable (dot) marker is from the <span class="math inline">\(0\)</span> line, the larger the magnitude.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">modelplot</span>(model1) <span class="sc">+</span> </span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>          <span class="fu">aes</span>(<span class="at">color =</span> <span class="fu">ifelse</span>(p.value <span class="sc">&lt;</span> <span class="fl">0.001</span>, <span class="st">"Significant"</span>, <span class="st">"Not significant"</span>)) <span class="sc">+</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>              <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"grey"</span>, <span class="st">"black"</span>)</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>                                 )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="predictionpolicy_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>           <span class="co"># grey points indicate statistically insignificat (p&gt;0.001) coefficient estimates</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>           <span class="co"># The scale of the plot is large due to the intercept estimate</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Not unlike what we saw in out correlation matrix, household size, electricity, having a flush toilet… the magnitude of the impact of these variables on monthly per capita expenditure is significantly larger than that of other assets/predictors.</p>
+</section>
+<section id="performance-indicators" class="level4">
+<h4 class="anchored" data-anchor-id="performance-indicators">Performance Indicators</h4>
+<p>In predictive modelling, we are interested in the following performance metrics:</p>
+<ul>
+<li><p>Model <em>residuals</em>: recall residuals are the observed value minus the predicted value. We can estimate a model’s Root Mean Squared Error (RMSE) or the Mean Absolute Error (MAE). Residuals allow us to quantify the extent to which the predicted response value (for a given observation) is close to the true response value. Small RMSE or MAE values indicate that the prediction is close to the true observed value.</p></li>
+<li><p>The <em>p-values</em>: represented by stars *** (and a pre-defined critical threshold, e.g.&nbsp;0.05), they point to the predictive power of each feature in the model; i.e.&nbsp;that the event does not occur by chance. In the same vein, the magnitude of the coefficient is also important, especially given that we are interested in explanatory power and not causality.</p></li>
+<li><p>The <em>R-squared</em>: arguably the go-to indicator for performance assessment. Low R^2 values are not uncommon, especially in the social sciences. However, when hoping to use a model for predictive purposes, a low R^2 is a bad sign, large number of statistically significant features notwithstanding. The drawback from relying solely on this measure is that it does not take into consideration the problem of model over-fitting; i.e.&nbsp;you can inflate the R-squared by adding as many variables as you want, even if those variables have little predicting power. This method will yield great results in the training data, but will under perform when extrapolating the model to the test (or indeed any other) data set.</p></li>
+</ul>
+<p><strong><em>Residuals</em></strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># = = Model Residuals = = #</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">summary</span>(model1<span class="sc">$</span>residuals))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
+-3.483927 -0.288657 -0.007872  0.000000  0.266950  1.887123 </code></pre>
+</div>
+</div>
+<p>Recall that the residual is estimated as the true (observed) value minus the predicted value. Thus: the max(imum) error of 1.88 suggests that the model under-predicted expenditure by circa (log) $2 (or $6.5) for at least one observation. Fifty percent of the predictions (between the first and third quartiles) lie between (log) $0.28 and (log) $0.26 over the true value. From the estimation of the prediction residuals we obtain the popular measure of performance evaluation known as the Root Mean Squared Error (RMSE, for short).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the RMSE for the training dataset, or the in-sample RMSE.</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Predict values on the training dataset</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>p0 <span class="ot">&lt;-</span> <span class="fu">predict</span>(model1, Train_df)</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Obtain the errors (predicted values minus observed values of target variable)</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>error0 <span class="ot">&lt;-</span> p0 <span class="sc">-</span> Train_df[[<span class="st">"lnexp_pc_month"</span>]]</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. In-sample RMSE</span></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>RMSE_insample <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>(error0 <span class="sc">^</span> <span class="dv">2</span>))</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(RMSE_insample)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.4271572</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># TIP: Notice that the in-sample RMSE we have just estimated was also printed in the linear model (regression) output tables!</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="co"># The table printed with the stargazer package returns this value at the bottom, under the header Residual Std. Error (0.428)</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="co"># The table printed with the modelsummary package returns this value at the bottom, under the header RMSE (0.43), rounded up. </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The RMSE (0.4271) gives us an absolute number that indicates how much our predicted values deviate from the true (observed) number. This is all in reference to the target vector (a.k.a. our outcome variable). Think of the question, <em>how far, on average, are the residuals away from zero?</em> Generally speaking, the lower the value, the better the model fit. Besides being a good measure of goodness of fit, the RMSE is also useful for comparing the ability of our model to make predictions on different (e.g.&nbsp;test) data sets. The in-sample RMSE should be close or equal to the out-of-sample RMSE.</p>
+<p>In this case, our RMSE is ~0.4 units away from zero. Given the range of the target variable (roughly 4 to 11), the number seems to be relatively small and close enough to zero.</p>
+<p><strong><em>P-values</em></strong></p>
+<p>Recall the large number of statistically significant features in our model. The coefficient plot, where we indicate that statistical significance is defined by a p-value threshold of 0.001, a strict rule (given the popularity of the more relaxed 0.05 critical value), shows that only 4 out of 29 features/variables do not meet this criterion. We can conclude that the features we have selected are relevant predictors.</p>
+<p><strong><em>R-squared</em></strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">summary</span>(model1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = lnexp_pc_month ~ ., data = Train_df)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.4839 -0.2887 -0.0079  0.2669  1.8871 
+
+Coefficients: (2 not defined because of singularities)
+                Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)    7.978e+00  4.409e-02 180.945  &lt; 2e-16 ***
+hhsize        -2.919e-01  6.429e-03 -45.397  &lt; 2e-16 ***
+hhsize2        1.206e-02  4.811e-04  25.067  &lt; 2e-16 ***
+agehead        2.749e-03  1.712e-03   1.606  0.10835    
+agehead2      -4.168e-05  1.717e-05  -2.428  0.01519 *  
+northNorth     8.001e-02  1.439e-02   5.560 2.78e-08 ***
+central1       2.521e-01  1.023e-02  24.639  &lt; 2e-16 ***
+rural1        -5.483e-02  1.687e-02  -3.250  0.00116 ** 
+nevermarried1  2.706e-01  2.839e-02   9.533  &lt; 2e-16 ***
+sharenoedu    -1.045e-01  2.006e-02  -5.212 1.91e-07 ***
+shareread      7.514e-02  1.502e-02   5.004 5.72e-07 ***
+nrooms         3.898e-02  4.032e-03   9.670  &lt; 2e-16 ***
+floor_cement1  1.016e-01  1.742e-02   5.835 5.58e-09 ***
+electricity1   3.718e-01  2.696e-02  13.793  &lt; 2e-16 ***
+flushtoilet1   3.295e-01  3.263e-02  10.099  &lt; 2e-16 ***
+soap1          2.150e-01  1.413e-02  15.220  &lt; 2e-16 ***
+bed1           1.040e-01  1.297e-02   8.019 1.20e-15 ***
+bike1          9.395e-02  1.064e-02   8.831  &lt; 2e-16 ***
+musicplayer1   1.111e-01  1.451e-02   7.658 2.08e-14 ***
+coffeetable1   1.369e-01  1.866e-02   7.338 2.36e-13 ***
+iron1          1.302e-01  1.378e-02   9.455  &lt; 2e-16 ***
+dimbagarden1   1.018e-01  1.017e-02  10.017  &lt; 2e-16 ***
+goats1         7.964e-02  1.168e-02   6.820 9.68e-12 ***
+dependratio   -4.501e-02  5.848e-03  -7.697 1.55e-14 ***
+hfem1         -6.570e-02  1.238e-02  -5.307 1.14e-07 ***
+grassroof1    -9.590e-02  1.575e-02  -6.089 1.18e-09 ***
+mortarpestle1  3.288e-02  1.027e-02   3.200  0.00138 ** 
+table1         5.074e-02  1.149e-02   4.417 1.01e-05 ***
+clock1         5.840e-02  1.423e-02   4.103 4.11e-05 ***
+regionNorth           NA         NA      NA       NA    
+regionSouth           NA         NA      NA       NA    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.4278 on 8995 degrees of freedom
+Multiple R-squared:  0.5986,    Adjusted R-squared:  0.5973 
+F-statistic:   479 on 28 and 8995 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p>We have printed our model’s output once more, now using the r base command summary(). The other packages (stargazer and modelsummary) are great if you want to export your results in text, html, latex format, but not necessary if you just want to print your output. The estimated (Multiple) R-squared of 0.59 tells us that our model predicts around 60 per cent of the variation in the independent variable (our target, log of per capita monthly expenditures). Also note that when we have a large number of predictors, it’s best to look at the Adjusted R-squared (of 0.59), which corrects or adjusts for this by only increasing when a new feature improves the model more so than what would be expected by chance.</p>
+</section>
+<section id="out-of-sample-predictions" class="level4">
+<h4 class="anchored" data-anchor-id="out-of-sample-predictions">Out of sample predictions</h4>
+<p>Now that we have built and evaluated our model in the training dataset, we can proceed to make out-of-sample predictions. That is, see how our model performs in the test dataset.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">predict</span>(model1, Test_df)</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="do">### Observed summary statistics of target variable in full dataset</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">summary</span>(data_malawi<span class="sc">$</span>lnexp_pc_month))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  4.777   6.893   7.305   7.359   7.758  11.064 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="do">### Predictions based on the training dataset</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">summary</span>(p0))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  6.011   6.980   7.308   7.357   7.661  10.143 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="do">### Predictions from the testing dataset</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">summary</span>(p))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  6.052   6.999   7.323   7.375   7.670   9.774 </code></pre>
+</div>
+</div>
+<p>The summary statistics for the predictions with the train and test datasets are very close to one another. This is an indication that our model extrapolates well to other datasets. Compared to the observed summary statistics of the target variable, they’re relatively close, with the largest deviations observed at the minimum and maximum values.</p>
+</section>
+<section id="the-bias-variance-tradeoff-in-practice" class="level4">
+<h4 class="anchored" data-anchor-id="the-bias-variance-tradeoff-in-practice">The bias-variance tradeoff in practice</h4>
+<p>We previously mentioned that the RMSE metric could also be used to compare between train and test model predictions. Let us estimate the out-of-sample RMSE:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>error <span class="ot">&lt;-</span> p <span class="sc">-</span> Test_df[[<span class="st">"lnexp_pc_month"</span>]] <span class="co"># predicted values minus actual values</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>RMSE_test <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>(error<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(RMSE_test) <span class="co"># this is known as the out-of-sample RMSE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.4284404</code></pre>
+</div>
+</div>
+<p>Notice that the <em>in-sample RMSE</em> [<span class="math inline">\(0.4271572\)</span>] is very close to the <em>out-of-sample RMSE</em> [<span class="math inline">\(0.4284404\)</span>]. This means that our model makes consistent predictions across different data sets. We also know by now that these predictions are relatively good. At least, we hit the mark around 60 per cent of the time. What we are observing here is a model that has found a balance between bias and variance. However, both measures can still improve. For one, McBride and Nichols (2018) report &gt; 80 per cent accuracy in their poverty predictions for Malawi. But please note that, at this point, we are not replicating their approach. They document using a classification model, which means that they previously used a poverty line score and divided the sample between individuals below and above the poverty line.</p>
+<p><em>What do we mean by bias in a model?</em></p>
+<p>The bias is the difference between the average prediction of our model and the true (observed) value. Minimising the bias is analogous to minimising the RMSE.</p>
+<p><em>What do we mean by variance in a model?</em></p>
+<p>It is the observed variability of our model prediction for a given data point (how much the model can adjust given the data set). A model with high variance would yield low error values in the training data but high errors in the test data.</p>
+<p>Hence, consistent in and out of sample RMSE scores = bias/variance balance.</p>
+</section>
+<section id="fine-tuning-model-parameters" class="level4">
+<h4 class="anchored" data-anchor-id="fine-tuning-model-parameters">Fine-tuning model parameters</h4>
+<p>Can we fine-tune model parameters? The quick answer is yes! Every algorithm has a set of parameters that can be adjusted/fine-tuned to improve our estimations. Even in the case of a simple linear model, we can try our hand at fine-tuning with, for example, cross-validation.</p>
+<p><em>What is cross-validation?</em></p>
+<p>Broadly speaking, it is a technique that allows us to assess the performance of our machine learning model. How so? Well, it looks at the ‘stability’ of the model. It’s a measure of how well our model would work on new, unseen data (is this ringing a bell yet?); i.e.&nbsp;it has correctly observed and recorded the patterns in the data and has not captured too much noise (what we know as the error term, or what we are unable to explain with our model). K-fold cross-validation is a good place to start for such a thing. In the words of <a href="https://www.javatpoint.com/cross-validation-in-machine-learning">The Internet™</a>, what k-fold cross validation does is:</p>
+<pre><code>Split the input dataset into K groups
+    For each group:
+        - Take one group as the reserve or test data set.
+        - Use remaining groups as the training dataset.
+        - Fit the model on the training set and evaluate the performance of the model using the test set.</code></pre>
+<p>TL;DR We’re improving our splitting technique!</p>
+<p>An Illustration by <a href="https://eugenia-anello.medium.com/">Eugenia Anello</a></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/kfold_crossvalidation.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's rumble! </span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">12345</span>)</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a><span class="co"># create an object that defines the training method as cross-validation and number of folds (caret pkg)</span></span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>cv_10fold <span class="ot">&lt;-</span> <span class="fu">trainControl</span>(</span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">"cv"</span>, <span class="co">#cross-validation</span></span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">number =</span> <span class="dv">10</span> <span class="co"># k-fold = 10-fold (split the data into 10 similar-sized samples)</span></span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">12345</span>)</span>
+<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a><span class="co"># train a model </span></span>
+<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a>ols_kfold <span class="ot">&lt;-</span> <span class="fu">train</span>(</span>
+<span id="cb47-15"><a href="#cb47-15" aria-hidden="true" tabindex="-1"></a>    lnexp_pc_month <span class="sc">~</span> .,</span>
+<span id="cb47-16"><a href="#cb47-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> Train_df,</span>
+<span id="cb47-17"><a href="#cb47-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">'lm'</span>, <span class="co"># runs a linear regression model (or ols)</span></span>
+<span id="cb47-18"><a href="#cb47-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">trControl =</span> cv_10fold <span class="co"># use 10 folds to cross-validate</span></span>
+<span id="cb47-19"><a href="#cb47-19" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb47-20"><a href="#cb47-20" aria-hidden="true" tabindex="-1"></a>ols_kfold2 <span class="ot">&lt;-</span> <span class="fu">train</span>(</span>
+<span id="cb47-21"><a href="#cb47-21" aria-hidden="true" tabindex="-1"></a>    lnexp_pc_month <span class="sc">~</span> .,</span>
+<span id="cb47-22"><a href="#cb47-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> Test_df,</span>
+<span id="cb47-23"><a href="#cb47-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">'lm'</span>, <span class="co"># runs a linear regression model (or ols)</span></span>
+<span id="cb47-24"><a href="#cb47-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">trControl =</span> cv_10fold <span class="co"># use 10 folds to cross-validate</span></span>
+<span id="cb47-25"><a href="#cb47-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb47-26"><a href="#cb47-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-27"><a href="#cb47-27" aria-hidden="true" tabindex="-1"></a>ols_kfold3 <span class="ot">&lt;-</span> <span class="fu">train</span>(</span>
+<span id="cb47-28"><a href="#cb47-28" aria-hidden="true" tabindex="-1"></a>    lnexp_pc_month <span class="sc">~</span> .,</span>
+<span id="cb47-29"><a href="#cb47-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> data_malawi,</span>
+<span id="cb47-30"><a href="#cb47-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">'lm'</span>, <span class="co"># runs a linear regression model (or ols)</span></span>
+<span id="cb47-31"><a href="#cb47-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">trControl =</span> cv_10fold <span class="co"># use 10 folds to cross-validate</span></span>
+<span id="cb47-32"><a href="#cb47-32" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb47-33"><a href="#cb47-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-34"><a href="#cb47-34" aria-hidden="true" tabindex="-1"></a><span class="do">### Linear model with train dataset</span></span>
+<span id="cb47-35"><a href="#cb47-35" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(ols_kfold)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linear Regression 
+
+9024 samples
+  29 predictor
+
+No pre-processing
+Resampling: Cross-Validated (10 fold) 
+Summary of sample sizes: 8121, 8121, 8123, 8122, 8121, 8121, ... 
+Resampling results:
+
+  RMSE       Rsquared   MAE      
+  0.4295064  0.5947776  0.3365398
+
+Tuning parameter 'intercept' was held constant at a value of TRUE</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="do">#### Linear model with test dataset</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(ols_kfold2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linear Regression 
+
+2256 samples
+  29 predictor
+
+No pre-processing
+Resampling: Cross-Validated (10 fold) 
+Summary of sample sizes: 2030, 2030, 2030, 2030, 2031, 2031, ... 
+Resampling results:
+
+  RMSE       Rsquared   MAE      
+  0.4312944  0.5991526  0.3379473
+
+Tuning parameter 'intercept' was held constant at a value of TRUE</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="do">### Linear model with full dataset")</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(ols_kfold3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linear Regression 
+
+11280 samples
+   29 predictor
+
+No pre-processing
+Resampling: Cross-Validated (10 fold) 
+Summary of sample sizes: 10152, 10152, 10152, 10152, 10152, 10152, ... 
+Resampling results:
+
+  RMSE       Rsquared   MAE      
+  0.4291473  0.5965825  0.3363802
+
+Tuning parameter 'intercept' was held constant at a value of TRUE</code></pre>
+</div>
+</div>
+<p>Having cross-validated our model with 10 folds, we can see that the results are virtually the same. We have a RMSE of around .43, an R^2 of .59, (and a MAE of .33). We ran the same model for the train, test and full datasets and find results are consistent. Recall the R^2 tells us the model’s predictive ability and the RMSE and MAE the model’s accuracy.</p>
+<p><strong>NOTE:</strong> k-fold cross-validation replaces our original 80/20 split (we don’t need to do that anymore!) Therefore, we use the full dataset in the train() function. Using the train, test and full datasets in the example above was just for pedagogical purposes but it is no longer necessary and we can use the reported estimates of R^2 (close to 1!), RMSE (close to 0!) and MAE (let’s go low!) for model assessment without comparing them to another set of predictions. These reported parameters are estimated as the average of the R^2, RMSE, and MAE for all the folds.</p>
+</section>
+</section>
+<section id="feature-selection-with-lasso-linear-regression" class="level3">
+<h3 class="anchored" data-anchor-id="feature-selection-with-lasso-linear-regression">4. Feature selection with Lasso linear regression</h3>
+
+
 </section>
 </section>
 
