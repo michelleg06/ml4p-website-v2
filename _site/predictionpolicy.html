@@ -1123,8 +1123,8 @@ Levels: NotNorth North</code></pre>
 
     <script>
 
-      function styleCell_jzf8bl1ppj0mtrasnwjr(i, j, css_id) {
-          var table = document.getElementById("tinytable_jzf8bl1ppj0mtrasnwjr");
+      function styleCell_51nn9ki0idrqstr6fhtr(i, j, css_id) {
+          var table = document.getElementById("tinytable_51nn9ki0idrqstr6fhtr");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -1134,7 +1134,7 @@ Levels: NotNorth North</code></pre>
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_jzf8bl1ppj0mtrasnwjr');
+        var table = document.getElementById('tinytable_51nn9ki0idrqstr6fhtr');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -1142,8 +1142,8 @@ Levels: NotNorth North</code></pre>
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_jzf8bl1ppj0mtrasnwjr(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_jzf8bl1ppj0mtrasnwjr");
+      function spanCell_51nn9ki0idrqstr6fhtr(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_51nn9ki0idrqstr6fhtr");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -1173,15 +1173,15 @@ Levels: NotNorth North</code></pre>
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 9, j: 2 }, { i: 9, j: 3 }, { i: 9, j: 7 }, { i: 9, j: 1 }, { i: 9, j: 5 }, { i: 9, j: 6 }, { i: 9, j: 0 }, { i: 9, j: 4 }, { i: 9, j: 8 },  ], css_id: 'tinytable_css_k51984tm2apq8eyfwnbw',}, 
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 4 }, { i: 0, j: 8 }, { i: 0, j: 2 }, { i: 0, j: 3 }, { i: 0, j: 7 }, { i: 0, j: 1 }, { i: 0, j: 5 }, { i: 0, j: 6 },  ], css_id: 'tinytable_css_cry8pvfl27yw9tx70r3v',}, 
-          { positions: [ { i: 2, j: 2 }, { i: 6, j: 0 }, { i: 3, j: 0 }, { i: 2, j: 1 }, { i: 3, j: 1 }, { i: 1, j: 0 }, { i: 2, j: 0 }, { i: 6, j: 1 }, { i: 4, j: 0 }, { i: 5, j: 0 }, { i: 2, j: 3 }, { i: 7, j: 0 }, { i: 8, j: 0 }, { i: 5, j: 3 }, { i: 3, j: 2 }, { i: 1, j: 1 }, { i: 5, j: 2 }, { i: 6, j: 2 }, { i: 4, j: 1 }, { i: 5, j: 1 }, { i: 2, j: 4 }, { i: 7, j: 1 }, { i: 8, j: 1 }, { i: 5, j: 4 }, { i: 3, j: 3 }, { i: 1, j: 2 }, { i: 8, j: 4 }, { i: 6, j: 3 }, { i: 4, j: 2 }, { i: 8, j: 3 }, { i: 2, j: 5 }, { i: 7, j: 2 }, { i: 8, j: 2 }, { i: 5, j: 5 }, { i: 3, j: 4 }, { i: 1, j: 3 }, { i: 8, j: 5 }, { i: 6, j: 4 }, { i: 4, j: 3 }, { i: 1, j: 6 }, { i: 2, j: 6 }, { i: 7, j: 3 }, { i: 1, j: 5 }, { i: 5, j: 6 }, { i: 3, j: 5 }, { i: 1, j: 4 }, { i: 8, j: 6 }, { i: 6, j: 5 }, { i: 4, j: 4 }, { i: 1, j: 7 }, { i: 2, j: 7 }, { i: 7, j: 4 }, { i: 4, j: 7 }, { i: 5, j: 7 }, { i: 3, j: 6 }, { i: 4, j: 6 }, { i: 8, j: 7 }, { i: 6, j: 6 }, { i: 4, j: 5 }, { i: 1, j: 8 }, { i: 2, j: 8 }, { i: 7, j: 5 }, { i: 4, j: 8 }, { i: 5, j: 8 }, { i: 3, j: 7 }, { i: 7, j: 8 }, { i: 8, j: 8 }, { i: 6, j: 7 }, { i: 7, j: 7 }, { i: 6, j: 8 }, { i: 3, j: 8 }, { i: 7, j: 6 },  ], css_id: 'tinytable_css_2d5bd5fslp9nnlkx9n6j',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 4 }, { i: 0, j: 8 }, { i: 0, j: 2 }, { i: 0, j: 3 }, { i: 0, j: 7 }, { i: 0, j: 1 }, { i: 0, j: 5 }, { i: 0, j: 6 },  ], css_id: 'tinytable_css_v61k5fm9g9j4bb0fbywe',}, 
+          { positions: [ { i: 2, j: 2 }, { i: 6, j: 0 }, { i: 3, j: 0 }, { i: 2, j: 1 }, { i: 3, j: 1 }, { i: 1, j: 0 }, { i: 2, j: 0 }, { i: 6, j: 1 }, { i: 4, j: 0 }, { i: 5, j: 0 }, { i: 2, j: 3 }, { i: 7, j: 0 }, { i: 8, j: 0 }, { i: 5, j: 3 }, { i: 3, j: 2 }, { i: 1, j: 1 }, { i: 5, j: 2 }, { i: 6, j: 2 }, { i: 4, j: 1 }, { i: 5, j: 1 }, { i: 2, j: 4 }, { i: 7, j: 1 }, { i: 8, j: 1 }, { i: 5, j: 4 }, { i: 3, j: 3 }, { i: 1, j: 2 }, { i: 8, j: 4 }, { i: 6, j: 3 }, { i: 4, j: 2 }, { i: 8, j: 3 }, { i: 2, j: 5 }, { i: 7, j: 2 }, { i: 8, j: 2 }, { i: 5, j: 5 }, { i: 3, j: 4 }, { i: 1, j: 3 }, { i: 8, j: 5 }, { i: 6, j: 4 }, { i: 4, j: 3 }, { i: 1, j: 6 }, { i: 2, j: 6 }, { i: 7, j: 3 }, { i: 1, j: 5 }, { i: 5, j: 6 }, { i: 3, j: 5 }, { i: 1, j: 4 }, { i: 8, j: 6 }, { i: 6, j: 5 }, { i: 4, j: 4 }, { i: 1, j: 7 }, { i: 2, j: 7 }, { i: 7, j: 4 }, { i: 4, j: 7 }, { i: 5, j: 7 }, { i: 3, j: 6 }, { i: 4, j: 6 }, { i: 8, j: 7 }, { i: 6, j: 6 }, { i: 4, j: 5 }, { i: 1, j: 8 }, { i: 2, j: 8 }, { i: 7, j: 5 }, { i: 4, j: 8 }, { i: 5, j: 8 }, { i: 3, j: 7 }, { i: 7, j: 8 }, { i: 8, j: 8 }, { i: 6, j: 7 }, { i: 7, j: 7 }, { i: 6, j: 8 }, { i: 3, j: 8 }, { i: 7, j: 6 },  ], css_id: 'tinytable_css_ovoizid358npolthgxj7',}, 
+          { positions: [ { i: 9, j: 2 }, { i: 9, j: 3 }, { i: 9, j: 7 }, { i: 9, j: 1 }, { i: 9, j: 5 }, { i: 9, j: 6 }, { i: 9, j: 0 }, { i: 9, j: 4 }, { i: 9, j: 8 },  ], css_id: 'tinytable_css_nkn93pujo9zxpy53gen9',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_jzf8bl1ppj0mtrasnwjr(cell.i, cell.j, group.css_id);
+                  styleCell_51nn9ki0idrqstr6fhtr(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -1189,12 +1189,12 @@ Levels: NotNorth North</code></pre>
 
     <style>
       /* tinytable css entries after */
-      .table td.tinytable_css_k51984tm2apq8eyfwnbw, .table th.tinytable_css_k51984tm2apq8eyfwnbw { text-align: left; border-bottom: solid #d3d8dc 0.1em; }
-      .table td.tinytable_css_cry8pvfl27yw9tx70r3v, .table th.tinytable_css_cry8pvfl27yw9tx70r3v { text-align: left; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
-      .table td.tinytable_css_2d5bd5fslp9nnlkx9n6j, .table th.tinytable_css_2d5bd5fslp9nnlkx9n6j { text-align: left; }
+      .table td.tinytable_css_v61k5fm9g9j4bb0fbywe, .table th.tinytable_css_v61k5fm9g9j4bb0fbywe { text-align: left; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+      .table td.tinytable_css_ovoizid358npolthgxj7, .table th.tinytable_css_ovoizid358npolthgxj7 { text-align: left; }
+      .table td.tinytable_css_nkn93pujo9zxpy53gen9, .table th.tinytable_css_nkn93pujo9zxpy53gen9 { text-align: left; border-bottom: solid #d3d8dc 0.1em; }
     </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_jzf8bl1ppj0mtrasnwjr" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_51nn9ki0idrqstr6fhtr" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -1220,7 +1220,7 @@ Levels: NotNorth North</code></pre>
                   <td>4.8</td>
                   <td>7.3</td>
                   <td>11.1</td>
-                  <td><img src="./tinytable_assets/id7om8tlqt9ty5xg2div1n.png" style="height: 1em;"></td>
+                  <td><img src="./tinytable_assets/idzzgk54gltvgwmswlz2do.png" style="height: 1em;"></td>
                 </tr>
                 <tr>
                   <td>hhsize</td>
@@ -1231,7 +1231,7 @@ Levels: NotNorth North</code></pre>
                   <td>1.0</td>
                   <td>4.0</td>
                   <td>27.0</td>
-                  <td><img src="./tinytable_assets/id6nauzrr5tsaj8xmkgvbc.png" style="height: 1em;"></td>
+                  <td><img src="./tinytable_assets/id0wekc6ro6d9pb9ya55xm.png" style="height: 1em;"></td>
                 </tr>
                 <tr>
                   <td>hhsize2</td>
@@ -1242,7 +1242,7 @@ Levels: NotNorth North</code></pre>
                   <td>1.0</td>
                   <td>16.0</td>
                   <td>729.0</td>
-                  <td><img src="./tinytable_assets/idyi8d4o8jljijyn4kdssr.png" style="height: 1em;"></td>
+                  <td><img src="./tinytable_assets/idhnqgd1bbffqfqeaonf9c.png" style="height: 1em;"></td>
                 </tr>
                 <tr>
                   <td>agehead</td>
@@ -1253,7 +1253,7 @@ Levels: NotNorth North</code></pre>
                   <td>10.0</td>
                   <td>39.0</td>
                   <td>104.0</td>
-                  <td><img src="./tinytable_assets/idbau69ij8bxmhmlvsce65.png" style="height: 1em;"></td>
+                  <td><img src="./tinytable_assets/idgrnntodmcf7k9yfn1cj2.png" style="height: 1em;"></td>
                 </tr>
                 <tr>
                   <td>agehead2</td>
@@ -1264,7 +1264,7 @@ Levels: NotNorth North</code></pre>
                   <td>100.0</td>
                   <td>1521.0</td>
                   <td>10816.0</td>
-                  <td><img src="./tinytable_assets/idoiu59g5q771zxkqypdk8.png" style="height: 1em;"></td>
+                  <td><img src="./tinytable_assets/idnbykwxbrno6zycshaj1f.png" style="height: 1em;"></td>
                 </tr>
                 <tr>
                   <td>sharenoedu</td>
@@ -1275,7 +1275,7 @@ Levels: NotNorth North</code></pre>
                   <td>0.0</td>
                   <td>0.0</td>
                   <td>1.0</td>
-                  <td><img src="./tinytable_assets/id45skftozx5vwx3i3p481.png" style="height: 1em;"></td>
+                  <td><img src="./tinytable_assets/ids5195gtfobaaep13u6s9.png" style="height: 1em;"></td>
                 </tr>
                 <tr>
                   <td>shareread</td>
@@ -1286,7 +1286,7 @@ Levels: NotNorth North</code></pre>
                   <td>0.0</td>
                   <td>0.7</td>
                   <td>1.0</td>
-                  <td><img src="./tinytable_assets/idgrlzj4sivapby5mdc0x8.png" style="height: 1em;"></td>
+                  <td><img src="./tinytable_assets/idyeak44vd1uknn4m77cil.png" style="height: 1em;"></td>
                 </tr>
                 <tr>
                   <td>nrooms</td>
@@ -1297,7 +1297,7 @@ Levels: NotNorth North</code></pre>
                   <td>0.0</td>
                   <td>2.0</td>
                   <td>16.0</td>
-                  <td><img src="./tinytable_assets/idvgk58g70y5yt63y3aerc.png" style="height: 1em;"></td>
+                  <td><img src="./tinytable_assets/ide5izngm1rtzzj5w11ski.png" style="height: 1em;"></td>
                 </tr>
                 <tr>
                   <td>dependratio</td>
@@ -1308,7 +1308,7 @@ Levels: NotNorth North</code></pre>
                   <td>0.0</td>
                   <td>1.0</td>
                   <td>9.0</td>
-                  <td><img src="./tinytable_assets/idiqexcv7kvcvuxm9j4bnq.png" style="height: 1em;"></td>
+                  <td><img src="./tinytable_assets/idw61xy5l7gsbdhqk967bb.png" style="height: 1em;"></td>
                 </tr>
         </tbody>
       </table>
