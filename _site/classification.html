@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.41">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Classification with Logistic Regression – Machine Learning for Public Policy</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-45c9daaf6acd34b0420988892e8b8644.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-73ee73b83b1a433826722856a32939c3.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="./index.html" class="navbar-brand navbar-brand-logo">
+    <img src="./assets/ML4PP.png" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Machine Learning for Public Policy</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-introduction" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Introduction</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-introduction">    
+        <li>
+    <a class="dropdown-item" href="./introduction.html">
+ <span class="dropdown-text">Introduction</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./r-intro.html">
+ <span class="dropdown-text">An Introduction to R Programming</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./python-intro.html">
+ <span class="dropdown-text">An introduction to Python programming</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-content" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Content</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-content">    
+        <li>
+    <a class="dropdown-item" href="./predictionpolicy.html">
+ <span class="dropdown-text">Prediction Policy Problems: Linear Models and Lasso Regression</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./classification.html">
+ <span class="dropdown-text">Classification with Logistic Regression</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./treebasedmodels.html">
+ <span class="dropdown-text">Tree-based models for classification problems</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./fairml.html">
+ <span class="dropdown-text">Algorithmic fairness</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+    <a href="https://github.com/michelleg06/Machine-Learning-for-Public-Policy" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#practical-example" id="toc-practical-example" class="nav-link active" data-scroll-target="#practical-example">Practical Example</a>
+  <ul class="collapse">
+  <li><a href="#preliminaries-working-directory-libraries-data-upload" id="toc-preliminaries-working-directory-libraries-data-upload" class="nav-link" data-scroll-target="#preliminaries-working-directory-libraries-data-upload">1. Preliminaries: working directory, libraries, data upload</a></li>
+  <li><a href="#data-pre-processing" id="toc-data-pre-processing" class="nav-link" data-scroll-target="#data-pre-processing">2. Data pre-processing</a></li>
+  <li><a href="#model-validation" id="toc-model-validation" class="nav-link" data-scroll-target="#model-validation">3. Model Validation</a></li>
+  <li><a href="#model-visualisation" id="toc-model-visualisation" class="nav-link" data-scroll-target="#model-visualisation">Model Visualisation</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  <li><a href="#practice-at-home" id="toc-practice-at-home" class="nav-link" data-scroll-target="#practice-at-home">Practice at home</a></li>
+  <li><a href="#readings" id="toc-readings" class="nav-link" data-scroll-target="#readings">Readings</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Classification with Logistic Regression</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><strong>This section will cover:</strong></p>
+<ul>
+<li>Logistic regression</li>
+<li>Confusion matrix</li>
+<li>Performance metrics: Accuracy, Recall, Precision (…)</li>
+</ul>
+<p><br></p>
+<p>Have you heard the English proverb, “Birds of a feather flock together”? It references and old saying that indicates that people with similar characteristics tend to group and stay together. In Machine Learning, Classification problems deal with the evaluation of models of categorical response, such as:</p>
+<ul>
+<li><p><strong>Predictive classification</strong>: E.g. is this spam or not? Predictive classification concerns itself with unlabeled data, and groups them by the proportion of characteristics they commonly share. After which, it classifies them into some predetermined category. A common, ‘lazy’ method is kNearest Neighbors.</p></li>
+<li><p><strong>Binary classification:</strong> You may already be familiar with probit or logistic regression models. You obtain two types of predictions from such models: proportions, and the generation of a predicted discrete choice. For Policy purposes, we are interested in the discrete choice. E.g. filtering low-income individuals to select those who will receive social assistance and those who will not, based on some income/expenditure threshold. But, we still need the probability estimates of each of the two categories. They are relevant when working out the model’s confidence about the predicted discrete choice.</p></li>
+<li><p><strong>Multi-label classification</strong>: Not unlike binary classification, it is a labeled data model that relies on techniques such as multinomial logistic regression. It deals with data with more than two categories, and generates discrete choices, which policymakers then rely on to make decisions.</p></li>
+</ul>
+<p>In the video-lecture below you’ll get an intuitive explanation of what a logistic regression model is, and how we can use it in the context of a prediction policy framework.</p>
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/A9qVrFhlRMY?si=ExusvC9elkiRhtXe" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+<p>After watching the video, below you’ll find a continuation of our previous exercise. Previously, we were working on predicting per capita monthly expenditures of a sample of individuals from Malawi. Our assumption is that by predicting how much a person spends per month, we can infer whether they are in poverty (or not) by contrasting that value to other relevant information, such as the cost of food and rent in the country. Another way to go about this is to use the estimated poverty line, and generate a variable that takes on the value <span class="math inline">\(1\)</span> if the person’s expenditure is below the poverty line (they are poor) and <span class="math inline">\(0\)</span> otherwise (not poor). Thus, our policy problem becomes one of classification.</p>
+<section id="practical-example" class="level2">
+<h2 class="anchored" data-anchor-id="practical-example">Practical Example</h2>
+<p>We will continue to work with the Malawi dataset, which can be downloaded in the (Prediction Policy Problems)[predictionpolicy.qmd] tab of this website.</p>
+<section id="preliminaries-working-directory-libraries-data-upload" class="level3">
+<h3 class="anchored" data-anchor-id="preliminaries-working-directory-libraries-data-upload">1. Preliminaries: working directory, libraries, data upload</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>()) <span class="co"># this line cleans your Global Environment.</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#setwd("/Users/michellegonzalez/Documents/GitHub/Machine-Learning-for-Public-Policy") # set your working directory</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Do not forget to install a package with the install.packages() function if it's the first time you use it!</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages(caTools, plotROC) # these guys are new for us </span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr) <span class="co"># core package for dataframe manipulation. Usually installed and loaded with the tidyverse, but sometimes needs to be loaded in conjunction to avoid warnings.</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># a large collection of packages for data manipulation and visualisation.  </span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caret) <span class="co"># a library with key functions that streamline the process for predictive modelling </span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(skimr) <span class="co"># a package with a set of functions to describe dataframes and more</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plyr) <span class="co"># a package for data wrangling</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caTools) <span class="co"># a library with several basic utility functions (e.g. ROC curves, LogitBoos classifier, etc.)</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plotROC) <span class="co"># a companion to ggplot2 (loaded with the tidyverse) for plotting ROC curves</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>data_malawi <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/malawi.csv"</span>) <span class="co"># the file is directly read from the working directory/folder previously set</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="data-pre-processing" class="level3">
+<h3 class="anchored" data-anchor-id="data-pre-processing">2. Data pre-processing</h3>
+<p>This section will not be a thorough step-by-step of the pre-processing and visualisation of our data because we have already done that. However, we have to do something very important: recover a static variable from the original dataset that contains a single number: the poverty line in Malawi.</p>
+<section id="feature-selection-subsetting-the-dataset" class="level4">
+<h4 class="anchored" data-anchor-id="feature-selection-subsetting-the-dataset">Feature selection: subsetting the dataset</h4>
+<p>The variable that we’re interested in recovering is <strong>lnzline</strong>. The code below reproduces the dataframe subsetting from our previous exercise. Except, this time we will NOT delete de static vector lnzline.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># object:vector that contains the names of the variables that we want to get rid of (notice this time lnzline is still there)</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>cols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"ea"</span>, <span class="st">"EA"</span>, <span class="st">"psu"</span>,<span class="st">"hhwght"</span>, <span class="st">"strataid"</span>, <span class="st">"case_id"</span>,<span class="st">"eatype"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># subset of the data_malawi object:datframe</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>data_malawi <span class="ot">&lt;-</span> data_malawi[,<span class="sc">-</span><span class="fu">which</span>(<span class="fu">colnames</span>(data_malawi) <span class="sc">%in%</span> cols)] <span class="co"># the minus sign indicates deletion of cols</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(data_malawi) <span class="co"># print the names of the remaining vectors in our dataframe</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "lnexp_pc_month" "hhsize"         "hhsize2"        "agehead"       
+ [5] "agehead2"       "north"          "central"        "rural"         
+ [9] "nevermarried"   "sharenoedu"     "shareread"      "nrooms"        
+[13] "floor_cement"   "electricity"    "flushtoilet"    "soap"          
+[17] "bed"            "bike"           "musicplayer"    "coffeetable"   
+[21] "iron"           "dimbagarden"    "goats"          "dependratio"   
+[25] "hfem"           "grassroof"      "mortarpestle"   "table"         
+[29] "clock"          "region"         "lnzline"       </code></pre>
+</div>
+</div>
+<p>At this point, we still need to do two more pre-processing steps: correctly define the vector/variable class in the dataframe, and create the binary outcome/target variable. We will repeat the class-transformation code chunk below so that you have all that is needed in one section. However, we won’t spend time explaining it in detail as that was done in the previous session.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># transform all binary/categorical data into factor class</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>min_count <span class="ot">&lt;-</span> <span class="dv">3</span> <span class="co"># vector: 3 categories is our max number of categories found</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># store boolean (true/false) if the number of unique values is lower or equal to the min_count vector</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>n_distinct2 <span class="ot">&lt;-</span> <span class="fu">apply</span>(data_malawi, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="fu">length</span>(<span class="fu">unique</span>(x))) <span class="sc">&lt;=</span> min_count</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># select the identified categorical variables and transform them into factors</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>data_malawi[n_distinct2] <span class="ot">&lt;-</span> <span class="fu">lapply</span>(data_malawi[n_distinct2], factor) </span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co"># recall poverty line contains 1 unique value (it is static), let's transform the variable into numeric again</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>data_malawi<span class="sc">$</span>lnzline <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">as.character</span>(data_malawi<span class="sc">$</span>lnzline))</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co"># you can use ``skim(data_malawi)'' to check that the dataframe is in working order</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="feature-creation-create-a-binary-variable" class="level4">
+<h4 class="anchored" data-anchor-id="feature-creation-create-a-binary-variable">Feature creation: create a binary variable</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># print summary statistics of target variable</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(data_malawi<span class="sc">$</span>lnexp_pc_month)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  4.777   6.893   7.305   7.359   7.758  11.064 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># if the log of per capita expenditure is below the estimated poverty line, classify individual as poor, else classify individual as not poor. Store as factor (default with text is class character)</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>data_malawi<span class="sc">$</span>poor <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(<span class="fu">ifelse</span>(data_malawi<span class="sc">$</span>lnexp_pc_month<span class="sc">&lt;=</span> data_malawi<span class="sc">$</span>lnzline,<span class="st">"Y"</span>,<span class="st">"N"</span>)) <span class="co"># Y(es) N(o)</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># make sure that the factor target variable has poor = Y as reference category (this step is important when running the logistic regression)</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>data_malawi<span class="sc">$</span>poor <span class="ot">&lt;-</span> <span class="fu">relevel</span>(data_malawi<span class="sc">$</span>poor, <span class="at">ref=</span><span class="st">"Y"</span>) <span class="co"># make Y reference category</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co"># print a proportions table to get a first impression of the state of poverty in Malawi</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="fu">prop.table</span>(<span class="fu">table</span>(data_malawi<span class="sc">$</span>poor))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+   Y    N 
+0.65 0.35 </code></pre>
+</div>
+</div>
+<p>According to our sample, about 65% of Malawians are considered poor. This number is not unreasonable. According to The World Bank’s <a href="https://databankfiles.worldbank.org/public/ddpext_download/poverty/987B9C90-CB9F-4D93-AE8C-750588BF00QA/current/Global_POVEQ_MWI.pdf">Country Report</a> for Malawi, ca. <span class="math inline">\(70\%\)</span> of the population lives with under <span class="math inline">\(\$2.15\)</span> a day, and the poverty rate is estimated to be at <span class="math inline">\(50\%\)</span>. About half of their population is labelled as poor. These estimates were done with <span class="math inline">\(2019\)</span> data (so, a bit more recent than our sample).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Final data pre-processing: delete static variable (poverty line)</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># and along with it: remove the continuous target (as it perfectly predicts the binary target) </span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">which</span>(<span class="fu">colnames</span>(data_malawi)<span class="sc">==</span><span class="st">"lnzline"</span>) <span class="co"># returns column number 31</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 31</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">which</span>(<span class="fu">colnames</span>(data_malawi)<span class="sc">==</span><span class="st">"lnexp_pc_month"</span>) <span class="co"># returns column number 1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>data_malawi <span class="ot">&lt;-</span> data_malawi[,<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">31</span>)] <span class="co"># delete columns no. 1 and 31 from the dataset</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="model-validation" class="level3">
+<h3 class="anchored" data-anchor-id="model-validation">3. Model Validation</h3>
+<p>Let’s use a simple 80:20 split of our data. We will use the caret package again.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>) <span class="co"># ensures reproducibility of our data split</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># data partitioning: train and test datasets</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>train_idx <span class="ot">&lt;-</span> <span class="fu">createDataPartition</span>(data_malawi<span class="sc">$</span>poor, <span class="at">p =</span> .<span class="dv">8</span>, <span class="at">list =</span> <span class="cn">FALSE</span>, <span class="at">times =</span> <span class="dv">1</span>) </span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>Train_df <span class="ot">&lt;-</span> data_malawi[ train_idx,]</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>Test_df  <span class="ot">&lt;-</span> data_malawi[<span class="sc">-</span>train_idx,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now, let’s fit a logistic model:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: create trainControl object</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>TrControl <span class="ot">&lt;-</span> <span class="fu">trainControl</span>(</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">"cv"</span>,</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">number =</span> <span class="dv">5</span>,</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">summaryFunction =</span> twoClassSummary,</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">classProbs =</span> <span class="cn">TRUE</span>, <span class="co"># IMPORTANT!</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">verboseIter =</span> <span class="cn">FALSE</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We’re going to pass the TrControl object onto the caret model estimation to ask for the following:</p>
+<ul>
+<li>cross-validate with 5 folds</li>
+<li>show model summary: performance metrics for when we have two distinct classes (binary outcome), including the area under the ROC curve, the sensitivity and specificity.</li>
+<li>the ROC curve is based on the predicted class probabilities, so the classProbs = TRUE parameter must accompany a twoClassSummary setup.</li>
+<li>veboseIter = TRUE shows you the output for each iteration (but we don’t want to display all the details atm).</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 2: train the model.</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">12345</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">train</span>(</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    poor <span class="sc">~</span> ., </span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    Train_df, </span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">"glm"</span>,</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">family=</span><span class="st">"binomial"</span>,</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">trControl =</span> TrControl,</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">preProcess=</span><span class="fu">c</span>(<span class="st">"center"</span>, <span class="st">"scale"</span>)</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in train.default(x, y, weights = w, ...): The metric "Accuracy" was not
+in the result set. ROC will be used instead.</code></pre>
+</div>
+</div>
+<p>Notice the warning. If we want to report the “Accuracy” metric, we should remove the twoClassSummary parameter specification in the TrControl object.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># print the model's performance metrics</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(m) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Generalized Linear Model 
+
+9025 samples
+  29 predictor
+   2 classes: 'Y', 'N' 
+
+Pre-processing: centered (30), scaled (30) 
+Resampling: Cross-Validated (5 fold) 
+Summary of sample sizes: 7219, 7220, 7220, 7221, 7220 
+Resampling results:
+
+  ROC        Sens       Spec     
+  0.8825702  0.8943044  0.6774223</code></pre>
+</div>
+</div>
+<section id="performance-metrics-on-the-train-set" class="level4">
+<h4 class="anchored" data-anchor-id="performance-metrics-on-the-train-set">Performance metrics (on the train set!)</h4>
+<ul>
+<li><p><strong>ROC:</strong> it is a probability curve plotted with the True Positive Rate (y-axis) against the False Positive Rate (x-axis); you can think of it as plotting the tradeoff between maximising the true positive rate and minimising the false positive rate. The preferred area under the curve is <span class="math inline">\(1\)</span>. Our estimated <span class="math inline">\(0.88\)</span> score indicates that a logistic classification is a good fit for our data (close to <span class="math inline">\(1\)</span>).</p></li>
+<li><p><strong>Sensitivity:</strong> it is a measure of the proportion of the positive (<span class="math inline">\(1\)</span> = poor) values that are correctly identified. Therefore, we have correctly identified <span class="math inline">\(89\%\)</span> of the actual positives. The formula is: <span class="math inline">\(\frac{tp}{tp + fn}\)</span>; where tp = true positive and fn = false negative. In the video-lecture, Stephan used the term <strong>Recall</strong>, where we now use sensitivity. This means that our model does pretty well at predicting/identifying people living below the poverty line in Malawi!</p></li>
+<li><p><strong>Specificity:</strong> measures the proportion of actual negatives that are correctly identified by the model; i.e.&nbsp;the ability of our model to predict if an observation doesn’t belong to a certain category. The formula is: <span class="math inline">\(\frac{tn}{tn + fp}\)</span>; where tn = true negative and fp = false positive. At <span class="math inline">\(67\%\)</span>, we can trust a predicted negative (<span class="math inline">\(0\)</span>) value to be real more than half the time. Our model is not as good at predicting who doesn’t live below the poverty line in Malawi.</p></li>
+</ul>
+<p>The performance metrics we have interpreted above are based on the training dataset only. We are interested in our model’s ability to make out-of-sample predictions. Therefore, we will use the definitions above, but to take the scores on the test-dataset predictions to make our final evaluation.</p>
+</section>
+<section id="out-of-sample-performance" class="level4">
+<h4 class="anchored" data-anchor-id="out-of-sample-performance">Out-of-sample performance</h4>
+<p>Notice that we have used cross-validation in our training dataset. In theory, our performance metrics have been validated in 5 different folds. To a certain extent, that means that our performance metrics above did reflect the model’s ability to extrapolate. Nevertheless, we will still see how our trained model performs in our test dataset. You can think of this step as predicting on a sixth fold. We know that the performance of a logistic classification model on the train set is relatively good, is it the same for the test dataset?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># First, use the logistic classification model (trained on the Train_df) to make predictions on the test dataset:</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">12345</span>)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>pr1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(m, Test_df, <span class="at">type =</span> <span class="st">"raw"</span>)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(pr1) <span class="co"># Yes and No output</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] N Y Y Y Y Y
+Levels: Y N</code></pre>
+</div>
+</div>
+<p>We have specified the type of prediction we want: raw. This will return the predicted classification (<span class="math inline">\(0\)</span> or <span class="math inline">\(1\)</span>) as opposed to the individual’s probability of falling into the selected category <span class="math inline">\(1\)</span> (or the estimated probability of being poor). There is a rule of thumb that says you will be categorised as poor (or any chosen category) if your estimated probability is &gt;= to <span class="math inline">\(0.5\)</span>. With this information, we can create a Confusion Matrix which will be accompanied by performance metrics.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Next, we call the caret package's confusionMatrix function, and select the two elements to be contrasted:</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co"># the predicted classification vector, and the actual observed vector from the test dataframe. </span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">confusionMatrix</span>(pr1, Test_df[[<span class="st">"poor"</span>]], <span class="at">positive =</span> <span class="st">"Y"</span>) <span class="co"># positive = "Y" indicates that our category of interest is Y (1)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confusion Matrix and Statistics
+
+          Reference
+Prediction    Y    N
+         Y 1294  270
+         N  172  519
+                                         
+               Accuracy : 0.804          
+                 95% CI : (0.787, 0.8202)
+    No Information Rate : 0.6501         
+    P-Value [Acc &gt; NIR] : &lt; 2.2e-16      
+                                         
+                  Kappa : 0.5564         
+                                         
+ Mcnemar's Test P-Value : 3.953e-06      
+                                         
+            Sensitivity : 0.8827         
+            Specificity : 0.6578         
+         Pos Pred Value : 0.8274         
+         Neg Pred Value : 0.7511         
+             Prevalence : 0.6501         
+         Detection Rate : 0.5738         
+   Detection Prevalence : 0.6936         
+      Balanced Accuracy : 0.7702         
+                                         
+       'Positive' Class : Y              
+                                         </code></pre>
+</div>
+</div>
+<p>The first element from the above function returns the confusion matrix, a 2×2 table that shows the predicted values from the model vs.&nbsp;the actual values from the test dataset. You may be acquainted with this sort of table, but know it as a cross-tabulation. From the confusion matrix, we obtain the information that we need to estimate some performance metrics. If you need a reminder of what each cell in the 2x2 matrix represents, recall that the structure of our target variable is [<span class="math inline">\(Y(1),N(0)\)</span>]. Therefore, the first cell would be the intersection of Predicted <span class="math inline">\(Y\)</span> vs Observed <span class="math inline">\(Y\)</span> (or True Positive) = <span class="math inline">\(1294\)</span>, the fourth cell would be the intersection of Predicted <span class="math inline">\(N\)</span> vs Observed <span class="math inline">\(N\)</span> (or True Negative) = <span class="math inline">\(519\)</span>. These guys are the predictions that have hit the mark! On the other hand, the second cell would be the intersection of Predicted <span class="math inline">\(Y\)</span> vs Observed <span class="math inline">\(N\)</span> (or False Positive) = <span class="math inline">\(270\)</span>, and the third cell Predicted <span class="math inline">\(N\)</span> vs Observed <span class="math inline">\(Y\)</span> (or False Negative) = <span class="math inline">\(172\)</span>. These were incorrect predictions. We use these counts (true positives, true negatives, false positives, false negatives) to estimate performance metrics</p>
+<p>Besides the performance metrics discussed previously, this function also shows the Accuracy of our model (or <span class="math inline">\(1\)</span> - the error rate) which, at <span class="math inline">\(0.8\)</span>, indicates that our classification algorithm is highly accurate.</p>
+<p><strong>Imbalanced data</strong></p>
+<p>When you have a large number of zeros (or No, in this case), the Accuracy metric may not be the most reliable one. If we look at the formula: number of correct predictions / total number of predictions, we see why this might be an issue. It is a lot easier to correctly predict that of which there is plenty of (Yes), than the category for which we have less instances.</p>
+<p>Imbalance is not a problem for our target variable, as we have roughly as many zeros as ones. In fact, we have more Yes (1) responses. Nonetheless, this sets the stage for us to introduce the Kappa statistic (<span class="math inline">\(0.55\)</span>), which is a measure of model accuracy that is adjusted by accounting for the possibility of a correct prediction by chance alone. It ranges from 0 to 1, and can be interpreted using the following thresholds:</p>
+<ul>
+<li><p>Poor = Less than 0.20</p></li>
+<li><p>Fair = 0.20 to 0.40</p></li>
+<li><p>Moderate = 0.40 to 0.60</p></li>
+<li><p>Good = 0.60 to 0.80</p></li>
+<li><p>Very good = 0.80 to 1.00</p></li>
+</ul>
+<p>At <span class="math inline">\(0.55\)</span>, our classification model performs moderately well. Finally, Sensitivity and Specificity scores on the test dataset are very close to the ones obtained from the train dataset. This is a good sign for the out-of-sample stability of our model.</p>
+</section>
+</section>
+<section id="model-visualisation" class="level3">
+<h3 class="anchored" data-anchor-id="model-visualisation">Model Visualisation</h3>
+<p>We can visualise the performance of our classification model in various ways. For now, we’ll focus on a simple ROC AUC.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ROC AUC: Area Under the Curve</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co"># colAUC function from the caTools library</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co"># transform predicted values and observed values into class numeric (needed for the colAUC function)</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>pr_numeric <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">as.factor</span>(pr1))</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="co"># sanity check:</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">cbind</span>(pr_numeric, pr1)) <span class="co"># the numeric values of both vectors seem to be the same. </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     pr_numeric pr1
+[1,]          2   2
+[2,]          1   1
+[3,]          1   1
+[4,]          1   1
+[5,]          1   1
+[6,]          1   1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>poor_numeric <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">as.factor</span>(Test_df<span class="sc">$</span>poor))</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co"># sanity check</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">cbind</span>(poor_numeric,Test_df<span class="sc">$</span>poor)) <span class="co"># all good </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     poor_numeric  
+[1,]            1 1
+[2,]            1 1
+[3,]            1 1
+[4,]            1 1
+[5,]            1 1
+[6,]            1 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot the ROC area under the curve</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">colAUC</span>(pr_numeric, poor_numeric, <span class="at">plotROC =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="classification_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             [,1]
+1 vs. 2 0.7702343</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># We can also plot the ROC AUC with ggplot</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="co"># First, we create a dataframe containing the observed and the predicted values (in numeric form)</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>roc_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Observed =</span> poor_numeric, <span class="at">Predicted =</span> pr_numeric)</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Second, we add the geom_roc() layer to a ggplot object</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>roc_gg <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(roc_df, <span class="fu">aes</span> (<span class="at">d =</span> Observed, <span class="at">m =</span> Predicted)) <span class="sc">+</span> </span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>            <span class="fu">geom_roc</span>(<span class="at">labels =</span> <span class="cn">FALSE</span>, <span class="at">color=</span><span class="st">'orange'</span>) <span class="sc">+</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>            <span class="fu">style_roc</span>(<span class="at">theme =</span> theme_bw, <span class="at">guide =</span> <span class="cn">TRUE</span>) <span class="co"># guide=TRUE adds a diagonal guideline, style_roc() adds minor grid lines, and optionally direct labels to ggplot objects containing a geom_roc layer</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="fu">direct_label</span>(roc_gg, <span class="at">nudge_y =</span> <span class="fl">0.2</span>) <span class="co"># direct_label tells you what the plotted line represents, nudge_y option places the label (you can play around with that number to see where different values place the label)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in verify_d(data$d): D not labeled 0/1, assuming 1 = 0 and 2 = 1!
+Warning in verify_d(data$d): D not labeled 0/1, assuming 1 = 0 and 2 = 1!</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="classification_files/figure-html/unnamed-chunk-12-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Notice the warning on the ggplot2 ROC AUC plot. The assumption that they are making is correct, so we do not need to do anything else at this moment. You can check this by contrasting the values of the labelled vs.&nbsp;the numeric vectors (use the head() function).</p>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>How did our classification model do? Is a logistic regression the right algorithm? I trust you can form your own judgement based on the performance metrics above. Personally, I think we have improved from a linear regression, but perhaps we can do better with Ensemble Learning techniques!</p>
+</section>
+<section id="practice-at-home" class="level2">
+<h2 class="anchored" data-anchor-id="practice-at-home">Practice at home</h2>
+<p>As before, you can use the Bolivia dataset to try your hand at a logistic model. The data can be downloaded in the <a href="./predictionpolicy.html">Practice at home</a> section in the Prediction Policy Problems webpage of this site. <br></p>
+<p>Let us know you are completing the tasks by answering a simple question via this <a href="https://maastrichtuniversity.eu.qualtrics.com/jfe/form/SV_5bPRxhgDBqCAzxc">Qualtrics link</a>. <br></p>
+<p>It is important for us to know that you are engaging with the course. Sending an answer - even if it is incorrect - to our Qualtrics question lets us know just that. So please say hi on Qualtrics! (And on our blog, too.)</p>
+</section>
+<section id="readings" class="level2">
+<h2 class="anchored" data-anchor-id="readings">Readings</h2>
+<p><em>Mandatory Readings</em></p>
+<ul>
+<li><p>An introduction to Statistical learning Chapter 4</p></li>
+<li><p>Athey, S., &amp; Imbens, G. W. (2019). <a href="https://www.annualreviews.org/doi/abs/10.1146/annurev-economics-080217-053433">Machine learning methods that economists should know about.</a> Annual Review of Economics, 11, 685-725.</p></li>
+<li><p>McBride, L., &amp; Nichols, A. (2018). <a href="https://academic.oup.com/wber/article-abstract/32/3/531/2447896?redirectedFrom=fulltext">Retooling poverty targeting using out-of-sample validation and machine learning.</a> The World Bank Economic Review, 32(3), 531-550.pter 5.1</p></li>
+</ul>
+<p><em>Optional Readings</em></p>
+<ul>
+<li>Bondi-Kelly et al.&nbsp;(2023)- <a href="https://onlinelibrary.wiley.com/doi/10.1002/aaai.12080">Predicting micronutrient deficiency with publicly available satellite data.</a> In AI Magazine.</li>
+</ul>
+<!--DISQUS COMMENTS SCRIPT-->
+<div id="disqus_thread">
+
+</div>
+<script>
+    var disqus_config = function () {
+    this.page.identifier = "predictionpolicy.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+
+    
+    (function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+    s.src = 'https://unu-merit.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>
+Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+</noscript>
+
+
+</section>
+
+<div class="footer">
+Copyright © 2025 Michelle González Amador &amp; Stephan Dietrich. All rights reserved.<br> <a href="https://github.com/michelleg06/Machine-Learning-for-Public-Policy"><img src="https://img.shields.io/badge/GitHub-Repository-blue?logo=github.png" class="img-fluid" alt="GitHub"></a>
+</div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

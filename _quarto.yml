@@ -8,11 +8,20 @@ website:
     left:
       - href: index.qmd
         text: Home
-      - about.qmd
-      - text: "Content"
+      - text: "Introduction"
         menu:
         - introduction.qmd
+        - r-intro.qmd
+        - python-intro.qmd
+      - text: "Content"
+        menu:
         - predictionpolicy.qmd 
+        - classification.qmd
+        - treebasedmodels.qmd
+        - fairml.qmd
+        - neuralNets.qmd
+      - policyChallenge.qmd
+      - about.qmd
     tools:
       - icon: github
         href: "https://github.com/michelleg06/Machine-Learning-for-Public-Policy"

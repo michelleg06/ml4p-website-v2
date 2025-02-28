@@ -1,0 +1,92 @@
+---
+title: "Tree-based models for classification problems"
+format: html
+---
+
+**This section will cover:**
+
++ Decision Trees: a classification approach
++ Ensemble learning: bagging and boosting.
+
+<br>
+
+## A general overview of tree-based methods
+
+An introduction to Tree-based machine learning models is given to us by [Dr. Francisco Rosales](https://www.linkedin.com/in/fraroma/), Assistant Professor at ESAN University (Perú) and Lead Data Scientist ([BREIN](https://www.linkedin.com/company/breinhub/)). You can watch the pre-recorded session below:
+
+{{< video https://youtu.be/l7s3k2TlQeY?si=ezqWJ0tPGP1sX0Fa >}}
+
+Some key points to keep in mind when working through the practical exercise include:
+
++ Tree-based methods work for both classification and regression problems.
+
++ Decision Trees are both a logical and a technical tool:
+
+    + they involve stratifying or segmenting the predictor space into a number of simple regions
+    
+    + from each region, we obtain a relevant metric (e.g. mean/average) and then use that information to make predictions about the observations that belong to that region
+    
++ Decision Trees are the simplest version of a tree-based method. To improve on a simple splitting algorithm, there exist ensemble learning techniques such as bagging and boosting:
+
+    + **bagging**: also known as bootstrap aggregating, it is an ensemble technique used to decrease a model's variance. A <strong> Random Forest </strong> is a tree-based method that functions on the concept of bagging. The main idea behind a Random Forest model is that, if you partition the data that would be used to create a single decision tree into different parts, create one tree for each of these partitions, and then use a method to “average” the results of all of these different trees, you should end up with a better model.
+
+    + **boosting**: an ensemble technique mainly used to decrease a model's bias. Like bagging, we create multiple trees from various splits of our training dataset. However, whilst bagging uses bootstrap to create the various data splits (from which each tree is born), in boosting each tree is grown sequentially, using information from the previously built tree. So, boosting doesn't use bootstrap. Instead each tree is a modified version of the original dataset (each subsequent tree is built from the residuals of the previous model).  
+
+To conclude our Malawi case study, we will implement a Random Forest algorithm to our classification problem: given a set of features X (e.g. ownership of a toilet, size of household, etc.), how likely are we to correctly identify an individual's income class? Recall that this problem has already been approached using a linear regression model (and a lasso linear model) and a logistic classification (i.e. an eager learner model) and whilst there was no improvement between a linear and a lasso linear model, we did increase our model's predictive ability when we switched from a linear prediction to a classification approach. I had previously claimed that the improvement was marginal --- but since the model will be used to determine who gets and who doesn't get an income supplement (i.e. who's an eligible recipient of a cash transfer, as part of Malawi's social protection policies), any improvement is critical and we should try various methods until we find the one that best fits our data. 
+
+Some discussion points before the practical:
+
+ + Why did we decide to switch models (from linear to classification)?
+ 
+ + Intuitively, why did a classification model perform better than a linear regression at predicting an individual's social class based on their monthly per capita consumption? 
+ 
+ + How would a Random Forest classification approach improve our predictive ability? (hint, the answer may be similar to the above one)
+
+## Practical Example
+
+As always, start by opening the libraries that you'll need to reproduce the script below. We will continue to use the Caret library for machine learning purposes, and some other general libraries for data wrangling and visualisation. 
+
+```{r, message=FALSE}
+rm(list = ls()) # this line cleans your Global Environment.
+setwd("/Users/lucas/Documents/UNU-CDO/courses/ml4p/ml4p-website-v2") # set your working directory
+
+# Do not forget to install a package with the install.packages() function if it's the first time you use it!
+
+library(dplyr) # core package for dataframe manipulation. Usually installed and loaded with the tidyverse, but sometimes needs to be loaded in conjunction to avoid warnings.
+library(tidyverse) # a large collection of packages for data manipulation and visualisation.  
+library(caret) # a library with key functions that streamline the process for predictive modelling 
+library(skimr) # a package with a set of functions to describe dataframes and more
+library(plyr) # a package for data wrangling
+library(party) # provides a user-friendly interface for creating and analyzing decision trees using recursive partitioning
+library(rpart) # recursive partitioning and regression trees
+library(rpart.plot) # visualising decision trees
+library(rattle) # to obtain a fancy wrapper for the rpart.plot
+library(RColorBrewer) # import more colours 
+
+# import data
+data_malawi <- read_csv("data/malawi.csv") # the file is directly read from the working directory/folder previously set
+
+```
+
+For this exercise, we will skip all the data pre-processing steps. At this point, we are all well acquainted with the Malawi dataset, and should be able to create our binary outcome, poor (or not), and clean the dataset in general. If you need to, you can always go back to the [Logistic Classification tab](classification.qmd) and repeat the data preparation process described there. 
+
+### Data Split and Fit
+
+
+<!--DISQUS COMMENTS SCRIPT-->
+
+<div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    this.page.identifier = "predictionpolicy.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+
+    
+    (function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+    s.src = 'https://unu-merit.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>

@@ -1,0 +1,36 @@
+---
+title: "Algorithmic Fairness"
+format: html
+---
+
+**This section will cover:**
+
++ Common Machine Learning algorithms in (public policy) action
++ Black box algorithms
++ Biases
++ Ethical challenges
+
+<br>
+
+<hr>
+
+Machine Learning promises to be an important tool for Policymakers who wish to improve their response to challenges such as efficient resource allocation, or timely and effective reaction to crises. However, privacy and fairness issues arise in the use (and misuse) of Machine Learning algorithms. 
+
+{{< video https://youtu.be/4Q5UDg8bu58?si=o3gCzkOLXH_AD6oF >}}
+
+In this video lecture, Dr. [Juba Ziani](https://www.juba-ziani.com/), Assistant Professor at Georgia Tech will give us an overview of the more common ethical dilemmas that arise in machine learning, and practical examples in the public sphere where these issues have had a regressive impact in society. The video also includes some ways in which we (data scientists, machine learning enthusiasts, and future policymakers) can minimise these biases and avoid negative impacts from ML in the policy decision-making process. Some of his recommendations to delve deeper into this topic include:
+
+- The Ethical Algorithm: The Science of Socially Aware Algorithm Design by Michael Kearns and Aaron Roth. Available at: [Amazon](https://www.amazon.com/Ethical-Algorithm-Science-Socially-Design/dp/0190948205).
+
+- Fairness and Machine Learning: Limitations and Opportunities by Solon Barocas, Moritz Hardt, Arvind Narayanan. Available at: [https://fairmlbook.org/](https://fairmlbook.org/)
+
+
+This lecture does not come with an applied R or Python exercise, but we do ask that you think about the different sources of bias and how they may come up in your (personal) research. 
+
+## Readings
+
+- [Fast AI: Deep Learning for Coders with Fastai and PyTorch: AI Applications Without a PhD,  Chapter 4.](https://colab.research.google.com/github/fastai/fastbook/blob/master/03_ethics.ipynb)
+
+- Kasy, M., & Abebe, R. (2021, March). [Fairness, equality, and power in algorithmic decision-making.](https://maxkasy.github.io/home/files/papers/fairness_equality_power.pdf) In Proceedings of the 2021 ACM Conference on Fairness, Accountability, and Transparency (pp. 576-586).
+
+- [Fairness and Machine Learning: Limitations and Opportunities](https://fairmlbook.org/), Chapter 4.

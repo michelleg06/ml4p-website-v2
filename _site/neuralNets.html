@@ -1,0 +1,1586 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.41">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>An Introduction to Neural Networks – Machine Learning for Public Policy</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-45c9daaf6acd34b0420988892e8b8644.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-73ee73b83b1a433826722856a32939c3.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="./index.html" class="navbar-brand navbar-brand-logo">
+    <img src="./assets/ML4PP.png" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Machine Learning for Public Policy</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-introduction" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Introduction</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-introduction">    
+        <li>
+    <a class="dropdown-item" href="./introduction.html">
+ <span class="dropdown-text">Introduction</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./r-intro.html">
+ <span class="dropdown-text">An Introduction to R Programming</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./python-intro.html">
+ <span class="dropdown-text">An introduction to Python programming</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-content" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Content</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-content">    
+        <li>
+    <a class="dropdown-item" href="./predictionpolicy.html">
+ <span class="dropdown-text">Prediction Policy Problems: Linear Models and Lasso Regression</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./classification.html">
+ <span class="dropdown-text">Classification with Logistic Regression</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./treebasedmodels.html">
+ <span class="dropdown-text">Tree-based models for classification problems</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./fairml.html">
+ <span class="dropdown-text">Algorithmic Fairness</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./neuralNets.html">
+ <span class="dropdown-text">An Introduction to Neural Networks</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="./policyChallenge.html"> 
+<span class="menu-text">Collaborative Policy Challenge</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+    <a href="https://github.com/michelleg06/Machine-Learning-for-Public-Policy" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#what-are-neural-networks" id="toc-what-are-neural-networks" class="nav-link active" data-scroll-target="#what-are-neural-networks">What are neural networks?</a></li>
+  <li><a href="#r-practical" id="toc-r-practical" class="nav-link" data-scroll-target="#r-practical">R practical</a>
+  <ul class="collapse">
+  <li><a href="#data-preparation" id="toc-data-preparation" class="nav-link" data-scroll-target="#data-preparation">1. Data Preparation</a></li>
+  <li><a href="#model-preparation" id="toc-model-preparation" class="nav-link" data-scroll-target="#model-preparation">2. Model Preparation</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  <li><a href="#readings" id="toc-readings" class="nav-link" data-scroll-target="#readings">Readings</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">An Introduction to Neural Networks</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="what-are-neural-networks" class="level2">
+<h2 class="anchored" data-anchor-id="what-are-neural-networks">What are neural networks?</h2>
+<p>In this session, Prof.&nbsp;Dr.&nbsp;Robin Cowan will give is an intuitive introduction to neural networks. He has also prepared an exercise using data from <a href="https://share-eric.eu/">SHARE, the Survey of Health, Ageing and Retirement in Europe</a>. Please watch his video-lesson to get the intuition behind neural network algorithms and you can then follow policy-relevant application: predicting income-vulnerable older people in Europe.</p>
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/6hN2zE_nEy4" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+<p><strong>Why would being able to predict what will make an older person struggle financially be policy-relevant?</strong></p>
+<p>This is a discussion point that you can explore. But you might want to investigate what the average old-age pension is in some European countries, and what the average cost of living is. After working for more than half of your life, I’m sure you’d like to live comfortably…</p>
+</section>
+<section id="r-practical" class="level2">
+<h2 class="anchored" data-anchor-id="r-practical">R practical</h2>
+<p>As always, start by opening the libraries that you’ll need to reproduce the script below.</p>
+<p>Unfortunately, we are unable to share the dataset ourselves. However, if you wish to replicate this exercise at home (and use one of the many target variables that Robin has proposed to see how our model fares for those), you can request access to the dataset by creating an account with SHARE. You’ll need to specify this is for learning purposes, but you won’t be denied it.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>()) <span class="co"># this line cleans your Global Environment.</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">"/Users/lucas/Documents/UNU-CDO/courses/ml4p/ml4p-website-v2"</span>) <span class="co"># set your working directory</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># do not forget to install neuralnet and scales, which are packages we haven't used before</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># our favourite data wrangling ackagy </span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(neuralnet) <span class="co"># a package specific for neural networks</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales)    <span class="co"># to control the appearance of axis and legend labels</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(skimr)     <span class="co"># dataset summary</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># import data</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">"data/SHARE_DATA.rda"</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="do">## Notice that we're using the load() function, this is because the dataset is in .rda format, the standard R dataset format</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="do">##  Put it into a structure with an easy name, the remove the original</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> easySHARE_rel8_0_0</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(easySHARE_rel8_0_0)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>You can explore the dataset now (and refer to the SHARE website if you have any questions about the variables).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(z)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  [1] "mergeid"          "hhid"             "coupleid"        
+  [4] "wave"             "wavepart"         "int_version"     
+  [7] "int_year"         "int_month"        "country"         
+ [10] "country_mod"      "language"         "female"          
+ [13] "dn002_mod"        "dn003_mod"        "dn004_mod"       
+ [16] "age"              "birth_country"    "citizenship"     
+ [19] "iv009_mod"        "q34_re"           "isced1997_r"     
+ [22] "eduyears_mod"     "mar_stat"         "hhsize"          
+ [25] "partnerinhh"      "int_partner"      "age_partner"     
+ [28] "gender_partner"   "mother_alive"     "father_alive"    
+ [31] "siblings_alive"   "ch001_"           "ch021_mod"       
+ [34] "ch007_hh"         "ch007_km"         "sp002_mod"       
+ [37] "sp003_1_mod"      "sp003_2_mod"      "sp003_3_mod"     
+ [40] "sp008_"           "sp009_1_mod"      "sp009_2_mod"     
+ [43] "sp009_3_mod"      "books_age10"      "maths_age10"     
+ [46] "language_age10"   "vaccinated"       "childhood_health"
+ [49] "sphus"            "chronic_mod"      "casp"            
+ [52] "euro1"            "euro2"            "euro3"           
+ [55] "euro4"            "euro5"            "euro6"           
+ [58] "euro7"            "euro8"            "euro9"           
+ [61] "euro10"           "euro11"           "euro12"          
+ [64] "eurod"            "bfi10_extra_mod"  "bfi10_agree_mod" 
+ [67] "bfi10_consc_mod"  "bfi10_neuro_mod"  "bfi10_open_mod"  
+ [70] "hc002_mod"        "hc012_"           "hc029_"          
+ [73] "maxgrip"          "adlwa"            "adla"            
+ [76] "iadla"            "iadlza"           "mobilityind"     
+ [79] "lgmuscle"         "grossmotor"       "finemotor"       
+ [82] "recall_1"         "recall_2"         "orienti"         
+ [85] "numeracy_1"       "numeracy_2"       "bmi"             
+ [88] "bmi2"             "smoking"          "ever_smoked"     
+ [91] "br010_mod"        "br015_"           "ep005_"          
+ [94] "ep009_mod"        "ep011_mod"        "ep013_mod"       
+ [97] "ep026_mod"        "ep036_mod"        "co007_"          
+[100] "thinc_m"          "income_pct_w1"    "income_pct_w2"   
+[103] "income_pct_w4"    "income_pct_w5"    "income_pct_w6"   
+[106] "income_pct_w7"    "income_pct_w8"   </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="do">## and how big it is</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(z) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 412110    107</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ==== we can also use our trusted skimr package ==== #</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># skim(z)</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># =================================================== # </span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Remember to take out the hashtag to print the command! </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="data-preparation" class="level3">
+<h3 class="anchored" data-anchor-id="data-preparation">1. Data Preparation</h3>
+<p>Now we are going to clean up some things in the data to make it useful.</p>
+<ul>
+<li>Select a subset of the countries: Spain, France, Italy, Germany, Poland. These are identified in the data with numbers:</li>
+</ul>
+<p><code>Spain 724; France 250; Italy 380; Germany 276; NL 528; Poland 616</code></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>countries <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">724</span>, <span class="dv">250</span>, <span class="dv">380</span>, <span class="dv">276</span>, <span class="dv">528</span>, <span class="dv">616</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li><p>In the dataset, negative numbers indicate some kind of missing data, so we will replace them with NA (R-speak for missing values).</p></li>
+<li><p>We then select years since 2013 (let’s focus on the most recent cohorts)</p></li>
+<li><p>Restrict our data to observations that have certain qualities: we want people who are retired (ep005 ==1).</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>z1 <span class="ot">&lt;-</span> z <span class="sc">%&gt;%</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>        <span class="fu">filter</span>(country_mod <span class="sc">%in%</span> countries )<span class="sc">%&gt;%</span> <span class="co"># this line subsets the z dataset to only the countries we're interested in (expressed in the line above)</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="cf">function</span>(x){<span class="fu">replace</span>(x, <span class="fu">which</span>(x<span class="sc">&lt;</span><span class="dv">0</span>), <span class="cn">NA</span>)})) <span class="sc">%&gt;%</span> <span class="co"># this line replaces all values across the entire dataframe that are less than 0 to NA (missing)</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>        <span class="fu">filter</span>(int_year <span class="sc">&gt;=</span><span class="dv">2013</span>) <span class="sc">%&gt;%</span> <span class="co"># now we're subsetting the dataset to the years 2013 and after</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">filter</span>(ep005_ <span class="sc">==</span> <span class="dv">1</span>) <span class="co"># and finally, keeping only people old enought for retirement</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>At this point you should have decreased the number of observation by 366431 (new obs. = 45679). z1 now contains a cleaner version of the dataset (feel free to delete z)</p>
+<p>PS. The following symbols %&gt;% are called pipe operators. They belong to the dplyr packaged, which is masked within the tidyverse. They allow you to indicate a series of actions to do to the object in a sequence, just as above.</p>
+<section id="now-lets-create-some-variables-for-our-model" class="level4">
+<h4 class="anchored" data-anchor-id="now-lets-create-some-variables-for-our-model">Now let’s create some variables for our model</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Create the variable migrant  </span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="do">## change the nature of married to a dummy variable</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="do">## change the nature of our vaccination variable to zero or 1</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>z1 <span class="ot">&lt;-</span> z1 <span class="sc">%&gt;%</span>         </span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">migrant =</span> <span class="fu">ifelse</span>(birth_country<span class="sc">==</span>country,<span class="dv">0</span>,<span class="dv">1</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">married=</span><span class="fu">ifelse</span>((mar_stat<span class="sc">==</span><span class="dv">1</span> <span class="sc">|</span> mar_stat<span class="sc">==</span><span class="dv">2</span>),<span class="dv">1</span>,<span class="dv">0</span>))<span class="sc">%&gt;%</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">vaccinated=</span><span class="fu">ifelse</span>(vaccinated<span class="sc">==</span><span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>At this point we should have 109 variables (because we created two new variables and rewrote 1.</p>
+</section>
+<section id="select-the-variables-we-want-in-the-analysis" class="level4">
+<h4 class="anchored" data-anchor-id="select-the-variables-we-want-in-the-analysis">Select the variables we want in the analysis</h4>
+<p>To access the full survey with variable definitions, here’s a <a href="https://share-eric.eu/fileadmin/user_upload/Questionnaires/Q-Wave_8/paperverstion_en_GB_8_2_5b.pdf">link to the PDF in English</a>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="do">## get rid of crazy income values (the people with high income are not not part of our population of interest (regular folks who need to save for retirement))</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="do">## and make our dependent variable (co007, which is whether the household struggles to make ends meet) a factor</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>z1 <span class="ot">&lt;-</span> z1 <span class="sc">%&gt;%</span> </span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>        dplyr<span class="sc">::</span><span class="fu">select</span>(female,age,married,hhsize,vaccinated,books_age10,maths_age10,language_age10,childhood_health,migrant,eduyears_mod,co007_,thinc_m,eurod,country_mod,iv009_mod) <span class="sc">%&gt;%</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>        <span class="fu">filter</span>(thinc_m <span class="sc">&lt;</span> <span class="dv">100000</span>)<span class="sc">%&gt;%</span> <span class="co"># people earning above 100,000 are excluded </span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">co007_ =</span> <span class="fu">as.factor</span>(co007_)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="what-is-our-target-variable" class="level4">
+<h4 class="anchored" data-anchor-id="what-is-our-target-variable">What is our target variable?</h4>
+<p>In the English Questionnaire of the SHARE dataset, the variable asks:</p>
+<pre><code>Thinking of your household's total monthly income, would you say that your household is able to make ends meet... (Income struggle)
+
+(the possible answers include: )
+
+    1. With great difficulty
+
+    2. With some difficulty 
+
+    3. Fairly easily 
+
+    4. Easily</code></pre>
+<p>Let’s work with this variable to turn this into a classification problem.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="do">##  aggregate income struggle variable into 2 categories and add to our data</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>z1<span class="sc">$</span>co007_mod <span class="ot">&lt;-</span> z1<span class="sc">$</span>co007_ <span class="co"># here we're just creating a duplicate of the co007_ variable but with a different name</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># it's usually a good idea to manipulate a duplicated variable in case you make a mistake and need to call on the original/untransformed data again</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>z1<span class="sc">$</span>co007_mod[z1<span class="sc">$</span>co007_ <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)] <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># if the values in var z1$co007_ are 1 or 2, transform them into 1, store this in our new z1$co007_mod variable</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>z1<span class="sc">$</span>co007_mod[z1<span class="sc">$</span>co007_ <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">4</span>)] <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="co"># if the values in var z1$co007_ are 3 or 4, transform them into 2, store this in our new z1$co007_mod variable</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="do">## change the way to factor is defined to have only 2 levels</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>z1<span class="sc">$</span>co007_mod <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(<span class="fu">as.integer</span>(z1<span class="sc">$</span>co007_mod))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we have a variable that indicates whether a household struggles (1) or doesn’t struggle (2) to make ends meet.</p>
+<p>A different dependent variable could just be income. To make that sensible we make income bands (or ‘bins’): var thinc_m directly asks annual salary.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># we're creating quartiles (to which income quartile do you belong, given your annual salary? the lowest? the highest?)</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>z1<span class="sc">$</span>inc_bin <span class="ot">=</span> <span class="fu">cut</span>(z1<span class="sc">$</span>thinc_m,<span class="fu">quantile</span>(z1<span class="sc">$</span>thinc_m,<span class="at">breaks=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.25</span>,<span class="fl">0.5</span>,<span class="dv">075</span>,<span class="dv">1</span>),<span class="at">na.rm=</span>T))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We won’t work with the inc_bin (classification) variable, but it’s there if you wish to challenge yourself to create a neural network model for it.</p>
+</section>
+<section id="cleaning-missing-values-recall-ml-needs-a-full-dataset" class="level4">
+<h4 class="anchored" data-anchor-id="cleaning-missing-values-recall-ml-needs-a-full-dataset">Cleaning missing values (recall ML needs a full dataset)</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="do">## get rid of any observation that contains NA</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(z1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 140821</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">#You can get a glimpse of which variables have the most missing values with the skim() function</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">skim</span>(z1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Name</td>
+<td style="text-align: left;">z1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Number of rows</td>
+<td style="text-align: left;">37286</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Number of columns</td>
+<td style="text-align: left;">18</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">_______________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Column type frequency:</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">factor</td>
+<td style="text-align: left;">3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">numeric</td>
+<td style="text-align: left;">15</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">________________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Group variables</td>
+<td style="text-align: left;">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: factor</strong></p>
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 8%">
+<col style="width: 9%">
+<col style="width: 43%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: left;">ordered</th>
+<th style="text-align: right;">n_unique</th>
+<th style="text-align: left;">top_counts</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">co007_</td>
+<td style="text-align: right;">623</td>
+<td style="text-align: right;">0.98</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">4: 12700, 3: 12382, 2: 8843, 1: 2738</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">co007_mod</td>
+<td style="text-align: right;">623</td>
+<td style="text-align: right;">0.98</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">2: 25082, 1: 11581</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">inc_bin</td>
+<td style="text-align: right;">318</td>
+<td style="text-align: right;">0.99</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">(2.: 9322, (1.: 9321, (3.: 9321, (0,: 9004</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 9%">
+<col style="width: 13%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 5%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 7%">
+<col style="width: 5%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: right;">sd</th>
+<th style="text-align: right;">p0</th>
+<th style="text-align: right;">p25</th>
+<th style="text-align: right;">p50</th>
+<th style="text-align: right;">p75</th>
+<th style="text-align: right;">p100</th>
+<th style="text-align: left;">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">female</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">0.47</td>
+<td style="text-align: right;">0.50</td>
+<td style="text-align: right;">0.0</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.0</td>
+<td style="text-align: left;">▇▁▁▁▇</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">age</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">73.32</td>
+<td style="text-align: right;">7.86</td>
+<td style="text-align: right;">42.2</td>
+<td style="text-align: right;">67.20</td>
+<td style="text-align: right;">72.30</td>
+<td style="text-align: right;">78.80</td>
+<td style="text-align: right;">102.3</td>
+<td style="text-align: left;">▁▃▇▃▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">married</td>
+<td style="text-align: right;">208</td>
+<td style="text-align: right;">0.99</td>
+<td style="text-align: right;">0.71</td>
+<td style="text-align: right;">0.45</td>
+<td style="text-align: right;">0.0</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.0</td>
+<td style="text-align: left;">▃▁▁▁▇</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">hhsize</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">2.02</td>
+<td style="text-align: right;">0.88</td>
+<td style="text-align: right;">1.0</td>
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">10.0</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">vaccinated</td>
+<td style="text-align: right;">29307</td>
+<td style="text-align: right;">0.21</td>
+<td style="text-align: right;">0.93</td>
+<td style="text-align: right;">0.25</td>
+<td style="text-align: right;">0.0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.0</td>
+<td style="text-align: left;">▁▁▁▁▇</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">books_age10</td>
+<td style="text-align: right;">24733</td>
+<td style="text-align: right;">0.34</td>
+<td style="text-align: right;">1.85</td>
+<td style="text-align: right;">1.11</td>
+<td style="text-align: right;">1.0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">3.00</td>
+<td style="text-align: right;">5.0</td>
+<td style="text-align: left;">▇▃▂▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">maths_age10</td>
+<td style="text-align: right;">25127</td>
+<td style="text-align: right;">0.33</td>
+<td style="text-align: right;">2.80</td>
+<td style="text-align: right;">0.85</td>
+<td style="text-align: right;">1.0</td>
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">3.00</td>
+<td style="text-align: right;">3.00</td>
+<td style="text-align: right;">5.0</td>
+<td style="text-align: left;">▁▃▇▂▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">language_age10</td>
+<td style="text-align: right;">25161</td>
+<td style="text-align: right;">0.33</td>
+<td style="text-align: right;">2.81</td>
+<td style="text-align: right;">0.81</td>
+<td style="text-align: right;">1.0</td>
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">3.00</td>
+<td style="text-align: right;">3.00</td>
+<td style="text-align: right;">5.0</td>
+<td style="text-align: left;">▁▃▇▂▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">childhood_health</td>
+<td style="text-align: right;">29173</td>
+<td style="text-align: right;">0.22</td>
+<td style="text-align: right;">2.33</td>
+<td style="text-align: right;">1.03</td>
+<td style="text-align: right;">1.0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">3.00</td>
+<td style="text-align: right;">6.0</td>
+<td style="text-align: left;">▇▅▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">migrant</td>
+<td style="text-align: right;">250</td>
+<td style="text-align: right;">0.99</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">1.0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.0</td>
+<td style="text-align: left;">▁▁▇▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">eduyears_mod</td>
+<td style="text-align: right;">2542</td>
+<td style="text-align: right;">0.93</td>
+<td style="text-align: right;">10.21</td>
+<td style="text-align: right;">4.44</td>
+<td style="text-align: right;">0.0</td>
+<td style="text-align: right;">7.00</td>
+<td style="text-align: right;">10.00</td>
+<td style="text-align: right;">13.00</td>
+<td style="text-align: right;">25.0</td>
+<td style="text-align: left;">▃▇▇▂▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">thinc_m</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">25379.33</td>
+<td style="text-align: right;">16076.56</td>
+<td style="text-align: right;">0.0</td>
+<td style="text-align: right;">14357.39</td>
+<td style="text-align: right;">21731.12</td>
+<td style="text-align: right;">32783.51</td>
+<td style="text-align: right;">99829.1</td>
+<td style="text-align: left;">▇▇▂▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">eurod</td>
+<td style="text-align: right;">1485</td>
+<td style="text-align: right;">0.96</td>
+<td style="text-align: right;">2.57</td>
+<td style="text-align: right;">2.31</td>
+<td style="text-align: right;">0.0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">4.00</td>
+<td style="text-align: right;">12.0</td>
+<td style="text-align: left;">▇▃▂▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">country_mod</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">434.20</td>
+<td style="text-align: right;">184.53</td>
+<td style="text-align: right;">250.0</td>
+<td style="text-align: right;">276.00</td>
+<td style="text-align: right;">380.00</td>
+<td style="text-align: right;">616.00</td>
+<td style="text-align: right;">724.0</td>
+<td style="text-align: left;">▇▃▂▂▃</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">iv009_mod</td>
+<td style="text-align: right;">1269</td>
+<td style="text-align: right;">0.97</td>
+<td style="text-align: right;">3.68</td>
+<td style="text-align: right;">1.34</td>
+<td style="text-align: right;">1.0</td>
+<td style="text-align: right;">3.00</td>
+<td style="text-align: right;">4.00</td>
+<td style="text-align: right;">5.00</td>
+<td style="text-align: right;">5.0</td>
+<td style="text-align: left;">▂▂▃▆▇</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># we'll use the drop_na() function, which will delete any row if it has at least one missing value (be careful when doing this in your own data cleaning)</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>z2 <span class="ot">&lt;-</span> <span class="fu">drop_na</span>(z1)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(z2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 6881   18</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># z2 is a small subset of the original dataset which contains i) no missing values, ii) only relevant variables for our model on retirement, and iii) a more manageable dataset size</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="rescaling-data" class="level4">
+<h4 class="anchored" data-anchor-id="rescaling-data">Rescaling data</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="do">## age, years of education and income (thinc_m) have a big range, so let's rescale it to  between plus and minus 1</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="do">## scaling allows us to compare data that aren't measured in the same way</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>z4 <span class="ot">&lt;-</span> z2 <span class="sc">%&gt;%</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">ScaledAge =</span> <span class="fu">rescale</span>(age,<span class="at">to=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="dv">1</span>)))<span class="sc">%&gt;%</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">EduYears=</span><span class="fu">rescale</span>(eduyears_mod,<span class="at">to=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="dv">1</span>)))<span class="sc">%&gt;%</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">income =</span> <span class="fu">rescale</span>(thinc_m,<span class="at">to=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="dv">1</span>)))</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="co"># z4 is now the working dataset, with 3 more (scaled) variables</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="do">## check what we have</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(z4<span class="sc">$</span>ScaledAge)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+-1.00000 -0.16230  0.01222  0.04492  0.22862  1.00000 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="do">## check what variables we now have in the data</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(z4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "female"           "age"              "married"          "hhsize"          
+ [5] "vaccinated"       "books_age10"      "maths_age10"      "language_age10"  
+ [9] "childhood_health" "migrant"          "eduyears_mod"     "co007_"          
+[13] "thinc_m"          "eurod"            "country_mod"      "iv009_mod"       
+[17] "co007_mod"        "inc_bin"          "ScaledAge"        "EduYears"        
+[21] "income"          </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="do">## let's look at the data just to see if there is anything observable at the start</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="do">## plot the first 100 observations</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="do">## we will use a pairs plot</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">head</span>(z4,<span class="dv">100</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="neuralNets_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># you can use the zoom function of the image if you're replicating this script locally (that way you can read the variable names).</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="do">## look more closely at migrant and vaccination (the others seem to have a good spread)</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(z4<span class="sc">$</span>migrant)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+   1 
+6881 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="do">## there is only one value so no point in including it</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="do">## look at vaccination</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(z4<span class="sc">$</span>vaccinated)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+   0    1 
+ 367 6514 </code></pre>
+</div>
+</div>
+</section>
+<section id="select-a-subset-of-the-data-including-only-relevant-variables" class="level4">
+<h4 class="anchored" data-anchor-id="select-a-subset-of-the-data-including-only-relevant-variables">Select a subset of the data, including only relevant variables</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>z5 <span class="ot">&lt;-</span> z4 <span class="sc">%&gt;%</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>            dplyr<span class="sc">::</span><span class="fu">select</span>(female,married,hhsize,books_age10, maths_age10, language_age10, EduYears,eurod, country_mod,iv009_mod, inc_bin, co007_,co007_mod)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Notice that we create new datasets everytime we subset, instead of rewriting the old one. This is probably a good idea in case we need to take a step back.</p>
+<p>To be able to work with the neuralnet package, it’s best to have dummy variables instead of one variable with various categories. So, let’s start that process:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="do">## now change country to dummy variables</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>country <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(z5<span class="sc">$</span>country_mod)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>cmat    <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(<span class="sc">~</span><span class="dv">0</span><span class="sc">+</span>country)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The model.matrix() function takes a formula and a data frame (or similar structure) and returns a matrix with rows corresponding to cases and columns to predictor variables.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="do">## add to z5</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>z5 <span class="ot">&lt;-</span> <span class="fu">cbind</span>(z5,cmat)</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(z5)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       female married hhsize books_age10 maths_age10 language_age10 EduYears
+104800      1       1      2           1           3              3    -0.12
+104803      0       1      2           1           2              3    -0.12
+104808      1       1      2           1           3              3     0.12
+104812      0       1      2           1           3              3    -0.04
+104816      0       1      2           1           3              3     0.20
+104852      0       0      1           3           4              3    -0.12
+       eurod country_mod iv009_mod             inc_bin co007_ co007_mod
+104800     5         276         5 (1.44e+04,2.17e+04]      2         1
+104803     5         276         5 (1.44e+04,2.17e+04]      2         1
+104808     3         276         5 (3.28e+04,9.98e+04]      4         2
+104812     0         276         5 (3.28e+04,9.98e+04]      4         2
+104816     4         276         4 (3.28e+04,9.98e+04]      4         2
+104852     3         276         4 (1.44e+04,2.17e+04]      2         1
+       country250 country276 country380 country528 country724
+104800          0          1          0          0          0
+104803          0          1          0          0          0
+104808          0          1          0          0          0
+104812          0          1          0          0          0
+104816          0          1          0          0          0
+104852          0          1          0          0          0</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(z5)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "data.frame"</code></pre>
+</div>
+</div>
+<p>To finalise the data preparation, let’s do some variable cleaning:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="do">## fix level names of inc_bin</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(z5<span class="sc">$</span>inc_bin) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"first"</span>,<span class="st">"second"</span>,<span class="st">"third"</span>,<span class="st">"fourth"</span>)</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(z5)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "female"         "married"        "hhsize"         "books_age10"   
+ [5] "maths_age10"    "language_age10" "EduYears"       "eurod"         
+ [9] "country_mod"    "iv009_mod"      "inc_bin"        "co007_"        
+[13] "co007_mod"      "country250"     "country276"     "country380"    
+[17] "country528"     "country724"    </code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="model-preparation" class="level3">
+<h3 class="anchored" data-anchor-id="model-preparation">2. Model Preparation</h3>
+<p>This time around, we’re not using caret functions to split our data, or define our target and predictors. We’ll do this “manually”. The first thing we want to do, is create and object of the form [target ~ x1 + x2 + …+ xk]. This is how R reads target variables (on the left hand side of the squiggle) and predictors (on the right hand side of the squiggle and separated by + signs).</p>
+<section id="prepare-model" class="level4">
+<h4 class="anchored" data-anchor-id="prepare-model">Prepare model</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="do">## now make the formula we want to estimate</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>myform0 <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">names</span>(z5)[<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>,<span class="dv">10</span>,<span class="dv">14</span><span class="sc">:</span><span class="dv">18</span>)],<span class="at">collapse=</span><span class="st">" + "</span>)</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="co"># the object myform0 contains all the predictor variables for our neural network model</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>myform <span class="ot">&lt;-</span> <span class="fu">paste</span>( <span class="st">"co007_mod"</span>,<span class="fu">c</span>(myform0),<span class="at">sep=</span><span class="st">" ~ "</span>)</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a><span class="fu">all.equal</span>(myform,myform0) <span class="co"># returns one mistmatch.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "1 string mismatch"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># myform includes the income variable as a predictor, so it's all our previous predictors + co007_mod (as target!)</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="do">## look at the formula to make sure we got what we wanted</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(myform)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "co007_mod ~ female + married + hhsize + books_age10 + maths_age10 + language_age10 + EduYears + eurod + iv009_mod + country250 + country276 + country380 + country528 + country724"</code></pre>
+</div>
+</div>
+</section>
+<section id="data-split-train-and-test" class="level4">
+<h4 class="anchored" data-anchor-id="data-split-train-and-test">Data Split: train and test</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="do">## set the random seed so we can duplicate things if we want to </span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">4</span>)</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="co"># we're doing this manually, instead of using our trusted caret() package</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>trainRows <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(z5),<span class="fl">0.8</span><span class="sc">*</span><span class="fu">nrow</span>(z5)) <span class="co"># 80% of data to train</span></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>testRows  <span class="ot">&lt;-</span> (<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(z5))[<span class="sc">-</span>trainRows]</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a><span class="do">## now we have training data: trainz5; and testing data: testz5</span></span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>trainz5   <span class="ot">&lt;-</span> z5[trainRows,]</span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>testz5    <span class="ot">&lt;-</span> z5[testRows,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="train-our-neural-network-model" class="level4">
+<h4 class="anchored" data-anchor-id="train-our-neural-network-model">Train our neural network model!</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">4</span>)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">neuralnet</span>(</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>            myform, <span class="do">## use the formula we defined above</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">data =</span> trainz5, <span class="do">## tell it what data to use</span></span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">hidden=</span><span class="fu">c</span>(<span class="dv">6</span>), <span class="do">## define the number and size of hidden layers: here we have one layer with 5 nodes in it</span></span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">linear.output =</span> F, <span class="co"># F to show this is a classification problem (since our predictor is a factor) T returns a linear regression output. This also means that the (default) activation function is the sigmoid!</span></span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">stepmax =</span> <span class="dv">1000000</span>, <span class="do">## how many iterations to use to train it (1 million, but it converges before that mark)</span></span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">lifesign=</span><span class="st">"full"</span>,  <span class="do">## get some output while it works</span></span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">algorithm =</span> <span class="st">"rprop+"</span>, <span class="co"># it is a gradient descent algorithm "Resilient Propagation". </span></span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>            <span class="at">learningrate.limit =</span> <span class="cn">NULL</span>,</span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">learningrate.factor =</span></span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>                <span class="fu">list</span>(<span class="at">minus =</span> <span class="fl">0.5</span>, <span class="at">plus =</span> <span class="fl">1.2</span>),</span>
+<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">threshold =</span> <span class="fl">0.01</span></span>
+<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a>            )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>hidden: 6    thresh: 0.01    rep: 1/1    steps:    1000 min thresh: 1.22795192815468
+                                                   2000 min thresh: 0.408629618104168
+                                                   3000 min thresh: 0.255375732991587
+                                                   4000 min thresh: 0.255375732991587
+                                                   5000 min thresh: 0.206075288342767
+                                                   6000 min thresh: 0.181738092119449
+                                                   7000 min thresh: 0.142443872190076
+                                                   8000 min thresh: 0.108056969567729
+                                                   9000 min thresh: 0.0965760103945601
+                                                  10000 min thresh: 0.0924441234865121
+                                                  11000 min thresh: 0.0924441234865121
+                                                  12000 min thresh: 0.0924441234865121
+                                                  13000 min thresh: 0.0903834987550307
+                                                  14000 min thresh: 0.0903834987550307
+                                                  15000 min thresh: 0.0903834987550307
+                                                  16000 min thresh: 0.0903834987550307
+                                                  17000 min thresh: 0.0903834987550307
+                                                  18000 min thresh: 0.0903834987550307
+                                                  19000 min thresh: 0.0903834987550307
+                                                  20000 min thresh: 0.0903834987550307
+                                                  21000 min thresh: 0.0903834987550307
+                                                  22000 min thresh: 0.0903834987550307
+                                                  23000 min thresh: 0.0903834987550307
+                                                  24000 min thresh: 0.0903834987550307
+                                                  25000 min thresh: 0.0903834987550307
+                                                  26000 min thresh: 0.0903834987550307
+                                                  27000 min thresh: 0.0903834987550307
+                                                  28000 min thresh: 0.0903834987550307
+                                                  29000 min thresh: 0.0903834987550307
+                                                  30000 min thresh: 0.0903834987550307
+                                                  31000 min thresh: 0.0903834987550307
+                                                  32000 min thresh: 0.0903834987550307
+                                                  33000 min thresh: 0.0903834987550307
+                                                  34000 min thresh: 0.0903834987550307
+                                                  35000 min thresh: 0.0903834987550307
+                                                  36000 min thresh: 0.0903834987550307
+                                                  37000 min thresh: 0.0903834987550307
+                                                  38000 min thresh: 0.0903834987550307
+                                                  39000 min thresh: 0.080031973683847
+                                                  40000 min thresh: 0.080031973683847
+                                                  41000 min thresh: 0.080031973683847
+                                                  42000 min thresh: 0.0781654073237371
+                                                  43000 min thresh: 0.077217534035844
+                                                  44000 min thresh: 0.077217534035844
+                                                  45000 min thresh: 0.0663306621049722
+                                                  46000 min thresh: 0.0663306621049722
+                                                  47000 min thresh: 0.0663306621049722
+                                                  48000 min thresh: 0.0663306621049722
+                                                  49000 min thresh: 0.0640628426880909
+                                                  50000 min thresh: 0.0549832161036877
+                                                  51000 min thresh: 0.0549832161036877
+                                                  52000 min thresh: 0.0549832161036877
+                                                  53000 min thresh: 0.0535065197695844
+                                                  54000 min thresh: 0.0451843906210169
+                                                  55000 min thresh: 0.0407706834064874
+                                                  56000 min thresh: 0.0407706834064874
+                                                  57000 min thresh: 0.0407706834064874
+                                                  58000 min thresh: 0.0407706834064874
+                                                  59000 min thresh: 0.0407706834064874
+                                                  60000 min thresh: 0.0398750949182902
+                                                  61000 min thresh: 0.0347740947416519
+                                                  62000 min thresh: 0.0347740947416519
+                                                  63000 min thresh: 0.0347740947416519
+                                                  64000 min thresh: 0.0333526116102184
+                                                  65000 min thresh: 0.0333526116102184
+                                                  66000 min thresh: 0.0333526116102184
+                                                  67000 min thresh: 0.0333526116102184
+                                                  68000 min thresh: 0.0333526116102184
+                                                  69000 min thresh: 0.0316000239700686
+                                                  70000 min thresh: 0.0306565221261171
+                                                  71000 min thresh: 0.0274365035081705
+                                                  72000 min thresh: 0.0274365035081705
+                                                  73000 min thresh: 0.026496818727535
+                                                  74000 min thresh: 0.026496818727535
+                                                  75000 min thresh: 0.026496818727535
+                                                  76000 min thresh: 0.026496818727535
+                                                  77000 min thresh: 0.026496818727535
+                                                  78000 min thresh: 0.026496818727535
+                                                  79000 min thresh: 0.026496818727535
+                                                  80000 min thresh: 0.026496818727535
+                                                  81000 min thresh: 0.0259845739797748
+                                                  82000 min thresh: 0.0259845739797748
+                                                  83000 min thresh: 0.0259845739797748
+                                                  84000 min thresh: 0.0240579990735271
+                                                  85000 min thresh: 0.0226252873882434
+                                                  86000 min thresh: 0.0226252873882434
+                                                  87000 min thresh: 0.0221455597930601
+                                                  88000 min thresh: 0.0221455597930601
+                                                  89000 min thresh: 0.0221455597930601
+                                                  90000 min thresh: 0.0221455597930601
+                                                  91000 min thresh: 0.0203603362622581
+                                                  92000 min thresh: 0.0200746219013495
+                                                  93000 min thresh: 0.0200746219013495
+                                                  94000 min thresh: 0.0200746219013495
+                                                  95000 min thresh: 0.0200746219013495
+                                                  96000 min thresh: 0.0200746219013495
+                                                  97000 min thresh: 0.0163554171793395
+                                                  98000 min thresh: 0.0163554171793395
+                                                  99000 min thresh: 0.0163554171793395
+                                                  1e+05 min thresh: 0.0151167048702273
+                                                 101000 min thresh: 0.0151167048702273
+                                                 102000 min thresh: 0.0151167048702273
+                                                 103000 min thresh: 0.0151167048702273
+                                                 104000 min thresh: 0.0151167048702273
+                                                 105000 min thresh: 0.0151167048702273
+                                                 106000 min thresh: 0.0151167048702273
+                                                 107000 min thresh: 0.0151167048702273
+                                                 108000 min thresh: 0.0151167048702273
+                                                 109000 min thresh: 0.0142885225751462
+                                                 110000 min thresh: 0.0142885225751462
+                                                 111000 min thresh: 0.0142885225751462
+                                                 112000 min thresh: 0.0142885225751462
+                                                 113000 min thresh: 0.0142885225751462
+                                                 114000 min thresh: 0.0142885225751462
+                                                 115000 min thresh: 0.0142455799962317
+                                                 116000 min thresh: 0.0142455799962317
+                                                 117000 min thresh: 0.0142455799962317
+                                                 118000 min thresh: 0.012107497406225
+                                                 119000 min thresh: 0.012107497406225
+                                                 120000 min thresh: 0.012107497406225
+                                                 121000 min thresh: 0.012107497406225
+                                                 122000 min thresh: 0.012107497406225
+                                                 123000 min thresh: 0.0108934985445289
+                                                 124000 min thresh: 0.0108934985445289
+                                                 125000 min thresh: 0.0108934985445289
+                                                 126000 min thresh: 0.0108934985445289
+                                                 127000 min thresh: 0.0108934985445289
+                                                 128000 min thresh: 0.0108934985445289
+                                                 129000 min thresh: 0.0108934985445289
+                                                 130000 min thresh: 0.0108934985445289
+                                                 131000 min thresh: 0.0108934985445289
+                                                 132000 min thresh: 0.0108934985445289
+                                                 133000 min thresh: 0.0108934985445289
+                                                 134000 min thresh: 0.0108934985445289
+                                                 135000 min thresh: 0.0108934985445289
+                                                 136000 min thresh: 0.0108934985445289
+                                                 137000 min thresh: 0.0101758648461206
+                                                 138000 min thresh: 0.0101758648461206
+                                                 139000 min thresh: 0.0101758648461206
+                                                 140000 min thresh: 0.0101758648461206
+                                                 141000 min thresh: 0.0101758648461206
+                                                 142000 min thresh: 0.0101758648461206
+                                                 143000 min thresh: 0.0101758648461206
+                                                 143866 error: 944.06645    time: 5.7 mins</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># if you get an error, don't worry about it. It's not an issue for our estimation, and it indicates the last iteration (way before 1000000)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now, let’s plot our neural network:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model)</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="co"># notice that this is a vanilla network (no deep learning for us!).</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><br> <img src="assets/Neural_Network.png" class="img-fluid quarto-figure quarto-figure-center"> <br></p>
+<p>Now it is time to test our model’s <strong>predictive abilities</strong>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># use our fitted neural network to try to predict what the income states in our test data</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">4</span>)</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(model,testz5)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>As before, we will not use the caret package to call the ConfusionMatrix function, we’ll do all of it manually. We’ll have to manipulate the variables a little, to visualise the confusion matrix in a helpful way:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># add the levels from our target variable as labels (stored in an object)</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>myLabels <span class="ot">&lt;-</span> <span class="fu">levels</span>(testz5<span class="sc">$</span>co007_mod)</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>pointPred <span class="ot">&lt;-</span> <span class="fu">max.col</span>(pred) <span class="co"># find the index of the maximum value of my predictions</span></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>pointPred <span class="ot">&lt;-</span> myLabels[pointPred] <span class="co"># add the labels (or column names from our predictions) </span></span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Now, we'll store the actual/observed values in an objext as well:</span></span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>actual <span class="ot">&lt;-</span> testz5<span class="sc">$</span>co007_mod</span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>actual <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(<span class="fu">as.integer</span>(actual))</span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the Confusion Matrix using the predicted, observed values and the labels</span></span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>t1 <span class="ot">&lt;-</span> <span class="fu">table</span>(actual,pointPred)</span>
+<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a><span class="co"># voilà! manual confusion matrix!</span></span>
+<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(t1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      pointPred
+actual   1   2
+     1 134 259
+     2 114 870</code></pre>
+</div>
+</div>
+<p>Now that we have a confusion matrix, we can analyse the performance of our neural network model.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># How many older people struggle to make ends meet?</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="fu">prop.table</span>(<span class="fu">table</span>(testz5<span class="sc">$</span>co007_mod))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+        1         2 
+0.2854031 0.7145969 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># about 28%... </span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a><span class="co"># How accurate is our model?</span></span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">diag</span>(t1))<span class="sc">/</span><span class="fu">sum</span>(t1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.7291213</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># this returns the proportion of correct predictions! </span></span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 72% of correctly predicted income status</span></span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a><span class="co"># so, our neural network model does relatively well in predicting whether older people / pensioneers struggle to make ends meet in selected European countries</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>If we recall from previous sessions, it is hard to have accurate predictions of that of which we have less (struggling older people)… look again at the confusion matrix: what do we see? the ratio of correct predictions for non-strugglers (2x2) is higher than for the strugglers (1x1).</p>
+<p>Let’s remember what information we can obtain from a confusion matrix:</p>
+<ul>
+<li><p>True Positives (TP): 134 (actual = 1, predicted = 1)</p></li>
+<li><p>False Negatives (FN): 259 (actual = 1, predicted = 2)</p></li>
+<li><p>False Positives (FP): 114 (actual = 2, predicted = 1)</p></li>
+<li><p>True Negatives (TN): 870 (actual = 2, predicted = 2)</p></li>
+</ul>
+<p>Based on these confusion matrix values (and the formulas provided in session 2: logistic classification), we can get our neural network model’s performance metrics:</p>
+<ul>
+<li><p>Accuracy: 72.9%. (we got this above!). It is the proportion of true results regardless of the case.</p></li>
+<li><p>Recall (Sensitivity): 34.09% (we might want to know this, since we’re trying to identify vulnerable elderly people). It is the proportion of correctly identified vulnerable cases. The formula (if you want to check yourself) is TP/(TP+FN) = 134/(134+259) = 0.340</p></li>
+</ul>
+<p>Alternatively…</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># select the needed values from the confusion matrix t1</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>(t1[<span class="dv">1</span>,<span class="dv">1</span>])<span class="sc">/</span>(t1[<span class="dv">1</span>,<span class="dv">1</span>]<span class="sc">+</span>t1[<span class="dv">1</span>,<span class="dv">2</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.3409669</code></pre>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>How did we do? Neural networks are all the rage these days, it’s arguably the most famous machine learning algorithm. But don’t be fooled, it is still subject to the same data challenges as the rest of the algorithms we have explored so far.</p>
+</section>
+<section id="readings" class="level2">
+<h2 class="anchored" data-anchor-id="readings">Readings</h2>
+<p><strong>Optional Readings</strong></p>
+<ul>
+<li>Chatsiou and Mikhaylov (2020). <a href="https://arxiv.org/pdf/2005.06540.pdf">Deep Learning for Political Science</a>. Arxiv preprint.</li>
+</ul>
+
+
+</section>
+
+<div class="footer">
+Copyright © 2025 Michelle González Amador &amp; Stephan Dietrich. All rights reserved.<br> <a href="https://github.com/michelleg06/Machine-Learning-for-Public-Policy"><img src="https://img.shields.io/badge/GitHub-Repository-blue?logo=github.png" class="img-fluid" alt="GitHub"></a>
+</div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

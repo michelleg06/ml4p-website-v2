@@ -1,7 +1,6 @@
 ---
 title: "Prediction Policy Problems: Linear Models and Lasso Regression"
 format: html
-include-after-body: disqus.html
 ---
 
 **This section will cover:**
