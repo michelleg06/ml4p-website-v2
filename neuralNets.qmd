@@ -3,23 +3,21 @@ title: "An Introduction to Neural Networks"
 format: html
 ---
 
-##  What are neural networks?
+## What are neural networks?
 
-In this session, Prof. Dr. Robin Cowan will give is an intuitive introduction to neural networks. He has also prepared an exercise using data from [SHARE, the Survey of Health, Ageing and Retirement in Europe](https://share-eric.eu/). Please watch his video-lesson to get the intuition behind neural network algorithms and you can then follow policy-relevant application: predicting income-vulnerable older people in Europe. 
+In this session, Prof. Dr. Robin Cowan will give is an intuitive introduction to neural networks. He has also prepared an exercise using data from [SHARE, the Survey of Health, Ageing and Retirement in Europe](https://share-eric.eu/). Please watch his video-lesson to get the intuition behind neural network algorithms and you can then follow policy-relevant application: predicting income-vulnerable older people in Europe.
 
 {{< video https://youtu.be/6hN2zE_nEy4 >}}
-
 
 **Why would being able to predict what will make an older person struggle financially be policy-relevant?**
 
 This is a discussion point that you can explore. But you might want to investigate what the average old-age pension is in some European countries, and what the average cost of living is. After working for more than half of your life, I'm sure you'd like to live comfortably...
 
-
 ## R practical
 
-As always, start by opening the libraries that you'll need to reproduce the script below. 
+As always, start by opening the libraries that you'll need to reproduce the script below.
 
-Unfortunately, we are unable to share the dataset ourselves. However, if you wish to replicate this exercise at home (and use one of the many target variables that Robin has proposed to see how our model fares for those), you can request access to the dataset by creating an account with SHARE. You'll need to specify this is for learning purposes, but you won't be denied it. 
+Unfortunately, we are unable to share the dataset ourselves. However, if you wish to replicate this exercise at home (and use one of the many target variables that Robin has proposed to see how our model fares for those), you can request access to the dataset by creating an account with SHARE. You'll need to specify this is for learning purposes, but you won't be denied it.
 
 ```{r, message=FALSE}
 rm(list = ls()) # this line cleans your Global Environment.
@@ -60,19 +58,19 @@ dim(z)
 
 Now we are going to clean up some things in the data to make it useful.
 
-+ Select a subset of the countries: Spain, France, Italy, Germany, Poland. These are identified in the data with numbers:
-        
+-   Select a subset of the countries: Spain, France, Italy, Germany, Poland. These are identified in the data with numbers:
+
 `Spain 724; France 250; Italy 380; Germany 276; NL 528; Poland 616`
-        
+
 ```{r}
 countries <- c(724, 250, 380, 276, 528, 616)
 ```
 
-+ In the dataset, negative numbers indicate some kind of missing data, so we will replace them with NA (R-speak for missing values).
+-   In the dataset, negative numbers indicate some kind of missing data, so we will replace them with NA (R-speak for missing values).
 
-+ We then select years since 2013 (let's focus on the most recent cohorts)
+-   We then select years since 2013 (let's focus on the most recent cohorts)
 
-+ Restrict our data to observations that have certain qualities: we want people who are retired (ep005 ==1).
+-   Restrict our data to observations that have certain qualities: we want people who are retired (ep005 ==1).
 
 ```{r}
 z1 <- z %>%
@@ -84,7 +82,7 @@ z1 <- z %>%
 
 At this point you should have decreased the number of observation by 366431 (new obs. = 45679). z1 now contains a cleaner version of the dataset (feel free to delete z)
 
-PS. The following symbols %>% are called pipe operators. They belong to the dplyr packaged, which is masked within the tidyverse. They allow you to indicate a series of actions to do to the object in a sequence, just as above.
+PS. The following symbols %\>% are called pipe operators. They belong to the dplyr packaged, which is masked within the tidyverse. They allow you to indicate a series of actions to do to the object in a sequence, just as above.
 
 #### Now let's create some variables for our model
 
@@ -122,17 +120,19 @@ z1 <- z1 %>%
 
 In the English Questionnaire of the SHARE dataset, the variable asks:
 
-    Thinking of your household's total monthly income, would you say that your household is able to make ends meet... (Income struggle)
+```         
+Thinking of your household's total monthly income, would you say that your household is able to make ends meet... (Income struggle)
 
-    (the possible answers include: )
-    
-        1. With great difficulty
-    
-        2. With some difficulty 
-    
-        3. Fairly easily 
-    
-        4. Easily
+(the possible answers include: )
+
+    1. With great difficulty
+
+    2. With some difficulty 
+
+    3. Fairly easily 
+
+    4. Easily
+```
 
 Let's work with this variable to turn this into a classification problem.
 
@@ -151,7 +151,7 @@ z1$co007_mod <- as.factor(as.integer(z1$co007_mod))
 
 ```
 
-Now we have a variable that indicates whether a household struggles (1) or doesn't struggle (2) to make ends meet. 
+Now we have a variable that indicates whether a household struggles (1) or doesn't struggle (2) to make ends meet.
 
 A different dependent variable could just be income. To make that sensible we make income bands (or 'bins'): var thinc_m directly asks annual salary.
 
@@ -161,7 +161,7 @@ z1$inc_bin = cut(z1$thinc_m,quantile(z1$thinc_m,breaks=c(0,0.25,0.5,075,1),na.rm
 
 ```
 
-We won't work with the inc_bin (classification) variable, but it's there if you wish to challenge yourself to create a neural network model for it. 
+We won't work with the inc_bin (classification) variable, but it's there if you wish to challenge yourself to create a neural network model for it.
 
 #### Cleaning missing values (recall ML needs a full dataset)
 
@@ -245,7 +245,7 @@ names(z5)
 
 ### 2. Model Preparation
 
-This time around, we're not using caret functions to split our data, or define our target and predictors. We'll do this "manually". The first thing we want to do, is create and object of the form [target ~ x1 + x2 + ...+ xk]. This is how R reads target variables (on the left hand side of the squiggle) and predictors (on the right hand side of the squiggle and separated by + signs).
+This time around, we're not using caret functions to split our data, or define our target and predictors. We'll do this "manually". The first thing we want to do, is create and object of the form \[target \~ x1 + x2 + ...+ xk\]. This is how R reads target variables (on the left hand side of the squiggle) and predictors (on the right hand side of the squiggle and separated by + signs).
 
 #### Prepare model
 
@@ -300,6 +300,7 @@ model <- neuralnet(
 # if you get an error, don't worry about it. It's not an issue for our estimation, and it indicates the last iteration (way before 1000000)
 
 ```
+
 Now, let's plot our neural network:
 
 ```{r neural_net_plot, echo=TRUE, fig.cap="Neural network plot"}
@@ -308,9 +309,8 @@ plot(model)
 
 # notice that this is a vanilla network (no deep learning for us!).
 ```
-<br>
-![](assets/Neural_Network.png){fig-align="center"}
-<br>
+
+<br> ![](assets/Neural_Network.png){fig-align="center"} <br>
 
 Now it is time to test our model's **predictive abilities**.
 
@@ -341,7 +341,8 @@ print(t1)
 
 
 ```
-Now that we have a confusion matrix, we can analyse the performance of our neural network model. 
+
+Now that we have a confusion matrix, we can analyse the performance of our neural network model.
 
 ```{r}
 # How many older people struggle to make ends meet?
@@ -357,25 +358,24 @@ sum(diag(t1))/sum(t1)
 # so, our neural network model does relatively well in predicting whether older people / pensioneers struggle to make ends meet in selected European countries
 
 ```
+
 If we recall from previous sessions, it is hard to have accurate predictions of that of which we have less (struggling older people)... look again at the confusion matrix: what do we see? the ratio of correct predictions for non-strugglers (2x2) is higher than for the strugglers (1x1).
 
 Let's remember what information we can obtain from a confusion matrix:
 
-+ True Positives (TP): 134 (actual = 1, predicted = 1)
+-   True Positives (TP): 134 (actual = 1, predicted = 1)
 
-+ False Negatives (FN): 259 (actual = 1, predicted = 2)
+-   False Negatives (FN): 259 (actual = 1, predicted = 2)
 
-+ False Positives (FP): 114 (actual = 2, predicted = 1)
+-   False Positives (FP): 114 (actual = 2, predicted = 1)
 
-+ True Negatives (TN): 870 (actual = 2, predicted = 2)
+-   True Negatives (TN): 870 (actual = 2, predicted = 2)
 
-    
 Based on these confusion matrix values (and the formulas provided in session 2: logistic classification), we can get our neural network model's performance metrics:
 
-+ Accuracy: 72.9%. (we got this above!). It is the proportion of true results regardless of the case. 
+-   Accuracy: 72.9%. (we got this above!). It is the proportion of true results regardless of the case.
 
-+ Recall (Sensitivity): 34.09%  (we might want to know this, since we're trying to identify vulnerable elderly people). It is the proportion of correctly identified vulnerable cases. The formula (if you want to check yourself) is TP/(TP+FN) = 
-134/(134+259) = 0.340
+-   Recall (Sensitivity): 34.09% (we might want to know this, since we're trying to identify vulnerable elderly people). It is the proportion of correctly identified vulnerable cases. The formula (if you want to check yourself) is TP/(TP+FN) = 134/(134+259) = 0.340
 
 Alternatively...
 
@@ -394,4 +394,4 @@ How did we do? Neural networks are all the rage these days, it's arguably the mo
 
 **Optional Readings**
 
-- Chatsiou and Mikhaylov (2020). [Deep Learning for Political Science](https://arxiv.org/pdf/2005.06540.pdf). Arxiv preprint.
+-   Chatsiou and Mikhaylov (2020). [Deep Learning for Political Science](https://arxiv.org/pdf/2005.06540.pdf). Arxiv preprint.

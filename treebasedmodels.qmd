@@ -5,8 +5,8 @@ format: html
 
 **This section will cover:**
 
-+ Decision Trees: a classification approach
-+ Ensemble learning: bagging and boosting.
+-   Decision Trees: a classification approach
+-   Ensemble learning: bagging and boosting.
 
 <br>
 
@@ -18,33 +18,33 @@ An introduction to Tree-based machine learning models is given to us by [Dr. Fra
 
 Some key points to keep in mind when working through the practical exercise include:
 
-+ Tree-based methods work for both classification and regression problems.
+-   Tree-based methods work for both classification and regression problems.
 
-+ Decision Trees are both a logical and a technical tool:
+-   Decision Trees are both a logical and a technical tool:
 
-    + they involve stratifying or segmenting the predictor space into a number of simple regions
-    
-    + from each region, we obtain a relevant metric (e.g. mean/average) and then use that information to make predictions about the observations that belong to that region
-    
-+ Decision Trees are the simplest version of a tree-based method. To improve on a simple splitting algorithm, there exist ensemble learning techniques such as bagging and boosting:
+    -   they involve stratifying or segmenting the predictor space into a number of simple regions
 
-    + **bagging**: also known as bootstrap aggregating, it is an ensemble technique used to decrease a model's variance. A <strong> Random Forest </strong> is a tree-based method that functions on the concept of bagging. The main idea behind a Random Forest model is that, if you partition the data that would be used to create a single decision tree into different parts, create one tree for each of these partitions, and then use a method to “average” the results of all of these different trees, you should end up with a better model.
+    -   from each region, we obtain a relevant metric (e.g. mean/average) and then use that information to make predictions about the observations that belong to that region
 
-    + **boosting**: an ensemble technique mainly used to decrease a model's bias. Like bagging, we create multiple trees from various splits of our training dataset. However, whilst bagging uses bootstrap to create the various data splits (from which each tree is born), in boosting each tree is grown sequentially, using information from the previously built tree. So, boosting doesn't use bootstrap. Instead each tree is a modified version of the original dataset (each subsequent tree is built from the residuals of the previous model).  
+-   Decision Trees are the simplest version of a tree-based method. To improve on a simple splitting algorithm, there exist ensemble learning techniques such as bagging and boosting:
 
-To conclude our Malawi case study, we will implement a Random Forest algorithm to our classification problem: given a set of features X (e.g. ownership of a toilet, size of household, etc.), how likely are we to correctly identify an individual's income class? Recall that this problem has already been approached using a linear regression model (and a lasso linear model) and a logistic classification (i.e. an eager learner model) and whilst there was no improvement between a linear and a lasso linear model, we did increase our model's predictive ability when we switched from a linear prediction to a classification approach. I had previously claimed that the improvement was marginal --- but since the model will be used to determine who gets and who doesn't get an income supplement (i.e. who's an eligible recipient of a cash transfer, as part of Malawi's social protection policies), any improvement is critical and we should try various methods until we find the one that best fits our data. 
+    -   **bagging**: also known as bootstrap aggregating, it is an ensemble technique used to decrease a model's variance. A <strong> Random Forest </strong> is a tree-based method that functions on the concept of bagging. The main idea behind a Random Forest model is that, if you partition the data that would be used to create a single decision tree into different parts, create one tree for each of these partitions, and then use a method to “average” the results of all of these different trees, you should end up with a better model.
+
+    -   **boosting**: an ensemble technique mainly used to decrease a model's bias. Like bagging, we create multiple trees from various splits of our training dataset. However, whilst bagging uses bootstrap to create the various data splits (from which each tree is born), in boosting each tree is grown sequentially, using information from the previously built tree. So, boosting doesn't use bootstrap. Instead each tree is a modified version of the original dataset (each subsequent tree is built from the residuals of the previous model).
+
+To conclude our Malawi case study, we will implement a Random Forest algorithm to our classification problem: given a set of features X (e.g. ownership of a toilet, size of household, etc.), how likely are we to correctly identify an individual's income class? Recall that this problem has already been approached using a linear regression model (and a lasso linear model) and a logistic classification (i.e. an eager learner model) and whilst there was no improvement between a linear and a lasso linear model, we did increase our model's predictive ability when we switched from a linear prediction to a classification approach. I had previously claimed that the improvement was marginal --- but since the model will be used to determine who gets and who doesn't get an income supplement (i.e. who's an eligible recipient of a cash transfer, as part of Malawi's social protection policies), any improvement is critical and we should try various methods until we find the one that best fits our data.
 
 Some discussion points before the practical:
 
- + Why did we decide to switch models (from linear to classification)?
- 
- + Intuitively, why did a classification model perform better than a linear regression at predicting an individual's social class based on their monthly per capita consumption? 
- 
- + How would a Random Forest classification approach improve our predictive ability? (hint, the answer may be similar to the above one)
+-   Why did we decide to switch models (from linear to classification)?
+
+-   Intuitively, why did a classification model perform better than a linear regression at predicting an individual's social class based on their monthly per capita consumption?
+
+-   How would a Random Forest classification approach improve our predictive ability? (hint, the answer may be similar to the above one)
 
 ## Practical Example
 
-As always, start by opening the libraries that you'll need to reproduce the script below. We will continue to use the Caret library for machine learning purposes, and some other general libraries for data wrangling and visualisation. 
+As always, start by opening the libraries that you'll need to reproduce the script below. We will continue to use the Caret library for machine learning purposes, and some other general libraries for data wrangling and visualisation.
 
 ```{r, message=FALSE}
 rm(list = ls()) # this line cleans your Global Environment.
@@ -68,14 +68,178 @@ data_malawi <- read_csv("data/malawi.csv") # the file is directly read from the 
 
 ```
 
-For this exercise, we will skip all the data pre-processing steps. At this point, we are all well acquainted with the Malawi dataset, and should be able to create our binary outcome, poor (or not), and clean the dataset in general. If you need to, you can always go back to the [Logistic Classification tab](classification.qmd) and repeat the data preparation process described there. 
+For this exercise, we will skip all the data pre-processing steps. At this point, we are all well acquainted with the Malawi dataset, and should be able to create our binary outcome, poor (or not), and clean the dataset in general. If you need to, you can always go back to the [Logistic Classification tab](classification.qmd) and repeat the data preparation process described there.
 
 ### Data Split and Fit
+
+```{r split_and_fit_1, echo=FALSE}
+# object:vector that contains the names of the variables that we want to get rid of (notice this time lnzline is still there)
+cols <- c("ea", "EA", "psu","hhwght", "strataid", "case_id","eatype")
+
+
+# subset of the data_malawi object:datframe
+data_malawi <- data_malawi[,-which(colnames(data_malawi) %in% cols)] # the minus sign indicates deletion of cols
+
+# transform all binary/categorical data into factor class
+
+min_count <- 3 # vector: 3 categories is our max number of categories found
+
+# store boolean (true/false) if the number of unique values is lower or equal to the min_count vector
+n_distinct2 <- apply(data_malawi, 2, function(x) length(unique(x))) <= min_count
+
+# select the identified categorical variables and transform them into factors
+data_malawi[n_distinct2] <- lapply(data_malawi[n_distinct2], factor) 
+
+# recall poverty line contains 1 unique value (it is static), let's transform the variable into numeric again
+data_malawi$lnzline <- as.numeric(as.character(data_malawi$lnzline))
+
+# if the log of per capita expenditure is below the estimated poverty line, classify individual as poor, else classify individual as not poor. Store as factor (default with text is class character)
+data_malawi$poor <- as.factor(ifelse(data_malawi$lnexp_pc_month<= data_malawi$lnzline,"Y","N")) # Y(es) N(o)
+
+# make sure that the factor target variable has poor = Y as reference category (this step is important when running the logistic regression)
+data_malawi$poor <- relevel(data_malawi$poor, ref="Y") # make Y reference category
+
+# Final data pre-processing: delete static variable (poverty line)
+# and along with it: remove the continuous target (as it perfectly predicts the binary target) 
+
+data_malawi <- data_malawi[,-c(1,31)] # delete columns no. 1 and 31 from the dataset
+
+```
+
+```{r split_and_fit_2, cache=TRUE}
+
+
+set.seed(1234) # ensures reproducibility of our data split
+
+# data partitioning: train and test datasets
+train_idx <- createDataPartition(data_malawi$poor, p = .8, list = FALSE, times = 1) 
+
+Train_df <- data_malawi[ train_idx,]
+Test_df  <- data_malawi[-train_idx,]
+
+# data fit: fit a random forest model
+# (be warned that this may take longer to run than previous models)
+
+rf_train <- train(poor ~ .,
+                  data = Train_df,
+                  method = "ranger" # estimates a Random Forest algorithm via the ranger pkg (you may need to install the ranger pkg)
+                  )
+
+# First glimpse at our random forest model
+print(rf_train)
+```
+
+If you read the final box of the print() output, you'll notice that, given our input Y and X features, and no other information, the optimal random forest model, uses the following:
+
++ mtry = 2: mtry is the number of variables to sample at random at each split. This is the number we feed to the recursive partitioning algorithm.  At each split, the algorithm will search mtry (=2) variables (a completely different set from the previous split) chosen at random, and pick the best split point.
+
++ splitrule = gini: the splitting rule/algorithm used. Gini, or the Gini Impurity is a probability that ranges from $0$ to $1$. The lower the value, the more pure the node. Recall that a node that is $100\%$ pure includes only data from a single class (no noise!), and therefore the splitting stops.
+
++ Accuracy (or $1$ - the error rate): at $0.81$, it improves from our eager learner classification (logistic) approach by $0.01$ and it is highly accurate. 
+
++ Kappa (adjusted accuracy): at $0.55$, it indicates that our random forest model (on the training data) seems to perform the same as out logistic model. To make a proper comparison, we need to look at the out-of-sample predictions evaluation statistics. 
+
+### Out-of-sample predictions
+
+```{r out_of_sample_predictions_1}
+
+# make predictions using the trained model and the test dataset
+
+set.seed(12345)
+pr1 <- predict(rf_train, Test_df, type = "raw")
+head(pr1) # Yes and No output
+
+# evaluate the predictions using the ConfusionMatrix function from Caret pkg
+
+confusionMatrix(pr1, Test_df[["poor"]], positive = "Y") # positive = "Y" indicates that our category of interest is Y (1)
+
+```
+
+Based on our out-of-sample predictions, the Random Forest algorithm seems to yield pretty similar accuracy in its predictions as the logistic classification algorithm. The performance metrics (accuracy, sensitivity, specificity, kappa) remain the same (as for most classification problems). If you want a refresher of what they mean and how to interpret them, go back one session for a more thorough explanation! 
+
+### Fine-tuning parameters
+
+We can try to improve our Random Forest model by fine-tuning two parameters: grid and cross-validation
+```{r fine_tuning_parameters_1, cache=TRUE}
+
+# prepare the grid (create a larger random draw space)
+
+tuneGrid <- expand.grid(mtry = c(1,2, 3, 4),
+                      splitrule = c("gini", "extratrees"),
+                      min.node.size = c(1, 3, 5)) 
+
+# prepare the folds
+trControl <- trainControl( method = "cv",
+                                    number=5,
+                                    search = 'grid',
+                                    classProbs = TRUE,
+                                    savePredictions = "final"
+                           ) # 5-folds cross-validation 
+
+
+# fine-tune the model with optimised paramters
+# (again, be ready to wait a few minutes for this to run)
+
+rf_train_tuned <- train(poor ~ .,
+                            data = Train_df,
+                            method = "ranger",
+                            tuneGrid = tuneGrid, 
+                            trControl = trControl
+                  )
+
+# let's see how the fine-tuned model fared
+print(rf_train_tuned)
+```
+
+Fine tuning parameters has not done much for our in-sample model. The chosen mtry value and splitting rule were the same. The only parameter where I see improvement is in the (training set) Kappa, from $0.55$ to $0.56$. Will out of sample predictions improve?
+
+```{r fine_tuning_parameters_2}
+# make predictions using the trained model and the test dataset
+
+set.seed(12345)
+pr2 <- predict(rf_train_tuned, Test_df, type = "raw")
+head(pr2) # Yes and No output
+
+# evaluate the predictions using the ConfusionMatrix function from Caret pkg
+
+confusionMatrix(pr2, Test_df[["poor"]], positive = "Y") # positive = "Y" indicates that our category of interest is Y (1)
+
+```
+
+Consistent with the improvements on the train set, the out-of-sample predictions also return a higher adjusted accurcacy (Kappa statistic), and improved specificity and sensitivity. Not by much (e.g. Kappa increase of $0.01$), but we'll take what we can get. 
+
+
+These results also show that the biggest prediction improvements happen when we make big decisions - such as foregoing the variability of continuous outcomes in favour of classes. Exploring classification algorithms - in this case a logistic and a random forest model - was definitely worthwhile, but did not yield large returns on our predictive abilities. 
+
+### Visualising our model
+
+To close the chapter, let's have a quick look at the sort of plots we can make with a Random Forest algorithm.
+
+```{r visualizing_1}
+# we'll need to re-estimate the rf model using rpart
+
+MyRandomForest <- rpart(poor ~ ., data = Train_df)
+
+# visualise the decision tree (first of many in the forest)
+fancyRpartPlot(MyRandomForest, palettes = c("Oranges","Blues"), main = "Visualising nodes and splits") 
+```
+
+The fancy Rpart Plot returns the flow chart that we have now learned to call a decision tree. Recall that we have used different packages (and different specifications) for the Random Forest. So, the visualisation that we're looking at now is not the exact replica of our preferred fine-tuned model. It is, nonetheless, a good way to help you understand how classifications and decisions are made with tree-based methods. If you'd like an in-depth explanation of the plot, you can visit the [Rpart.plot pkg documentation](http://www.milbo.org/rpart-plot/prp.pdf). 
+
+## Readings
+
+*Optional Readings*
+
+- Dietrich et al. (2022) - [Economic Development, weather shocks, and child marriage in South Asia: A machine learning approach.](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0271373)
+
 
 
 <!--DISQUS COMMENTS SCRIPT-->
 
-<div id="disqus_thread"></div>
+::: {#disqus_thread}
+:::
+
+```{=html}
 <script>
     var disqus_config = function () {
     this.page.identifier = "predictionpolicy.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
@@ -89,4 +253,6 @@ For this exercise, we will skip all the data pre-processing steps. At this point
     (d.head || d.body).appendChild(s);
     })();
 </script>
+```
+
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>

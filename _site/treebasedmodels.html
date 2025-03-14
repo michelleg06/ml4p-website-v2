@@ -101,6 +101,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -204,7 +233,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#practical-example" id="toc-practical-example" class="nav-link" data-scroll-target="#practical-example">Practical Example</a>
   <ul class="collapse">
   <li><a href="#data-split-and-fit" id="toc-data-split-and-fit" class="nav-link" data-scroll-target="#data-split-and-fit">Data Split and Fit</a></li>
+  <li><a href="#out-of-sample-predictions" id="toc-out-of-sample-predictions" class="nav-link" data-scroll-target="#out-of-sample-predictions">Out-of-sample predictions</a></li>
+  <li><a href="#fine-tuning-parameters" id="toc-fine-tuning-parameters" class="nav-link" data-scroll-target="#fine-tuning-parameters">Fine-tuning parameters</a></li>
+  <li><a href="#visualising-our-model" id="toc-visualising-our-model" class="nav-link" data-scroll-target="#visualising-our-model">Visualising our model</a></li>
   </ul></li>
+  <li><a href="#readings" id="toc-readings" class="nav-link" data-scroll-target="#readings">Readings</a></li>
   </ul>
 </nav>
     </div>
@@ -288,6 +321,254 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>For this exercise, we will skip all the data pre-processing steps. At this point, we are all well acquainted with the Malawi dataset, and should be able to create our binary outcome, poor (or not), and clean the dataset in general. If you need to, you can always go back to the <a href="./classification.html">Logistic Classification tab</a> and repeat the data preparation process described there.</p>
 <section id="data-split-and-fit" class="level3">
 <h3 class="anchored" data-anchor-id="data-split-and-fit">Data Split and Fit</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>) <span class="co"># ensures reproducibility of our data split</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># data partitioning: train and test datasets</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>train_idx <span class="ot">&lt;-</span> <span class="fu">createDataPartition</span>(data_malawi<span class="sc">$</span>poor, <span class="at">p =</span> .<span class="dv">8</span>, <span class="at">list =</span> <span class="cn">FALSE</span>, <span class="at">times =</span> <span class="dv">1</span>) </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>Train_df <span class="ot">&lt;-</span> data_malawi[ train_idx,]</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>Test_df  <span class="ot">&lt;-</span> data_malawi[<span class="sc">-</span>train_idx,]</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># data fit: fit a random forest model</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># (be warned that this may take longer to run than previous models)</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>rf_train <span class="ot">&lt;-</span> <span class="fu">train</span>(poor <span class="sc">~</span> .,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> Train_df,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>                  <span class="at">method =</span> <span class="st">"ranger"</span> <span class="co"># estimates a Random Forest algorithm via the ranger pkg (you may need to install the ranger pkg)</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>                  )</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co"># First glimpse at our random forest model</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(rf_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Random Forest 
+
+9025 samples
+  29 predictor
+   2 classes: 'Y', 'N' 
+
+No pre-processing
+Resampling: Bootstrapped (25 reps) 
+Summary of sample sizes: 9025, 9025, 9025, 9025, 9025, 9025, ... 
+Resampling results across tuning parameters:
+
+  mtry  splitrule   Accuracy   Kappa    
+   2    gini        0.8108829  0.5557409
+   2    extratrees  0.7698647  0.4280448
+  16    gini        0.7999474  0.5472253
+  16    extratrees  0.8023850  0.5525424
+  30    gini        0.7946432  0.5359787
+  30    extratrees  0.7974024  0.5425408
+
+Tuning parameter 'min.node.size' was held constant at a value of 1
+Accuracy was used to select the optimal model using the largest value.
+The final values used for the model were mtry = 2, splitrule = gini
+ and min.node.size = 1.</code></pre>
+</div>
+</div>
+<p>If you read the final box of the print() output, you’ll notice that, given our input Y and X features, and no other information, the optimal random forest model, uses the following:</p>
+<ul>
+<li><p>mtry = 2: mtry is the number of variables to sample at random at each split. This is the number we feed to the recursive partitioning algorithm. At each split, the algorithm will search mtry (=2) variables (a completely different set from the previous split) chosen at random, and pick the best split point.</p></li>
+<li><p>splitrule = gini: the splitting rule/algorithm used. Gini, or the Gini Impurity is a probability that ranges from <span class="math inline">\(0\)</span> to <span class="math inline">\(1\)</span>. The lower the value, the more pure the node. Recall that a node that is <span class="math inline">\(100\%\)</span> pure includes only data from a single class (no noise!), and therefore the splitting stops.</p></li>
+<li><p>Accuracy (or <span class="math inline">\(1\)</span> - the error rate): at <span class="math inline">\(0.81\)</span>, it improves from our eager learner classification (logistic) approach by <span class="math inline">\(0.01\)</span> and it is highly accurate.</p></li>
+<li><p>Kappa (adjusted accuracy): at <span class="math inline">\(0.55\)</span>, it indicates that our random forest model (on the training data) seems to perform the same as out logistic model. To make a proper comparison, we need to look at the out-of-sample predictions evaluation statistics.</p></li>
+</ul>
+</section>
+<section id="out-of-sample-predictions" class="level3">
+<h3 class="anchored" data-anchor-id="out-of-sample-predictions">Out-of-sample predictions</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># make predictions using the trained model and the test dataset</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">12345</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>pr1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(rf_train, Test_df, <span class="at">type =</span> <span class="st">"raw"</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(pr1) <span class="co"># Yes and No output</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] Y Y Y Y Y Y
+Levels: Y N</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># evaluate the predictions using the ConfusionMatrix function from Caret pkg</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">confusionMatrix</span>(pr1, Test_df[[<span class="st">"poor"</span>]], <span class="at">positive =</span> <span class="st">"Y"</span>) <span class="co"># positive = "Y" indicates that our category of interest is Y (1)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confusion Matrix and Statistics
+
+          Reference
+Prediction    Y    N
+         Y 1344  324
+         N  122  465
+                                          
+               Accuracy : 0.8022          
+                 95% CI : (0.7852, 0.8185)
+    No Information Rate : 0.6501          
+    P-Value [Acc &gt; NIR] : &lt; 2.2e-16       
+                                          
+                  Kappa : 0.5379          
+                                          
+ Mcnemar's Test P-Value : &lt; 2.2e-16       
+                                          
+            Sensitivity : 0.9168          
+            Specificity : 0.5894          
+         Pos Pred Value : 0.8058          
+         Neg Pred Value : 0.7922          
+             Prevalence : 0.6501          
+         Detection Rate : 0.5960          
+   Detection Prevalence : 0.7397          
+      Balanced Accuracy : 0.7531          
+                                          
+       'Positive' Class : Y               
+                                          </code></pre>
+</div>
+</div>
+<p>Based on our out-of-sample predictions, the Random Forest algorithm seems to yield pretty similar accuracy in its predictions as the logistic classification algorithm. The performance metrics (accuracy, sensitivity, specificity, kappa) remain the same (as for most classification problems). If you want a refresher of what they mean and how to interpret them, go back one session for a more thorough explanation!</p>
+</section>
+<section id="fine-tuning-parameters" class="level3">
+<h3 class="anchored" data-anchor-id="fine-tuning-parameters">Fine-tuning parameters</h3>
+<p>We can try to improve our Random Forest model by fine-tuning two parameters: grid and cross-validation</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prepare the grid (create a larger random draw space)</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>tuneGrid <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">mtry =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>),</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>                      <span class="at">splitrule =</span> <span class="fu">c</span>(<span class="st">"gini"</span>, <span class="st">"extratrees"</span>),</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>                      <span class="at">min.node.size =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">5</span>)) </span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co"># prepare the folds</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>trControl <span class="ot">&lt;-</span> <span class="fu">trainControl</span>( <span class="at">method =</span> <span class="st">"cv"</span>,</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">number=</span><span class="dv">5</span>,</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">search =</span> <span class="st">'grid'</span>,</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">classProbs =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">savePredictions =</span> <span class="st">"final"</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>                           ) <span class="co"># 5-folds cross-validation </span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="co"># fine-tune the model with optimised paramters</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="co"># (again, be ready to wait a few minutes for this to run)</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>rf_train_tuned <span class="ot">&lt;-</span> <span class="fu">train</span>(poor <span class="sc">~</span> .,</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>                            <span class="at">data =</span> Train_df,</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>                            <span class="at">method =</span> <span class="st">"ranger"</span>,</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>                            <span class="at">tuneGrid =</span> tuneGrid, </span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>                            <span class="at">trControl =</span> trControl</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>                  )</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a><span class="co"># let's see how the fine-tuned model fared</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(rf_train_tuned)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Random Forest 
+
+9025 samples
+  29 predictor
+   2 classes: 'Y', 'N' 
+
+No pre-processing
+Resampling: Cross-Validated (5 fold) 
+Summary of sample sizes: 7219, 7220, 7220, 7221, 7220 
+Resampling results across tuning parameters:
+
+  mtry  splitrule   min.node.size  Accuracy   Kappa    
+  1     gini        1              0.7819382  0.4594359
+  1     gini        3              0.7822701  0.4593051
+  1     gini        5              0.7826031  0.4600870
+  1     extratrees  1              0.7404976  0.3310123
+  1     extratrees  3              0.7396100  0.3287570
+  1     extratrees  5              0.7404971  0.3308480
+  2     gini        1              0.8142918  0.5674387
+  2     gini        3              0.8134056  0.5653133
+  2     gini        5              0.8137385  0.5661639
+  2     extratrees  1              0.7828240  0.4695433
+  2     extratrees  3              0.7840429  0.4730871
+  2     extratrees  5              0.7830448  0.4705301
+  3     gini        1              0.8160649  0.5769315
+  3     gini        3              0.8144026  0.5730246
+  3     gini        5              0.8156218  0.5755611
+  3     extratrees  1              0.8089749  0.5519067
+  3     extratrees  3              0.8073122  0.5469591
+  3     extratrees  5              0.8070911  0.5471121
+  4     gini        1              0.8139609  0.5730598
+  4     gini        3              0.8157331  0.5778242
+  4     gini        5              0.8146244  0.5748192
+  4     extratrees  1              0.8115228  0.5636714
+  4     extratrees  3              0.8122979  0.5662566
+  4     extratrees  5              0.8131842  0.5681043
+
+Accuracy was used to select the optimal model using the largest value.
+The final values used for the model were mtry = 3, splitrule = gini
+ and min.node.size = 1.</code></pre>
+</div>
+</div>
+<p>Fine tuning parameters has not done much for our in-sample model. The chosen mtry value and splitting rule were the same. The only parameter where I see improvement is in the (training set) Kappa, from <span class="math inline">\(0.55\)</span> to <span class="math inline">\(0.56\)</span>. Will out of sample predictions improve?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># make predictions using the trained model and the test dataset</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">12345</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>pr2 <span class="ot">&lt;-</span> <span class="fu">predict</span>(rf_train_tuned, Test_df, <span class="at">type =</span> <span class="st">"raw"</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(pr2) <span class="co"># Yes and No output</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] Y Y Y Y Y Y
+Levels: Y N</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># evaluate the predictions using the ConfusionMatrix function from Caret pkg</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">confusionMatrix</span>(pr2, Test_df[[<span class="st">"poor"</span>]], <span class="at">positive =</span> <span class="st">"Y"</span>) <span class="co"># positive = "Y" indicates that our category of interest is Y (1)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confusion Matrix and Statistics
+
+          Reference
+Prediction    Y    N
+         Y 1316  291
+         N  150  498
+                                          
+               Accuracy : 0.8044          
+                 95% CI : (0.7875, 0.8206)
+    No Information Rate : 0.6501          
+    P-Value [Acc &gt; NIR] : &lt; 2.2e-16       
+                                          
+                  Kappa : 0.5516          
+                                          
+ Mcnemar's Test P-Value : 2.617e-11       
+                                          
+            Sensitivity : 0.8977          
+            Specificity : 0.6312          
+         Pos Pred Value : 0.8189          
+         Neg Pred Value : 0.7685          
+             Prevalence : 0.6501          
+         Detection Rate : 0.5836          
+   Detection Prevalence : 0.7126          
+      Balanced Accuracy : 0.7644          
+                                          
+       'Positive' Class : Y               
+                                          </code></pre>
+</div>
+</div>
+<p>Consistent with the improvements on the train set, the out-of-sample predictions also return a higher adjusted accurcacy (Kappa statistic), and improved specificity and sensitivity. Not by much (e.g.&nbsp;Kappa increase of <span class="math inline">\(0.01\)</span>), but we’ll take what we can get.</p>
+<p>These results also show that the biggest prediction improvements happen when we make big decisions - such as foregoing the variability of continuous outcomes in favour of classes. Exploring classification algorithms - in this case a logistic and a random forest model - was definitely worthwhile, but did not yield large returns on our predictive abilities.</p>
+</section>
+<section id="visualising-our-model" class="level3">
+<h3 class="anchored" data-anchor-id="visualising-our-model">Visualising our model</h3>
+<p>To close the chapter, let’s have a quick look at the sort of plots we can make with a Random Forest algorithm.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># we'll need to re-estimate the rf model using rpart</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>MyRandomForest <span class="ot">&lt;-</span> <span class="fu">rpart</span>(poor <span class="sc">~</span> ., <span class="at">data =</span> Train_df)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co"># visualise the decision tree (first of many in the forest)</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="fu">fancyRpartPlot</span>(MyRandomForest, <span class="at">palettes =</span> <span class="fu">c</span>(<span class="st">"Oranges"</span>,<span class="st">"Blues"</span>), <span class="at">main =</span> <span class="st">"Visualising nodes and splits"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="treebasedmodels_files/figure-html/visualizing_1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The fancy Rpart Plot returns the flow chart that we have now learned to call a decision tree. Recall that we have used different packages (and different specifications) for the Random Forest. So, the visualisation that we’re looking at now is not the exact replica of our preferred fine-tuned model. It is, nonetheless, a good way to help you understand how classifications and decisions are made with tree-based methods. If you’d like an in-depth explanation of the plot, you can visit the <a href="http://www.milbo.org/rpart-plot/prp.pdf">Rpart.plot pkg documentation</a>.</p>
+</section>
+</section>
+<section id="readings" class="level2">
+<h2 class="anchored" data-anchor-id="readings">Readings</h2>
+<p><em>Optional Readings</em></p>
+<ul>
+<li>Dietrich et al.&nbsp;(2022) - <a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0271373">Economic Development, weather shocks, and child marriage in South Asia: A machine learning approach.</a></li>
+</ul>
 <!--DISQUS COMMENTS SCRIPT-->
 <div id="disqus_thread">
 
@@ -310,7 +591,6 @@ Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">
 </noscript>
 
 
-</section>
 </section>
 
 <div class="footer">
