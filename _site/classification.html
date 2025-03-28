@@ -208,10 +208,6 @@ window.Quarto = {
     <a class="nav-link" href="./policyChallenge.html"> 
 <span class="menu-text">Collaborative Policy Challenge</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
-<span class="menu-text">About</span></a>
-  </li>  
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
@@ -285,9 +281,13 @@ window.Quarto = {
 <p>We will continue to work with the Malawi dataset, which can be downloaded in the (Prediction Policy Problems)[predictionpolicy.qmd] tab of this website.</p>
 <section id="preliminaries-working-directory-libraries-data-upload" class="level3">
 <h3 class="anchored" data-anchor-id="preliminaries-working-directory-libraries-data-upload">1. Preliminaries: working directory, libraries, data upload</h3>
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="language">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Python</a></li></ul>
+<div class="tab-content" data-group="language">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>()) <span class="co"># this line cleans your Global Environment.</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#setwd("/Users/michellegonzalez/Documents/GitHub/Machine-Learning-for-Public-Policy") # set your working directory</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">"/Users/lucas/Documents/UNU-CDO/courses/ml4p/ml4p-website-v2"</span>) <span class="co"># set your working directory</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Do not forget to install a package with the install.packages() function if it's the first time you use it!</span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages(caTools, plotROC) # these guys are new for us </span></span>
@@ -302,6 +302,41 @@ window.Quarto = {
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>data_malawi <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/malawi.csv"</span>) <span class="co"># the file is directly read from the working directory/folder previously set</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#==== Python version: 3.10.12 ====#</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Opening libraries</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sklearn <span class="im">as</span> sk <span class="co"># our trusted Machine Learning library</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split <span class="co"># split the dataset into train and test</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> cross_val_score <span class="co"># to obtain the cross-validation score</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> cross_validate <span class="co"># to perform cross-validation</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression <span class="co"># computation of logistic model for classification</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> confusion_matrix <span class="co"># returns a confusion matrix</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> roc_curve, roc_auc_score, auc <span class="co"># roc area under the curve</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score <span class="co"># performance metric for classification models</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> classification_report <span class="co"># general report for classification model</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Non-ML libraries</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random <span class="co"># for random state </span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> csv <span class="co"># a library to read and write csv files </span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np <span class="co"># a library for handling </span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd <span class="co"># a library to help us easily navigate and manipulate dataframes</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns <span class="co"># a data visualisation library</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt <span class="co"># a data visualisation library</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.api <span class="im">as</span> sm <span class="co"># computation of linear and logistic regressions</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Uploading data</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>malawi <span class="op">=</span> pd.read_csv(<span class="st">'/Users/lucas/Documents/UNU-CDO/courses/ml4p/ml4p-website-v2/data/malawi.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
 </section>
 <section id="data-pre-processing" class="level3">
 <h3 class="anchored" data-anchor-id="data-pre-processing">2. Data pre-processing</h3>
@@ -309,15 +344,19 @@ window.Quarto = {
 <section id="feature-selection-subsetting-the-dataset" class="level4">
 <h4 class="anchored" data-anchor-id="feature-selection-subsetting-the-dataset">Feature selection: subsetting the dataset</h4>
 <p>The variable that we’re interested in recovering is <strong>lnzline</strong>. The code below reproduces the dataframe subsetting from our previous exercise. Except, this time we will NOT delete de static vector lnzline.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="language">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Python</a></li></ul>
+<div class="tab-content" data-group="language">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># object:vector that contains the names of the variables that we want to get rid of (notice this time lnzline is still there)</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>cols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"ea"</span>, <span class="st">"EA"</span>, <span class="st">"psu"</span>,<span class="st">"hhwght"</span>, <span class="st">"strataid"</span>, <span class="st">"case_id"</span>,<span class="st">"eatype"</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># subset of the data_malawi object:datframe</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>data_malawi <span class="ot">&lt;-</span> data_malawi[,<span class="sc">-</span><span class="fu">which</span>(<span class="fu">colnames</span>(data_malawi) <span class="sc">%in%</span> cols)] <span class="co"># the minus sign indicates deletion of cols</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(data_malawi) <span class="co"># print the names of the remaining vectors in our dataframe</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># object:vector that contains the names of the variables that we want to get rid of (notice this time lnzline is still there)</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>cols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"ea"</span>, <span class="st">"EA"</span>, <span class="st">"psu"</span>,<span class="st">"hhwght"</span>, <span class="st">"strataid"</span>, <span class="st">"case_id"</span>,<span class="st">"eatype"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># subset of the data_malawi object:datframe</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>data_malawi <span class="ot">&lt;-</span> data_malawi[,<span class="sc">-</span><span class="fu">which</span>(<span class="fu">colnames</span>(data_malawi) <span class="sc">%in%</span> cols)] <span class="co"># the minus sign indicates deletion of cols</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(data_malawi) <span class="co"># print the names of the remaining vectors in our dataframe</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1] "lnexp_pc_month" "hhsize"         "hhsize2"        "agehead"       
  [5] "agehead2"       "north"          "central"        "rural"         
@@ -329,87 +368,301 @@ window.Quarto = {
 [29] "clock"          "region"         "lnzline"       </code></pre>
 </div>
 </div>
-<p>At this point, we still need to do two more pre-processing steps: correctly define the vector/variable class in the dataframe, and create the binary outcome/target variable. We will repeat the class-transformation code chunk below so that you have all that is needed in one section. However, we won’t spend time explaining it in detail as that was done in the previous session.</p>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># transform all binary/categorical data into factor class</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>min_count <span class="ot">&lt;-</span> <span class="dv">3</span> <span class="co"># vector: 3 categories is our max number of categories found</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># store boolean (true/false) if the number of unique values is lower or equal to the min_count vector</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>n_distinct2 <span class="ot">&lt;-</span> <span class="fu">apply</span>(data_malawi, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="fu">length</span>(<span class="fu">unique</span>(x))) <span class="sc">&lt;=</span> min_count</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># select the identified categorical variables and transform them into factors</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>data_malawi[n_distinct2] <span class="ot">&lt;-</span> <span class="fu">lapply</span>(data_malawi[n_distinct2], factor) </span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co"># recall poverty line contains 1 unique value (it is static), let's transform the variable into numeric again</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>data_malawi<span class="sc">$</span>lnzline <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">as.character</span>(data_malawi<span class="sc">$</span>lnzline))</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co"># you can use ``skim(data_malawi)'' to check that the dataframe is in working order</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Retrieve information from the poverty line static vector:</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>malawi[<span class="st">'lnzline'</span>].describe()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>count    1.128000e+04
+mean     7.555000e+00
+std      1.776436e-15
+min      7.555000e+00
+25%      7.555000e+00
+50%      7.555000e+00
+75%      7.555000e+00
+max      7.555000e+00
+Name: lnzline, dtype: float64</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's store this in an object outside of the dataframe and get rid of it in the dataframe</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Static variables have zero-variance, and we already know zero-variance predictors are troublesome..</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>lnzline <span class="op">=</span> malawi[<span class="st">'lnzline'</span>]</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Instead of deleting case_id, we will set it as an index (we did not do this last time!). </span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co"># This is essentially using the case_id variable as row names (and won't be included in your ML model)</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>malawi <span class="op">=</span> malawi.set_index(<span class="st">'case_id'</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co"># sanity check: notice that case_id is there, but doesn't have a corresponding column (it is now only considered a row name)</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>malawi.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             lnexp_pc_month  hhsize  hhsize2  ...       psu  strataid  lnzline
+case_id                                       ...                             
+10101002025        6.900896       7       49  ...  10101002         1    7.555
+10101002051        7.064378       3        9  ...  10101002         1    7.555
+10101002072        6.823851       6       36  ...  10101002         1    7.555
+10101002079        6.894722       6       36  ...  10101002         1    7.555
+10101002095        6.465989       6       36  ...  10101002         1    7.555
+
+[5 rows x 37 columns]</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># deleting variables from pandas dataframe </span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>cols2delete <span class="op">=</span> [<span class="st">'ea'</span>, <span class="st">'EA'</span>, <span class="st">'hhwght'</span>, <span class="st">'psu'</span>, <span class="st">'strataid'</span>, <span class="st">'lnzline'</span>, <span class="st">'eatype'</span>, <span class="st">'region'</span>]</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>malawi <span class="op">=</span> malawi.drop(cols2delete,axis<span class="op">=</span><span class="dv">1</span>) <span class="co"># axis=0 means delete rows and axis=1 means delete columns</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># check if we have deleted the columns: we originally had 37 variables, we now should have 29</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(malawi.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(11280, 29)</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>At this point, we still need to do two more pre-processing steps: correctly define the vector/variable class in the dataframe, and create the binary outcome/target variable. We will repeat the class-transformation code chunk below so that you have all that is needed in one section. However, we won’t spend time explaining it in detail as that was done in the previous session.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="language">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">Python</a></li></ul>
+<div class="tab-content" data-group="language">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># transform all binary/categorical data into factor class</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>min_count <span class="ot">&lt;-</span> <span class="dv">3</span> <span class="co"># vector: 3 categories is our max number of categories found</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co"># store boolean (true/false) if the number of unique values is lower or equal to the min_count vector</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>n_distinct2 <span class="ot">&lt;-</span> <span class="fu">apply</span>(data_malawi, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="fu">length</span>(<span class="fu">unique</span>(x))) <span class="sc">&lt;=</span> min_count</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co"># select the identified categorical variables and transform them into factors</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>data_malawi[n_distinct2] <span class="ot">&lt;-</span> <span class="fu">lapply</span>(data_malawi[n_distinct2], factor) </span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co"># recall poverty line contains 1 unique value (it is static), let's transform the variable into numeric again</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>data_malawi<span class="sc">$</span>lnzline <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">as.character</span>(data_malawi<span class="sc">$</span>lnzline))</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="co"># you can use ``skim(data_malawi)'' to check that the dataframe is in working order</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co">#==== Correctly identify each vector type: ====#</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># for-loop that iterates over variables in dataframe, if they have 2 unique values, transform vector into categorical</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> column <span class="kw">in</span> malawi:</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> malawi[column].nunique() <span class="op">==</span> <span class="dv">2</span>:</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>        malawi[column] <span class="op">=</span> pd.Categorical(malawi[column])</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>        </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
 </div>
 </section>
 <section id="feature-creation-create-a-binary-variable" class="level4">
 <h4 class="anchored" data-anchor-id="feature-creation-create-a-binary-variable">Feature creation: create a binary variable</h4>
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="language">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">Python</a></li></ul>
+<div class="tab-content" data-group="language">
+<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># print summary statistics of target variable</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(data_malawi<span class="sc">$</span>lnexp_pc_month)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># print summary statistics of target variable</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(data_malawi<span class="sc">$</span>lnexp_pc_month)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
   4.777   6.893   7.305   7.359   7.758  11.064 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># if the log of per capita expenditure is below the estimated poverty line, classify individual as poor, else classify individual as not poor. Store as factor (default with text is class character)</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>data_malawi<span class="sc">$</span>poor <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(<span class="fu">ifelse</span>(data_malawi<span class="sc">$</span>lnexp_pc_month<span class="sc">&lt;=</span> data_malawi<span class="sc">$</span>lnzline,<span class="st">"Y"</span>,<span class="st">"N"</span>)) <span class="co"># Y(es) N(o)</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># make sure that the factor target variable has poor = Y as reference category (this step is important when running the logistic regression)</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>data_malawi<span class="sc">$</span>poor <span class="ot">&lt;-</span> <span class="fu">relevel</span>(data_malawi<span class="sc">$</span>poor, <span class="at">ref=</span><span class="st">"Y"</span>) <span class="co"># make Y reference category</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co"># print a proportions table to get a first impression of the state of poverty in Malawi</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="fu">prop.table</span>(<span class="fu">table</span>(data_malawi<span class="sc">$</span>poor))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># if the log of per capita expenditure is below the estimated poverty line, classify individual as poor, else classify individual as not poor. Store as factor (default with text is class character)</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>data_malawi<span class="sc">$</span>poor <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(<span class="fu">ifelse</span>(data_malawi<span class="sc">$</span>lnexp_pc_month<span class="sc">&lt;=</span> data_malawi<span class="sc">$</span>lnzline,<span class="st">"Y"</span>,<span class="st">"N"</span>)) <span class="co"># Y(es) N(o)</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># make sure that the factor target variable has poor = Y as reference category (this step is important when running the logistic regression)</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>data_malawi<span class="sc">$</span>poor <span class="ot">&lt;-</span> <span class="fu">relevel</span>(data_malawi<span class="sc">$</span>poor, <span class="at">ref=</span><span class="st">"Y"</span>) <span class="co"># make Y reference category</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co"># print a proportions table to get a first impression of the state of poverty in Malawi</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="fu">prop.table</span>(<span class="fu">table</span>(data_malawi<span class="sc">$</span>poor))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
    Y    N 
 0.65 0.35 </code></pre>
 </div>
 </div>
-<p>According to our sample, about 65% of Malawians are considered poor. This number is not unreasonable. According to The World Bank’s <a href="https://databankfiles.worldbank.org/public/ddpext_download/poverty/987B9C90-CB9F-4D93-AE8C-750588BF00QA/current/Global_POVEQ_MWI.pdf">Country Report</a> for Malawi, ca. <span class="math inline">\(70\%\)</span> of the population lives with under <span class="math inline">\(\$2.15\)</span> a day, and the poverty rate is estimated to be at <span class="math inline">\(50\%\)</span>. About half of their population is labelled as poor. These estimates were done with <span class="math inline">\(2019\)</span> data (so, a bit more recent than our sample).</p>
+</div>
+<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Final data pre-processing: delete static variable (poverty line)</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># and along with it: remove the continuous target (as it perfectly predicts the binary target) </span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">which</span>(<span class="fu">colnames</span>(data_malawi)<span class="sc">==</span><span class="st">"lnzline"</span>) <span class="co"># returns column number 31</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co">#==== Correctly identify each vector type: ====#</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># for-loop that iterates over variables in dataframe, if they have 2 unique values, transform vector into categorical</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> column <span class="kw">in</span> malawi:</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> malawi[column].nunique() <span class="op">==</span> <span class="dv">2</span>:</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>        malawi[column] <span class="op">=</span> pd.Categorical(malawi[column])</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="co">#==== Create a binary target variable: ====#</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="co"># print summary statistics of target variable</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>malawi[<span class="st">'lnexp_pc_month'</span>].describe()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>count    11280.000000
+mean         7.358888
+std          0.675346
+min          4.776855
+25%          6.892941
+50%          7.305191
+75%          7.757587
+max         11.063562
+Name: lnexp_pc_month, dtype: float64</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># if the log of per capita expenditure is below the estimated poverty line, classify individual as poor, else classify individual as not poor. Store as factor (default with text is class character)</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(lnzline[<span class="dv">0</span>]) <span class="co"># copy the static number 7.555 to use as threshold / we're printing the first row of a static vector --- i.e. all rows contain the same number</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>7.5549998</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># use numPy to create a binary vector (notice we have rounded up the threshold)</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>malawi[<span class="st">'Poor'</span>] <span class="op">=</span> np.where(malawi[<span class="st">'lnexp_pc_month'</span>] <span class="op">&lt;=</span> <span class="fl">7.555</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># sanity check</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>malawi[<span class="st">'Poor'</span>].describe() <span class="co"># returns binary [0,1] float vector, let's turn this into a categorical vector</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>count    11280.000000
+mean         0.650000
+std          0.476991
+min          0.000000
+25%          0.000000
+50%          1.000000
+75%          1.000000
+max          1.000000
+Name: Poor, dtype: float64</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>malawi[<span class="st">'Poor'</span>] <span class="op">=</span> pd.Categorical(malawi[<span class="st">'Poor'</span>]) <span class="co"># use malawi['Poor'].info() if you want to see the transformation</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co"># alternatively...</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co"># malawi['Poor'] = (malawi['lnexp_pc_month'] &lt;= 7.555).astype(bool) # anlso numpy, but directly specifying boolean type (true (poor) /false (not poor))</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print a proportions table to get a first impression of the state of poverty in Malawi</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>malawi[<span class="st">'Poor'</span>].value_counts(normalize<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Poor
+1    0.65
+0    0.35
+Name: proportion, dtype: float64</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>According to our sample, about 65% of Malawians are considered poor. This number is not unreasonable. According to The World Bank’s <a href="https://databankfiles.worldbank.org/public/ddpext_download/poverty/987B9C90-CB9F-4D93-AE8C-750588BF00QA/current/Global_POVEQ_MWI.pdf">Country Report</a> for Malawi, ca. <span class="math inline">\(70\%\)</span> of the population lives with under <span class="math inline">\(\$2.15\)</span> a day, and the poverty rate is estimated to be at <span class="math inline">\(50\%\)</span>. About half of their population is labelled as poor. These estimates were done with <span class="math inline">\(2019\)</span> data (so, a bit more recent than our sample).</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="language">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">Python</a></li></ul>
+<div class="tab-content" data-group="language">
+<div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Final data pre-processing: delete static variable (poverty line)</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="co"># and along with it: remove the continuous target (as it perfectly predicts the binary target) </span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="fu">which</span>(<span class="fu">colnames</span>(data_malawi)<span class="sc">==</span><span class="st">"lnzline"</span>) <span class="co"># returns column number 31</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 31</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">which</span>(<span class="fu">colnames</span>(data_malawi)<span class="sc">==</span><span class="st">"lnexp_pc_month"</span>) <span class="co"># returns column number 1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">which</span>(<span class="fu">colnames</span>(data_malawi)<span class="sc">==</span><span class="st">"lnexp_pc_month"</span>) <span class="co"># returns column number 1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>data_malawi <span class="ot">&lt;-</span> data_malawi[,<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">31</span>)] <span class="co"># delete columns no. 1 and 31 from the dataset</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>data_malawi <span class="ot">&lt;-</span> data_malawi[,<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">31</span>)] <span class="co"># delete columns no. 1 and 31 from the dataset</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Final data pre-processing: remove the continuous target (as it perfectly predicts the binary target in a non-informative way)</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>cont_target  <span class="op">=</span> [<span class="st">'lnexp_pc_month'</span>]</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>malawi <span class="op">=</span> malawi.drop(cont_target , axis<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
 </div>
 </section>
 </section>
 <section id="model-validation" class="level3">
 <h3 class="anchored" data-anchor-id="model-validation">3. Model Validation</h3>
 <p>Let’s use a simple 80:20 split of our data. We will use the caret package again.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="language">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">Python</a></li></ul>
+<div class="tab-content" data-group="language">
+<div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>) <span class="co"># ensures reproducibility of our data split</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># data partitioning: train and test datasets</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>train_idx <span class="ot">&lt;-</span> <span class="fu">createDataPartition</span>(data_malawi<span class="sc">$</span>poor, <span class="at">p =</span> .<span class="dv">8</span>, <span class="at">list =</span> <span class="cn">FALSE</span>, <span class="at">times =</span> <span class="dv">1</span>) </span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>Train_df <span class="ot">&lt;-</span> data_malawi[ train_idx,]</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>Test_df  <span class="ot">&lt;-</span> data_malawi[<span class="sc">-</span>train_idx,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>) <span class="co"># ensures reproducibility of our data split</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="co"># data partitioning: train and test datasets</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>train_idx <span class="ot">&lt;-</span> <span class="fu">createDataPartition</span>(data_malawi<span class="sc">$</span>poor, <span class="at">p =</span> .<span class="dv">8</span>, <span class="at">list =</span> <span class="cn">FALSE</span>, <span class="at">times =</span> <span class="dv">1</span>) </span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>Train_df <span class="ot">&lt;-</span> data_malawi[ train_idx,]</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>Test_df  <span class="ot">&lt;-</span> data_malawi[<span class="sc">-</span>train_idx,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># First, recall the df structure</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>malawi.info() <span class="co"># returns the column number, e.g. hhsize = column number 0, hhsize2 = 1... etc.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;class 'pandas.core.frame.DataFrame'&gt;
+Index: 11280 entries, 10101002025 to 31202086374
+Data columns (total 29 columns):
+ #   Column        Non-Null Count  Dtype   
+---  ------        --------------  -----   
+ 0   hhsize        11280 non-null  int64   
+ 1   hhsize2       11280 non-null  int64   
+ 2   agehead       11280 non-null  int64   
+ 3   agehead2      11280 non-null  int64   
+ 4   north         11280 non-null  category
+ 5   central       11280 non-null  category
+ 6   rural         11280 non-null  category
+ 7   nevermarried  11280 non-null  category
+ 8   sharenoedu    11280 non-null  float64 
+ 9   shareread     11280 non-null  float64 
+ 10  nrooms        11280 non-null  int64   
+ 11  floor_cement  11280 non-null  category
+ 12  electricity   11280 non-null  category
+ 13  flushtoilet   11280 non-null  category
+ 14  soap          11280 non-null  category
+ 15  bed           11280 non-null  category
+ 16  bike          11280 non-null  category
+ 17  musicplayer   11280 non-null  category
+ 18  coffeetable   11280 non-null  category
+ 19  iron          11280 non-null  category
+ 20  dimbagarden   11280 non-null  category
+ 21  goats         11280 non-null  category
+ 22  dependratio   11280 non-null  float64 
+ 23  hfem          11280 non-null  category
+ 24  grassroof     11280 non-null  category
+ 25  mortarpestle  11280 non-null  category
+ 26  table         11280 non-null  category
+ 27  clock         11280 non-null  category
+ 28  Poor          11280 non-null  category
+dtypes: category(21), float64(3), int64(5)
+memory usage: 1.0 MB</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Then, split!</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> malawi.iloc[:, <span class="dv">0</span>:<span class="dv">27</span>] <span class="co"># x is a matrix containing all variables except the last one, which conveniently is our binary target variable</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> malawi.iloc[:, <span class="dv">28</span>] <span class="co"># y is a vector containing our target variable </span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">12345</span>) <span class="co"># random_state is for reproducibility purposes</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
 </div>
 <p>Now, let’s fit a logistic model:</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="language">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false">Python</a></li></ul>
+<div class="tab-content" data-group="language">
+<div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: create trainControl object</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>TrControl <span class="ot">&lt;-</span> <span class="fu">trainControl</span>(</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">"cv"</span>,</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">number =</span> <span class="dv">5</span>,</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">summaryFunction =</span> twoClassSummary,</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">classProbs =</span> <span class="cn">TRUE</span>, <span class="co"># IMPORTANT!</span></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">verboseIter =</span> <span class="cn">FALSE</span></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: create trainControl object</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>TrControl <span class="ot">&lt;-</span> <span class="fu">trainControl</span>(</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">"cv"</span>,</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">number =</span> <span class="dv">5</span>,</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">summaryFunction =</span> twoClassSummary,</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">classProbs =</span> <span class="cn">TRUE</span>, <span class="co"># IMPORTANT!</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">verboseIter =</span> <span class="cn">FALSE</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We’re going to pass the TrControl object onto the caret model estimation to ask for the following:</p>
 <ul>
@@ -419,16 +672,16 @@ window.Quarto = {
 <li>veboseIter = TRUE shows you the output for each iteration (but we don’t want to display all the details atm).</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 2: train the model.</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">12345</span>)</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">train</span>(</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    poor <span class="sc">~</span> ., </span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    Train_df, </span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">"glm"</span>,</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">family=</span><span class="st">"binomial"</span>,</span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">trControl =</span> TrControl,</span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">preProcess=</span><span class="fu">c</span>(<span class="st">"center"</span>, <span class="st">"scale"</span>)</span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 2: train the model.</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">12345</span>)</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">train</span>(</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    poor <span class="sc">~</span> ., </span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>    Train_df, </span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">"glm"</span>,</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">family=</span><span class="st">"binomial"</span>,</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">trControl =</span> TrControl,</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">preProcess=</span><span class="fu">c</span>(<span class="st">"center"</span>, <span class="st">"scale"</span>)</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning in train.default(x, y, weights = w, ...): The metric "Accuracy" was not
 in the result set. ROC will be used instead.</code></pre>
@@ -436,8 +689,8 @@ in the result set. ROC will be used instead.</code></pre>
 </div>
 <p>Notice the warning. If we want to report the “Accuracy” metric, we should remove the twoClassSummary parameter specification in the TrControl object.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># print the model's performance metrics</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(m) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># print the model's performance metrics</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(m) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Generalized Linear Model 
 
@@ -467,11 +720,11 @@ Resampling results:
 <h4 class="anchored" data-anchor-id="out-of-sample-performance">Out-of-sample performance</h4>
 <p>Notice that we have used cross-validation in our training dataset. In theory, our performance metrics have been validated in 5 different folds. To a certain extent, that means that our performance metrics above did reflect the model’s ability to extrapolate. Nevertheless, we will still see how our trained model performs in our test dataset. You can think of this step as predicting on a sixth fold. We know that the performance of a logistic classification model on the train set is relatively good, is it the same for the test dataset?</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># First, use the logistic classification model (trained on the Train_df) to make predictions on the test dataset:</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">12345</span>)</span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>pr1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(m, Test_df, <span class="at">type =</span> <span class="st">"raw"</span>)</span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(pr1) <span class="co"># Yes and No output</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># First, use the logistic classification model (trained on the Train_df) to make predictions on the test dataset:</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">12345</span>)</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>pr1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(m, Test_df, <span class="at">type =</span> <span class="st">"raw"</span>)</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(pr1) <span class="co"># Yes and No output</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] N Y Y Y Y Y
 Levels: Y N</code></pre>
@@ -479,9 +732,9 @@ Levels: Y N</code></pre>
 </div>
 <p>We have specified the type of prediction we want: raw. This will return the predicted classification (<span class="math inline">\(0\)</span> or <span class="math inline">\(1\)</span>) as opposed to the individual’s probability of falling into the selected category <span class="math inline">\(1\)</span> (or the estimated probability of being poor). There is a rule of thumb that says you will be categorised as poor (or any chosen category) if your estimated probability is &gt;= to <span class="math inline">\(0.5\)</span>. With this information, we can create a Confusion Matrix which will be accompanied by performance metrics.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Next, we call the caret package's confusionMatrix function, and select the two elements to be contrasted:</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co"># the predicted classification vector, and the actual observed vector from the test dataframe. </span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">confusionMatrix</span>(pr1, Test_df[[<span class="st">"poor"</span>]], <span class="at">positive =</span> <span class="st">"Y"</span>) <span class="co"># positive = "Y" indicates that our category of interest is Y (1)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Next, we call the caret package's confusionMatrix function, and select the two elements to be contrasted:</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="co"># the predicted classification vector, and the actual observed vector from the test dataframe. </span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="fu">confusionMatrix</span>(pr1, Test_df[[<span class="st">"poor"</span>]], <span class="at">positive =</span> <span class="st">"Y"</span>) <span class="co"># positive = "Y" indicates that our category of interest is Y (1)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Confusion Matrix and Statistics
 
@@ -526,19 +779,93 @@ Prediction    Y    N
 </ul>
 <p>At <span class="math inline">\(0.55\)</span>, our classification model performs moderately well. Finally, Sensitivity and Specificity scores on the test dataset are very close to the ones obtained from the train dataset. This is a good sign for the out-of-sample stability of our model.</p>
 </section>
+</div>
+<div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co">#==== Create a Logistic Regression Object and Fit the Model ====#</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="co"># We are going to add a random_state (reproducibility) and increase the number of iterations from the default (100) to 1000</span></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="co"># We have also stated that we want to fit the intercept and have no penalty (remember the penalisation parameter from the Lasso regression? sklearn has the option of including it in the Logistic Regression as well). </span></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> LogisticRegression(random_state<span class="op">=</span><span class="dv">12345</span>, max_iter<span class="op">=</span><span class="dv">1000</span>, fit_intercept <span class="op">=</span> <span class="va">True</span>, penalty </span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a><span class="op">=</span> <span class="va">None</span>).fit(X_train, y_train) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>/Users/lucas/Library/r-miniconda-arm64/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:465: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(</code></pre>
+</div>
+</div>
+<p>We have successfully fit a logistic classification model. A limitation of the sklearn python library is that we cannot easily access the output of the model. Instead, we immediately estimate performance metrics based on the testing dataset and evaluate accordingly. If you’d like to see the output of your model, I recommend re-estimating it using the statsmodel.api library. I won’t do it here, since we’re not particularly interested in interpreting coefficients, but on the overall predictive ability of our model. I also trust that you can do that yourself, given that we have an example of how to use the statsmodel.api library in the Linear Regression tutorial.</p>
+<p>Also, please note that the Logistic Regression algorithm included in the sklearn library has more capabilities than a simple logistic regression function. You might have already seen that given that we had to set a number of parameters before fitting the model. If you’d like to know more about what is included, you can read the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html">documentation</a> for it. Otherwise, what we have set above can be taken as a standard model fit.</p>
+<section id="predictions-and-performance" class="level4">
+<h4 class="anchored" data-anchor-id="predictions-and-performance">Predictions and Performance</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Make out-of-sample predictions on the test dataset</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> m.predict(X_test)</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Report the performance of your model using chosen metrics</span></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Accuracy:"</span>, accuracy_score(y_test, y_pred))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Accuracy: 0.8120567375886525</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Confusion Matrix:</span><span class="ch">\n</span><span class="st">"</span>, confusion_matrix(y_test, y_pred))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confusion Matrix:
+ [[ 528  280]
+ [ 144 1304]]</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Classification Report:</span><span class="ch">\n</span><span class="st">"</span>, classification_report(y_test, y_pred))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Classification Report:
+               precision    recall  f1-score   support
+
+           0       0.79      0.65      0.71       808
+           1       0.82      0.90      0.86      1448
+
+    accuracy                           0.81      2256
+   macro avg       0.80      0.78      0.79      2256
+weighted avg       0.81      0.81      0.81      2256</code></pre>
+</div>
+</div>
+<ul>
+<li><p>The Accuracy of our model (or <span class="math inline">\(1\)</span> - the error rate) is <span class="math inline">\(0.8\)</span>. The high score indicates that our classification algorithm is highly accurate.</p></li>
+<li><p>We have printed a confusion matrix.If you need a reminder of what each cell in the 2x2 matrix represents, recall that the structure of our target variable is [<span class="math inline">\(0[N],1[Y]\)</span>]. Therefore, the first cell would be the intersection of Predicted <span class="math inline">\(0\)</span> vs Observed <span class="math inline">\(0\)</span> (or True Negative) = <span class="math inline">\(530\)</span>, the fourth cell would be the intersection of Predicted <span class="math inline">\(1\)</span> vs Observed <span class="math inline">\(1\)</span> (or True Positive) = <span class="math inline">\(1306\)</span>. These guys are the predictions that have hit the mark! On the other hand, the second cell would be the intersection of Predicted <span class="math inline">\(0\)</span> vs Observed <span class="math inline">\(1\)</span> (or False Positive) = <span class="math inline">\(278\)</span>, and the third cell Predicted <span class="math inline">\(0\)</span> vs Observed <span class="math inline">\(1\)</span> (or False Negative) = <span class="math inline">\(142\)</span>. These were incorrect predictions. We use these counts (true positives, true negatives, false positives, false negatives) to estimate performance metrics, including Accuracy = <span class="math inline">\(\frac{tp + tn}{tp + tn + fp + fn}\)</span> for instance, Precision, Recall, and the F1-score.</p></li>
+<li><p>The Classification Report includes three more performance metrics (explained in the video-lecture by Stephan), besides the Accuracy of our model.</p>
+<ul>
+<li>Precision: it is the percentage of the overall predictions that are correct. Defined as the ratio of true positives to the sum of a true positive and false positive. Based on the output above, we are more <em>precise</em> in our predictions of the poor (<span class="math inline">\(1\)</span>) than our predictions of the non-poor (<span class="math inline">\(0\)</span>). Both values are high, close to 1, and indicate good performance.</li>
+<li>Recall: it is a measure of the proportion of the positive values that are correctly identified. Again, we can correctly identify a larger percentage of <span class="math inline">\(1\)</span> instances (<span class="math inline">\(90\%\)</span> of the time!) than <span class="math inline">\(0\)</span> instances (only <span class="math inline">\(66\%\)</span>).</li>
+<li>F1-score: it is the percentage of positive predictions that are correct. It is not, however, the same as recall. The F1-score is a weighted mean that can be used to compare different classification models (and not necessarily a measure of global accuracy). It is computed from the two previous measures: 2 * (Recall * Precision) / (Recall + Precision). Results are similar as above, better prediction ability for the poor than the non-poor.</li>
+</ul></li>
+</ul>
+<p>Overall, we seem to be good at predicting <span class="math inline">\(1\)</span> instances, but less so for <span class="math inline">\(0\)</span> instances. We are indeed interested in predicting who is poor (<span class="math inline">\(1\)</span>) so perhaps given the scores (all very close to <span class="math inline">\(1\)</span>) of all our metrics, we are doing well. However, if we are unable to perform equally well for both categories, then we may still misallocate public resources.</p>
+</section>
+</div>
+</div>
+</div>
 </section>
 <section id="model-visualisation" class="level3">
 <h3 class="anchored" data-anchor-id="model-visualisation">Model Visualisation</h3>
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="language">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false">Python</a></li></ul>
+<div class="tab-content" data-group="language">
+<div id="tabset-8-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
 <p>We can visualise the performance of our classification model in various ways. For now, we’ll focus on a simple ROC AUC.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ROC AUC: Area Under the Curve</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co"># colAUC function from the caTools library</span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co"># transform predicted values and observed values into class numeric (needed for the colAUC function)</span></span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>pr_numeric <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">as.factor</span>(pr1))</span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="co"># sanity check:</span></span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">cbind</span>(pr_numeric, pr1)) <span class="co"># the numeric values of both vectors seem to be the same. </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ROC AUC: Area Under the Curve</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="co"># colAUC function from the caTools library</span></span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a><span class="co"># transform predicted values and observed values into class numeric (needed for the colAUC function)</span></span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>pr_numeric <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">as.factor</span>(pr1))</span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a><span class="co"># sanity check:</span></span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">cbind</span>(pr_numeric, pr1)) <span class="co"># the numeric values of both vectors seem to be the same. </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     pr_numeric pr1
 [1,]          2   2
@@ -548,9 +875,9 @@ Prediction    Y    N
 [5,]          1   1
 [6,]          1   1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>poor_numeric <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">as.factor</span>(Test_df<span class="sc">$</span>poor))</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co"># sanity check</span></span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">cbind</span>(poor_numeric,Test_df<span class="sc">$</span>poor)) <span class="co"># all good </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>poor_numeric <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">as.factor</span>(Test_df<span class="sc">$</span>poor))</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="co"># sanity check</span></span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">cbind</span>(poor_numeric,Test_df<span class="sc">$</span>poor)) <span class="co"># all good </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     poor_numeric  
 [1,]            1 1
@@ -560,12 +887,12 @@ Prediction    Y    N
 [5,]            1 1
 [6,]            1 1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot the ROC area under the curve</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">colAUC</span>(pr_numeric, poor_numeric, <span class="at">plotROC =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot the ROC area under the curve</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="fu">colAUC</span>(pr_numeric, poor_numeric, <span class="at">plotROC =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="classification_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="classification_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -573,17 +900,17 @@ Prediction    Y    N
 <pre><code>             [,1]
 1 vs. 2 0.7702343</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># We can also plot the ROC AUC with ggplot</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="co"># First, we create a dataframe containing the observed and the predicted values (in numeric form)</span></span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>roc_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Observed =</span> poor_numeric, <span class="at">Predicted =</span> pr_numeric)</span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Second, we add the geom_roc() layer to a ggplot object</span></span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>roc_gg <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(roc_df, <span class="fu">aes</span> (<span class="at">d =</span> Observed, <span class="at">m =</span> Predicted)) <span class="sc">+</span> </span>
-<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>            <span class="fu">geom_roc</span>(<span class="at">labels =</span> <span class="cn">FALSE</span>, <span class="at">color=</span><span class="st">'orange'</span>) <span class="sc">+</span></span>
-<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>            <span class="fu">style_roc</span>(<span class="at">theme =</span> theme_bw, <span class="at">guide =</span> <span class="cn">TRUE</span>) <span class="co"># guide=TRUE adds a diagonal guideline, style_roc() adds minor grid lines, and optionally direct labels to ggplot objects containing a geom_roc layer</span></span>
-<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="fu">direct_label</span>(roc_gg, <span class="at">nudge_y =</span> <span class="fl">0.2</span>) <span class="co"># direct_label tells you what the plotted line represents, nudge_y option places the label (you can play around with that number to see where different values place the label)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># We can also plot the ROC AUC with ggplot</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="co"># First, we create a dataframe containing the observed and the predicted values (in numeric form)</span></span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>roc_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Observed =</span> poor_numeric, <span class="at">Predicted =</span> pr_numeric)</span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Second, we add the geom_roc() layer to a ggplot object</span></span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a>roc_gg <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(roc_df, <span class="fu">aes</span> (<span class="at">d =</span> Observed, <span class="at">m =</span> Predicted)) <span class="sc">+</span> </span>
+<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a>            <span class="fu">geom_roc</span>(<span class="at">labels =</span> <span class="cn">FALSE</span>, <span class="at">color=</span><span class="st">'orange'</span>) <span class="sc">+</span></span>
+<span id="cb58-9"><a href="#cb58-9" aria-hidden="true" tabindex="-1"></a>            <span class="fu">style_roc</span>(<span class="at">theme =</span> theme_bw, <span class="at">guide =</span> <span class="cn">TRUE</span>) <span class="co"># guide=TRUE adds a diagonal guideline, style_roc() adds minor grid lines, and optionally direct labels to ggplot objects containing a geom_roc layer</span></span>
+<span id="cb58-10"><a href="#cb58-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-11"><a href="#cb58-11" aria-hidden="true" tabindex="-1"></a><span class="fu">direct_label</span>(roc_gg, <span class="at">nudge_y =</span> <span class="fl">0.2</span>) <span class="co"># direct_label tells you what the plotted line represents, nudge_y option places the label (you can play around with that number to see where different values place the label)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning in verify_d(data$d): D not labeled 0/1, assuming 1 = 0 and 2 = 1!
 Warning in verify_d(data$d): D not labeled 0/1, assuming 1 = 0 and 2 = 1!</code></pre>
@@ -591,12 +918,47 @@ Warning in verify_d(data$d): D not labeled 0/1, assuming 1 = 0 and 2 = 1!</code>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="classification_files/figure-html/unnamed-chunk-12-2.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="classification_files/figure-html/unnamed-chunk-21-2.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>Notice the warning on the ggplot2 ROC AUC plot. The assumption that they are making is correct, so we do not need to do anything else at this moment. You can check this by contrasting the values of the labelled vs.&nbsp;the numeric vectors (use the head() function).</p>
+</div>
+<div id="tabset-8-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
+<p>To conclude our evaluation, let’s compute the ROC AUC:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute the ROC curve</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>fpr, tpr, thresholds <span class="op">=</span> roc_curve(y_test, y_pred)</span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute the ROC AUC score</span></span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>roc_auc <span class="op">=</span> auc(fpr, tpr)</span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'ROC Area Under the Curve score: </span><span class="sc">{</span>roc_auc<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>ROC Area Under the Curve score: 0.7770089163612495</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the ROC curve! :) (it's nice to get a visual)</span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">6</span>))</span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>plt.plot(fpr, tpr, color<span class="op">=</span><span class="st">'orange'</span>, lw<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span><span class="ss">f'ROC Curve (AUC = </span><span class="sc">{</span>roc_auc<span class="sc">:.1f}</span><span class="ss">)'</span>)</span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">0</span>, <span class="dv">1</span>], [<span class="dv">0</span>, <span class="dv">1</span>], color<span class="op">=</span><span class="st">'darkblue'</span>, lw<span class="op">=</span><span class="dv">2</span>, linestyle<span class="op">=</span><span class="st">'--'</span>)</span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'False Positive Rate (FPR)'</span>)</span>
+<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'True Positive Rate (TPR)'</span>)</span>
+<span id="cb62-8"><a href="#cb62-8" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'ROC Curve'</span>)</span>
+<span id="cb62-9"><a href="#cb62-9" aria-hidden="true" tabindex="-1"></a>plt.legend(loc<span class="op">=</span><span class="st">'lower right'</span>)</span>
+<span id="cb62-10"><a href="#cb62-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="classification_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The ROC (Receiver Operating Characteristic) is a probability curve plotted with the True Positive Rate (y-axis) against the False Positive Rate (x-axis); you can think of it as plotting the tradeoff between maximising the true positive rate and minimising the false positive rate. The preferred area under the curve is <span class="math inline">\(1\)</span>. Our estimated <span class="math inline">\(0.8\)</span> (rounded up) indicates that a logistic classification is a good model for our data (close to <span class="math inline">\(1\)</span>).</p>
+</div>
+</div>
+</div>
 </section>
 </section>
 <section id="conclusion" class="level2">

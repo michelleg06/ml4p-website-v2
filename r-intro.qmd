@@ -8,10 +8,11 @@ For the purposes of this course, we will be working with the integrated developm
 ## Features of R
 
 R is a statistical programming language. As such, it understands and categorises its input as **data types**:
-    
+
 *(Note that R is not too strict about data types, but you need to be able to identify them to use them in math operations.)*
-    
+
 Examples of data types:
+
 ```{r}
 # Numeric (or double): 
 numeric_vector <- c(1, 1.0, 65.5)
@@ -54,6 +55,7 @@ print(y)
 ```
 
 *Matrices*: they have rows and columns containing elements of the same type.
+
 ```{r}
 #Matrices: 
 A <- matrix(1:9, ncol=3, nrow=3, byrow= TRUE)
@@ -61,6 +63,7 @@ print(A)
 ```
 
 *Arrays*: A vector is a one-dimensional array. A matrix is a two-dimensional array. In short, an array is a collection of data of the same type.
+
 ```{r}
 #Arrays:
 n <- 5*5*3 
@@ -68,15 +71,15 @@ B <- array(1:n, c(5,5,3))
 print(B)
 ```
 
+*Lists*: a list is a one-dimensional, heterogeneous data structure. Basically, it is an object that stores all object types.
 
-*Lists*: a list is a one-dimensional, heterogeneous data structure. Basically, it is an object that stores all object types. 
 ```{r}
 my_list <- list(42, "The answer is", TRUE)
 print(my_list)
 ```
 
+*Data frames*: a data frame is a list of column vectors. Each vector must contain the same data type, but the different vectors can store different data types. Note, however, that in a data frame all vectors must have the same length.
 
-*Data frames*: a data frame is a list of  column vectors. Each vector must contain the same data type, but the different vectors can store different data types. Note, however, that in a data frame all vectors must have the same length. 
 ```{r}
 a <- 1L:5L
 class(a)
@@ -90,7 +93,8 @@ df <- as.data.frame(cbind(a,b,c))
 str(df)
 ```
 
-Notice that even though vector *a* in dataframe *df* is of class integer, vector *b* is of class character, and vector ^*c* is of class boolean/logical, when binding them together they have been coerced into factors. You'll have to manually transform them into their original class to be able to use them in math operations.
+Notice that even though vector *a* in dataframe *df* is of class integer, vector *b* is of class character, and vector \^*c* is of class boolean/logical, when binding them together they have been coerced into factors. You'll have to manually transform them into their original class to be able to use them in math operations.
+
 ```{r}
 df$a <- as.integer(df$a)
 df$b <- as.character(df$b)
@@ -103,13 +107,14 @@ From here on, we will write an R script together, and learn some basic commands 
 
 ## 1. Setting up the Rstudio working environment
 
-
 It is good practice to make sure that the working environment is empty/clean before you start running any code.
+
 ```{r}
 # The r base command rm() stands for remove
 rm(list = ls()) # this line indicates R to clear absolutely everything from the environment
 
 ```
+
 Once that has been taken care of, you need to load the libraries you will be working with. While r base has a large number of commands to explore, wrangle, and manipulate data, the **open source** feature of R means that people all over the world are constantly working on packages and functions to make our lives easier. These can be used by calling the libraries in which they are stored:
 
 ```{r}
@@ -118,7 +123,9 @@ library(tidyverse)
 library(data.table)
 
 ```
+
 If you're working with an imported data set, you should probably set up your working directory as well:
+
 ```{r}
 setwd("/Users/lucas/Documents/UNU-CDO/courses/ml4p/ml4p-website-v2")
 ```
@@ -127,8 +134,7 @@ From the working directory, you can call documents: .csv files, .xls and .xlsx, 
 
 ## 2. R base commands for data set exploration
 
-
-Now that we have all the basic stuff set up, let's start with some basic r base commands that will allow us to explore our data. To do so, we will work with the toy data set *mtcars* that can be called from R without the need to upload data or call data from a website. 
+Now that we have all the basic stuff set up, let's start with some basic r base commands that will allow us to explore our data. To do so, we will work with the toy data set *mtcars* that can be called from R without the need to upload data or call data from a website.
 
 ```{r}
 
@@ -149,26 +155,26 @@ prop.table(table(mtcars$am)) #categorical data in a table: proportions
 ## 3. Objects and assignments
 
 Another important feature of the R programming language is that it is *object oriented*. For the most part, for every function used, there must be an object assigned! Let's see an example of object assignment with a bivariate linear regression model:
-    
+
 ```{r}
 ols_model <- lm(mpg ~ wt, data = mtcars) # lm stands for linear model. In parenthesis, dependent variable first, independent variable after the squiggly.
 summary(ols_model)
 ```
+
 If you would like to see the results from your regression, you do not need to run it again. Instead, you print the object (ols_model) you have assigned for the linear model function. Similarly, you can call information stored in that object at any time, for example, the estimated coefficients:
-    
+
 ```{r}
 ols_model$coefficients
 ```
+
 *If you want to read more about object oriented programming in R, check out [Hadley Whickam's site](https://adv-r.hadley.nz/oo.html)*
-    
-    
+
 ## 4. Plotting with and without special libraries
-    
-    
+
 We had previously loaded a couple of libraries. Why did we do that if we've only used r base commands so far? We're going to exemplify the power of libraries by drawing plots using r base, and ggplot2. Ggplot2 is the plotting function from the Tidyverse, and arguably one of the best data visualisation tools across programming languages. If you'd like to read more about why that is the case, check out the [Grammar of Graphics](https://ggplot2.tidyverse.org/) site.
 
-
 Plotting with R base
+
 ```{r}
 plot(mtcars$wt, mtcars$mpg, pch = 14, col = "grey", main ="Mileage and Weight")
 abline(ols_model, col ="blue") # Note that to add a line of best fit, we had to call our previously estimate linear model, stored in the ols_model object-
@@ -178,6 +184,7 @@ p_rbase <- recordPlot()
 ```
 
 Plotting with ggplot2, using the grammar of graphics
+
 ```{r}
 # Steps in the Grammar of Graphics
 # 1: linking plot to dataset, 
@@ -192,9 +199,8 @@ p_ggplot <- ggplot(data = mtcars, aes(x = wt, y = mpg, col=am )) + #the color is
 print(p_ggplot)
 ```
 
-
 Thanks to the grammar of graphics, we can continue to edit the plot after we have finished it. Perhaps we've come up with ideas to make it more stylish? Or helpful? Let's see an example:
-    
+
 ```{r}
 p_ggplot <- p_ggplot + theme(legend.position = "right") # I am saving it with the same name again, but I could easily choose another name and keep two versions of the plot. 
 print(p_ggplot) # the legend we just added is NOT helpful. Why is that? 
@@ -243,14 +249,12 @@ print(p)
 
 ```
 
-
 ## 5. R base capabilities
 
-
 We've had some fun, now let's go back to some r base basics. These are going to be relevant for making algorithms of your own:
-    
+
 ### Arithmetic and other operations
-    
+
 ```{r}
 
 2+2 #addition
@@ -262,7 +266,7 @@ We've had some fun, now let's go back to some r base basics. These are going to 
 ```
 
 ### Logical operators
-    
+
 ```{r}
 34 < 35 #smaller than
 34 < 35 | 33 #smaller than OR than (returns true if it is smaller than any one of them)
@@ -274,9 +278,8 @@ We've had some fun, now let's go back to some r base basics. These are going to 
 34==34 #evaluation
 ```
 
-
 ### Indexing
-    
+
 The tidyverse comes with a cool Starwars dataframe (or tibble, in the tidyverse language). As long as you have loaded the tidyverse library, you can use it.
 
 ```{r}
@@ -296,6 +299,7 @@ We are now reaching the end of this brief introduction to R and Rstudio. We will
 ## 6. Reserved names
 
 ### 1. Not-observed data
+
 ```{r}
 # 1.1 NaN: results that cannot be reasonably defined
 h <- 0/0
@@ -312,8 +316,12 @@ mean(as.integer(starwars$height), na.rm = TRUE) # read as integer, ignore NAs :)
 # missing values (NA) are regarded by R as non comparables, even to themselves, so if you ever encounter a missing values in a vector, make sure tto explicitly tell the function you are using what to do with them.
 ```
 
-### 2. if, else, ifelse, function, for, print, length (etc...)*
-    These words are reserved for control flow and looping. 
+### 2. if, else, ifelse, function, for, print, length (etc...)\*
+
+```         
+These words are reserved for control flow and looping. 
+```
+
 ```{r}
 # if else statements
 meanheight <- 174.358
@@ -346,13 +354,14 @@ print(starwars[c("name", "height_judge", "height")])
 
 You can download the R script by clicking on the button below.
 
-<a class="btn btn-primary" download href="scripts/Download Intro to R script (.R).R">
-    Download Intro to R script (.R)
-</a>
+<a class="btn btn-primary" download href="scripts/Download Intro to R script (.R).R"> Download Intro to R script (.R) </a>
 
 <!--DISQUS COMMENTS SCRIPT-->
 
-<div id="disqus_thread"></div>
+::: {#disqus_thread}
+:::
+
+```{=html}
 <script>
     var disqus_config = function () {
     this.page.identifier = "predictionpolicy.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
@@ -366,4 +375,6 @@ You can download the R script by clicking on the button below.
     (d.head || d.body).appendChild(s);
     })();
 </script>
+```
+
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
