@@ -21,7 +21,6 @@ website:
         - fairml.qmd
         - neuralNets.qmd
       - policyChallenge.qmd
-      - about.qmd
     tools:
       - icon: github
         href: "https://github.com/michelleg06/Machine-Learning-for-Public-Policy"

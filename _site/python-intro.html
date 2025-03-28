@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -145,10 +179,6 @@ ul.task-list li input[type="checkbox"] {
     <a class="nav-link" href="./policyChallenge.html"> 
 <span class="menu-text">Collaborative Policy Challenge</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
-<span class="menu-text">About</span></a>
-  </li>  
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
@@ -193,7 +223,476 @@ ul.task-list li input[type="checkbox"] {
 <p>A <strong>Python Virtual Environment</strong>, also referred to as venv(s), is there to help us decouple and isolate package installs and manage them, independently from pkgs that are provided by the system or used by other projects. Although not strictly necessary, it is a good practice that will save us a few headaches in the future.</p>
 <p>To create a virtual environment, once you’ve opened a new blank project in VSC, click on shift + cmd + P (or F1) to open the Command Palette (it should display from the top of VSC). Type “Python” and select create python terminal. In the terminal, type `` python -m venv venv ’’ and that’s it! You’ll notice the appearance of a venv folder in your dedicated project folder.</p>
 <p>Now, you’ll need to install and load the libraries you’ll need for your project. To install them, use the python terminal you have opened. It should be displayed in the bottom of the working environment. Use the following (which should work with both Windows and Macbook, although Mac users can also use the general brew installer):</p>
-<p>`` pip install pkg_name ’’</p>
+<pre><code>pip install pkg_name 
+</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Now, we can load the libraries</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np <span class="co"># can be used to perform a wide variety of mathematical operations on arrays.</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd <span class="co"># mainly used for data analysis and associated manipulation of tabular data in DataFrames</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib <span class="im">as</span> mpl <span class="co"># comprehensive library for creating static, animated, and interactive visualizations in Python</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sklearn <span class="im">as</span> sk <span class="co">#  implement machine learning models and statistical modelling.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>With some basic libraries open, let’s start with a brief introduction to Python programming. Like R, it is object oriented programming. But we call its elements differently. Python uses the following list of elements:</p>
+<ul>
+<li>literals, variables, operators, delimiters, keywords, comments</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Assigning VARIABLES with LITERALS</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>an_integer <span class="op">=</span> <span class="dv">4</span> <span class="co"># integer</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>a_float <span class="op">=</span> <span class="fl">4.5</span> <span class="co"># numeric/float</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>a_boolean <span class="op">=</span> <span class="va">False</span> <span class="co"># boolean, true or false</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>a_string <span class="op">=</span> <span class="st">"Number of literals:"</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(a_string , an_integer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Number of literals: 4</code></pre>
+</div>
+</div>
+<p>You’ll notice that what we call an object in R, is a variable in Python. Likewise, an element in R is now a literal in Python. We’ll stop with the comparisons and proceed to work with Python language for now.</p>
+<ul>
+<li><p>In Python, the data type is derived from the literal and does not have to be described explicitly.</p></li>
+<li><p>You can overwrite a variable (i.e.&nbsp;an object) with new information.</p></li>
+</ul>
+<p>e.g.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>an_integer <span class="op">=</span> <span class="dv">7</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(an_integer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>7</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">2</span>,<span class="dv">2</span>,<span class="dv">41</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[-2.  -1.9 -1.8 -1.7 -1.6 -1.5 -1.4 -1.3 -1.2 -1.1 -1.  -0.9 -0.8 -0.7
+ -0.6 -0.5 -0.4 -0.3 -0.2 -0.1  0.   0.1  0.2  0.3  0.4  0.5  0.6  0.7
+  0.8  0.9  1.   1.1  1.2  1.3  1.4  1.5  1.6  1.7  1.8  1.9  2. ]</code></pre>
+</div>
+</div>
+<p>If you’re working with a VSC script, you’ll want to select a snippet of the script and use shift + enter to only run that snippet (and not the whole code chunk).</p>
+<p>Some basics:</p>
+<p><strong>Arithmetic operators</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="dv">5</span> <span class="op">+</span> <span class="dv">1</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>6</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="dv">5</span><span class="op">*</span><span class="dv">3</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>15</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="dv">6</span> <span class="op">==</span> <span class="dv">100</span> <span class="co"># returns FALSE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>False</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="dv">6</span> <span class="op">!=</span> <span class="dv">100</span> <span class="co"># returns TRUE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>True</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="dv">20</span> <span class="op">/</span> <span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>10.0</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="dv">2</span> <span class="op">**</span> <span class="dv">3</span> <span class="co"># 2 to the power of 3, ** is used for exponentiation</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>8</code></pre>
+</div>
+</div>
+<p><strong>Keywords and comments</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>a_var <span class="op">=</span> <span class="st">"This is a variable, which contains a string."</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co">#and this is a comment about the string variable</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(a_var)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="co"># lists: they are ordered arrays of elements, accesible via an index, e.g.</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>many_strings <span class="op">=</span> [<span class="st">"Tolkien"</span>, <span class="st">"Orwell"</span>, <span class="st">"Austen"</span>]</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>many_strings[<span class="dv">0</span>] <span class="co"># returns first element of list</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="co"># note that python starts counting from zero</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>many_strings.append(<span class="st">"Mephistopheles"</span>)</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(many_strings) <span class="co"># we have succesfully appended an element to our list</span></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>many_strings.insert(<span class="dv">2</span>,<span class="st">"Shrek"</span>) <span class="co"># Insert element Shrek in position 3 of list (0,1,2)</span></span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(many_strings)</span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a><span class="co"># finally, sort the list... </span></span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>many_strings.sort()</span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(many_strings)</span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a><span class="co"># python orders alphabetically :) </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s use a toy dataset from the sklearn package to practice some basic estimations.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a> <span class="co"># import sklearn dataset</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_diabetes</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a> <span class="co"># load the  dataset, assign it to an object</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>diabetes <span class="op">=</span> load_diabetes()</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(diabetes.DESCR) <span class="co"># DESCR is a description option from sklearn library. Be mindful of the Note!</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>.. _diabetes_dataset:
+
+Diabetes dataset
+----------------
+
+Ten baseline variables, age, sex, body mass index, average blood
+pressure, and six blood serum measurements were obtained for each of n =
+442 diabetes patients, as well as the response of interest, a
+quantitative measure of disease progression one year after baseline.
+
+**Data Set Characteristics:**
+
+:Number of Instances: 442
+
+:Number of Attributes: First 10 columns are numeric predictive values
+
+:Target: Column 11 is a quantitative measure of disease progression one year after baseline
+
+:Attribute Information:
+    - age     age in years
+    - sex
+    - bmi     body mass index
+    - bp      average blood pressure
+    - s1      tc, total serum cholesterol
+    - s2      ldl, low-density lipoproteins
+    - s3      hdl, high-density lipoproteins
+    - s4      tch, total cholesterol / HDL
+    - s5      ltg, possibly log of serum triglycerides level
+    - s6      glu, blood sugar level
+
+Note: Each of these 10 feature variables have been mean centered and scaled by the standard deviation times the square root of `n_samples` (i.e. the sum of squares of each column totals 1).
+
+Source URL:
+https://www4.stat.ncsu.edu/~boos/var.select/diabetes.html
+
+For more information see:
+Bradley Efron, Trevor Hastie, Iain Johnstone and Robert Tibshirani (2004) "Least Angle Regression," Annals of Statistics (with discussion), 407-499.
+(https://web.stanford.edu/~hastie/Papers/LARS/LeastAngle_2002.pdf)</code></pre>
+</div>
+</div>
+<p>Whilst there are many things you can do directly with the sklearn package options, the pandas library is the best for dataframe manipulation.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. convert the dataframe object into a pandas dataframe object</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>pandas_diabetes <span class="op">=</span> pd.DataFrame(diabetes.data, columns<span class="op">=</span>diabetes.feature_names)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co"># now we can use the handy describe() and info() options from pandas</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>pandas_diabetes.describe() <span class="co"># returns descriptive statistics of variables in dataframe (df)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                age           sex  ...            s5            s6
+count  4.420000e+02  4.420000e+02  ...  4.420000e+02  4.420000e+02
+mean  -2.511817e-19  1.230790e-17  ...  9.293722e-17  1.130318e-17
+std    4.761905e-02  4.761905e-02  ...  4.761905e-02  4.761905e-02
+min   -1.072256e-01 -4.464164e-02  ... -1.260971e-01 -1.377672e-01
+25%   -3.729927e-02 -4.464164e-02  ... -3.324559e-02 -3.317903e-02
+50%    5.383060e-03 -4.464164e-02  ... -1.947171e-03 -1.077698e-03
+75%    3.807591e-02  5.068012e-02  ...  3.243232e-02  2.791705e-02
+max    1.107267e-01  5.068012e-02  ...  1.335973e-01  1.356118e-01
+
+[8 rows x 10 columns]</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>pandas_diabetes.info() <span class="co"># returns basic information about observations and variable names/types</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;class 'pandas.core.frame.DataFrame'&gt;
+RangeIndex: 442 entries, 0 to 441
+Data columns (total 10 columns):
+ #   Column  Non-Null Count  Dtype  
+---  ------  --------------  -----  
+ 0   age     442 non-null    float64
+ 1   sex     442 non-null    float64
+ 2   bmi     442 non-null    float64
+ 3   bp      442 non-null    float64
+ 4   s1      442 non-null    float64
+ 5   s2      442 non-null    float64
+ 6   s3      442 non-null    float64
+ 7   s4      442 non-null    float64
+ 8   s5      442 non-null    float64
+ 9   s6      442 non-null    float64
+dtypes: float64(10)
+memory usage: 34.7 KB</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(pandas_diabetes) <span class="co"># returns the length of the object (aka the number of observations in df)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>442</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>pandas_diabetes.head() <span class="co"># print the first 4 observations of the variables (glimpse of your df)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        age       sex       bmi  ...        s4        s5        s6
+0  0.038076  0.050680  0.061696  ... -0.002592  0.019907 -0.017646
+1 -0.001882 -0.044642 -0.051474  ... -0.039493 -0.068332 -0.092204
+2  0.085299  0.050680  0.044451  ... -0.002592  0.002861 -0.025930
+3 -0.089063 -0.044642 -0.011595  ...  0.034309  0.022688 -0.009362
+4  0.005383 -0.044642 -0.036385  ... -0.002592 -0.031988 -0.046641
+
+[5 rows x 10 columns]</code></pre>
+</div>
+</div>
+<p>If you’re working with VSC and you’d like to get a nice display of your data:</p>
+<p>install the pkg ‘tabulate’ (pip install tabulate) using the terminal. You may have to open a new bash terminal (that is not using the Python REPL) to install packages. If that is the case (i.e.&nbsp;you could not pip install in the terminal you are using), you can ‘split’ the terminal using the interface split prompt.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># this prints the dataframe nicely (but remember to only print the head/first observations, otherwise you display a large table!)</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(pandas_diabetes.head().to_markdown())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>|    |         age |        sex |        bmi |          bp |          s1 |         s2 |          s3 |          s4 |          s5 |          s6 |
+|---:|------------:|-----------:|-----------:|------------:|------------:|-----------:|------------:|------------:|------------:|------------:|
+|  0 |  0.0380759  |  0.0506801 |  0.0616962 |  0.0218724  | -0.0442235  | -0.0348208 | -0.0434008  | -0.00259226 |  0.0199075  | -0.0176461  |
+|  1 | -0.00188202 | -0.0446416 | -0.0514741 | -0.0263275  | -0.00844872 | -0.0191633 |  0.0744116  | -0.0394934  | -0.0683315  | -0.092204   |
+|  2 |  0.0852989  |  0.0506801 |  0.0444512 | -0.00567042 | -0.0455995  | -0.0341945 | -0.0323559  | -0.00259226 |  0.00286131 | -0.0259303  |
+|  3 | -0.0890629  | -0.0446416 | -0.011595  | -0.0366561  |  0.0121906  |  0.0249906 | -0.0360376  |  0.0343089  |  0.0226877  | -0.00936191 |
+|  4 |  0.00538306 | -0.0446416 | -0.0363847 |  0.0218724  |  0.00393485 |  0.0155961 |  0.00814208 | -0.00259226 | -0.0319876  | -0.0466409  |</code></pre>
+</div>
+</div>
+<p>Some basic operations and estimation of a linear model:</p>
+<p><em>Indexig with pandas is done using the .iloc[] call. </em>To estimate a linear model (OLS), you’ll need to split your data into a dependent Y and independent X variables.</p>
+<p>Luckily for us, because the diabetes toy dataframe is from the sklearn library, you can use the target and data functions. For the same reason, we will use the diabetes dataset and not the pandas-converted dataset.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>pandas_diabetes.iloc[:,<span class="dv">1</span>] <span class="co"># print first column: Name: sex, Length: 442, dtype: float64</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>0      0.050680
+1     -0.044642
+2      0.050680
+3     -0.044642
+4     -0.044642
+         ...   
+437    0.050680
+438    0.050680
+439    0.050680
+440   -0.044642
+441   -0.044642
+Name: sex, Length: 442, dtype: float64</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>pandas_diabetes.iloc[:,<span class="dv">1</span>].mean() <span class="co"># get the mean of the first column: 1.2307902309192911e-17</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>np.float64(1.2307902309192911e-17)</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Linear Model (OLS), split data into dep Y and indep X variables</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>Y <span class="op">=</span> diabetes.target <span class="co"># define targer/ Y var</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> diabetes.data <span class="co"># all remaining variables in the dataset are now X covariates</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(Y.shape, X.shape) <span class="co"># y is one column with 442 observations, X is 10 columns with 442 observations</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(442,) (442, 10)</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(Y) <span class="co"># prints all the vaues of Y</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[151.  75. 141. 206. 135.  97. 138.  63. 110. 310. 101.  69. 179. 185.
+ 118. 171. 166. 144.  97. 168.  68.  49.  68. 245. 184. 202. 137.  85.
+ 131. 283. 129.  59. 341.  87.  65. 102. 265. 276. 252.  90. 100.  55.
+  61.  92. 259.  53. 190. 142.  75. 142. 155. 225.  59. 104. 182. 128.
+  52.  37. 170. 170.  61. 144.  52. 128.  71. 163. 150.  97. 160. 178.
+  48. 270. 202. 111.  85.  42. 170. 200. 252. 113. 143.  51.  52. 210.
+  65. 141.  55. 134.  42. 111.  98. 164.  48.  96.  90. 162. 150. 279.
+  92.  83. 128. 102. 302. 198.  95.  53. 134. 144. 232.  81. 104.  59.
+ 246. 297. 258. 229. 275. 281. 179. 200. 200. 173. 180.  84. 121. 161.
+  99. 109. 115. 268. 274. 158. 107.  83. 103. 272.  85. 280. 336. 281.
+ 118. 317. 235.  60. 174. 259. 178. 128.  96. 126. 288.  88. 292.  71.
+ 197. 186.  25.  84.  96. 195.  53. 217. 172. 131. 214.  59.  70. 220.
+ 268. 152.  47.  74. 295. 101. 151. 127. 237. 225.  81. 151. 107.  64.
+ 138. 185. 265. 101. 137. 143. 141.  79. 292. 178.  91. 116.  86. 122.
+  72. 129. 142.  90. 158.  39. 196. 222. 277.  99. 196. 202. 155.  77.
+ 191.  70.  73.  49.  65. 263. 248. 296. 214. 185.  78.  93. 252. 150.
+  77. 208.  77. 108. 160.  53. 220. 154. 259.  90. 246. 124.  67.  72.
+ 257. 262. 275. 177.  71.  47. 187. 125.  78.  51. 258. 215. 303. 243.
+  91. 150. 310. 153. 346.  63.  89.  50.  39. 103. 308. 116. 145.  74.
+  45. 115. 264.  87. 202. 127. 182. 241.  66.  94. 283.  64. 102. 200.
+ 265.  94. 230. 181. 156. 233.  60. 219.  80.  68. 332. 248.  84. 200.
+  55.  85.  89.  31. 129.  83. 275.  65. 198. 236. 253. 124.  44. 172.
+ 114. 142. 109. 180. 144. 163. 147.  97. 220. 190. 109. 191. 122. 230.
+ 242. 248. 249. 192. 131. 237.  78. 135. 244. 199. 270. 164.  72.  96.
+ 306.  91. 214.  95. 216. 263. 178. 113. 200. 139. 139.  88. 148.  88.
+ 243.  71.  77. 109. 272.  60.  54. 221.  90. 311. 281. 182. 321.  58.
+ 262. 206. 233. 242. 123. 167.  63. 197.  71. 168. 140. 217. 121. 235.
+ 245.  40.  52. 104. 132.  88.  69. 219.  72. 201. 110.  51. 277.  63.
+ 118.  69. 273. 258.  43. 198. 242. 232. 175.  93. 168. 275. 293. 281.
+  72. 140. 189. 181. 209. 136. 261. 113. 131. 174. 257.  55.  84.  42.
+ 146. 212. 233.  91. 111. 152. 120.  67. 310.  94. 183.  66. 173.  72.
+  49.  64.  48. 178. 104. 132. 220.  57.]</code></pre>
+</div>
+</div>
+<p>To estimate a linear model, we’ll need t load the function from the sklearn library.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LinearRegression</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>lm <span class="op">=</span> LinearRegression(fit_intercept<span class="op">=</span><span class="va">True</span>).fit(X, Y)</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="co">#print model coefficients using pandas</span></span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(lm.coef_) <span class="co"># displayed in the order of the column names</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[ -10.0098663  -239.81564367  519.84592005  324.3846455  -792.17563855
+  476.73902101  101.04326794  177.06323767  751.27369956   67.62669218]</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(lm.intercept_) <span class="co"># model intercept = 152.133</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>152.13348416289597</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># in a nicer way</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>column_names <span class="op">=</span> pandas_diabetes.columns <span class="co"># to retrieve column names we should use the pandas dataset</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>coefficients <span class="op">=</span> pd.concat([pd.DataFrame(column_names),pd.DataFrame(np.transpose(lm.coef_))], axis <span class="op">=</span> <span class="dv">1</span>)</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(coefficients) <span class="co"># displays variable name and it's estimated coefficient. </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     0           0
+0  age  -10.009866
+1  sex -239.815644
+2  bmi  519.845920
+3   bp  324.384646
+4   s1 -792.175639
+5   s2  476.739021
+6   s3  101.043268
+7   s4  177.063238
+8   s5  751.273700
+9   s6   67.626692</code></pre>
+</div>
+</div>
+<p>The sklearn library will be our trusted Machine Learning ally. However, for general statistical analysis and easier to interpret output, there are other libraries. E.g.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># an ever more intuitive output would look like this -&gt;</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="co"># remember to pip install the libraries before importing them! And to do so in a different terminal (open a new bash terminal)</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.api <span class="im">as</span> sm</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> stats</span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>constant <span class="op">=</span> sm.add_constant(X) <span class="co"># create a new X (covariate) object that includes all our variables and allow for this object to also display an estimated constant</span></span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>est <span class="op">=</span> sm.OLS(Y, constant) <span class="co"># estimate a linear regression model with dep Y and indep Xs (now constant)</span></span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>lm_2 <span class="op">=</span> est.fit() <span class="co"># create an object that contains all the models' parameters</span></span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(lm_2.summary()) <span class="co"># print linear model parameters</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                      y   R-squared:                       0.518
+Model:                            OLS   Adj. R-squared:                  0.507
+Method:                 Least Squares   F-statistic:                     46.27
+Date:                Fri, 28 Mar 2025   Prob (F-statistic):           3.83e-62
+Time:                        13:36:42   Log-Likelihood:                -2386.0
+No. Observations:                 442   AIC:                             4794.
+Df Residuals:                     431   BIC:                             4839.
+Df Model:                          10                                         
+Covariance Type:            nonrobust                                         
+==============================================================================
+                 coef    std err          t      P&gt;|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const        152.1335      2.576     59.061      0.000     147.071     157.196
+x1           -10.0099     59.749     -0.168      0.867    -127.446     107.426
+x2          -239.8156     61.222     -3.917      0.000    -360.147    -119.484
+x3           519.8459     66.533      7.813      0.000     389.076     650.616
+x4           324.3846     65.422      4.958      0.000     195.799     452.970
+x5          -792.1756    416.680     -1.901      0.058   -1611.153      26.802
+x6           476.7390    339.030      1.406      0.160    -189.620    1143.098
+x7           101.0433    212.531      0.475      0.635    -316.684     518.770
+x8           177.0632    161.476      1.097      0.273    -140.315     494.441
+x9           751.2737    171.900      4.370      0.000     413.407    1089.140
+x10           67.6267     65.984      1.025      0.306     -62.064     197.318
+==============================================================================
+Omnibus:                        1.506   Durbin-Watson:                   2.029
+Prob(Omnibus):                  0.471   Jarque-Bera (JB):                1.404
+Skew:                           0.017   Prob(JB):                        0.496
+Kurtosis:                       2.726   Cond. No.                         227.
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.</code></pre>
+</div>
+</div>
+<p>This displayed output contains all the information we may need to interpret the suitability of our linear model.</p>
+<p>We’re at the end of this brief intro to Python. Notice that there’s a forward structure throughout. We create an object X, which we define to be of class, say, pandas. It’s class will let us use that class/library’s functions by calling them after a dot: X.summary() will display a summary of the X object. ** Visualisation with matplotlib **</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>pandas_diabetes.head() <span class="co"># to remember our variables</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        age       sex       bmi  ...        s4        s5        s6
+0  0.038076  0.050680  0.061696  ... -0.002592  0.019907 -0.017646
+1 -0.001882 -0.044642 -0.051474  ... -0.039493 -0.068332 -0.092204
+2  0.085299  0.050680  0.044451  ... -0.002592  0.002861 -0.025930
+3 -0.089063 -0.044642 -0.011595  ...  0.034309  0.022688 -0.009362
+4  0.005383 -0.044642 -0.036385  ... -0.002592 -0.031988 -0.046641
+
+[5 rows x 10 columns]</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>bmi <span class="op">=</span> pandas_diabetes.iloc[:,<span class="dv">2</span>] <span class="co"># select and store bmi variable</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>age <span class="op">=</span> pandas_diabetes.iloc[:,<span class="dv">0</span>] <span class="co"># select and store age variable</span></span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>plt.hist(bmi)</span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>plt.show() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="python-intro_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>plt.clf()</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>plt.scatter(age,bmi) <span class="co"># order is x,y</span></span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="python-intro_files/figure-html/unnamed-chunk-14-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># let's add some elements#add line of best fit to plot</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a><span class="co"># find line of best fit</span></span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>a, b <span class="op">=</span> np.polyfit(age, bmi, <span class="dv">1</span>)</span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a><span class="co"># add the points to the plot</span></span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>plt.scatter(age,bmi) <span class="co"># order is x,y</span></span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a><span class="co"># add the line and then display</span></span>
+<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a>plt.plot(age, a<span class="op">*</span>age<span class="op">+</span>b, color<span class="op">=</span><span class="st">'red'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, linewidth<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb54-10"><a href="#cb54-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="python-intro_files/figure-html/unnamed-chunk-14-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Defining functions and loops</strong></p>
+<p>The last useful tip before we begin to use Python in earnest, is to remember that we can define functions or use loops (general flow control) to help us with our data wrangling:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="co"># for loops, to iterate over some length and repeat an operation, e.g.</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>count <span class="op">=</span> <span class="dv">0</span> <span class="co"># initialize empty variable</span></span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>nums <span class="op">=</span> [<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>,<span class="dv">7</span>,<span class="dv">8</span>,<span class="dv">9</span>,<span class="dv">10</span>]</span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> nums:</span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>    count <span class="op">+=</span> i</span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"We have a total sum of: </span><span class="sc">{</span>count<span class="sc">}</span><span class="ss">."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>We have a total sum of: 55.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="co"># we've essentially set a counter: 1 + 2 + 3 + 4  + ... 10 = 55!</span></span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="dv">101</span> <span class="op">==</span> <span class="dv">100</span>: </span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Hello, 5!"</span>)</span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a><span class="cf">elif</span> <span class="dv">101</span> <span class="op">&gt;</span> <span class="dv">100</span>:</span>
+<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Much gold!"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Much gold!</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="co"># if logical statement is true, print(), else if new logical statement is true, print()</span></span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a><span class="co"># defining functions: lottery draw!</span></span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> French_talk(name,age):</span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Je m'appelle"</span>, name)</span>
+<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Mon âge est"</span>, age)</span>
+<span id="cb59-9"><a href="#cb59-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb59-10"><a href="#cb59-10" aria-hidden="true" tabindex="-1"></a>French_talk(<span class="st">"Saruman"</span>,<span class="dv">1000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Je m'appelle Saruman
+Mon âge est 1000</code></pre>
+</div>
+</div>
+<p>You can download the R script by clicking on the button below.</p>
+<p><a class="btn btn-primary" download="" href="scripts/Intro2Python.py"> Download Intro to Python script </a></p>
 
 
 
