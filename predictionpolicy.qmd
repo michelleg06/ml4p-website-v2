@@ -12,11 +12,11 @@ use_miniconda("/Users/lucas/Library/r-miniconda-arm64", required = TRUE)
 
 **This section will cover:**
 
-+ Prediction Policy problems
-+ Inference vs. prediction for policy analysis
-+ Assessing accuracy: bias-variance tradeoff
-+ Training error vs. test error
-+ Feature selection: brief introduction to Lasso
+-   Prediction Policy problems
+-   Inference vs. prediction for policy analysis
+-   Assessing accuracy: bias-variance tradeoff
+-   Training error vs. test error
+-   Feature selection: brief introduction to Lasso
 
 <br>
 
@@ -80,9 +80,7 @@ Which variables and characteristics that we include in the prediction model can 
 
 You can download the dataset by clicking on the button below.
 
-<a class="btn btn-primary" download href="data/malawi.csv">
-  Download Malawi.csv
-</a>
+<a class="btn btn-primary" download href="data/malawi.csv"> Download Malawi.csv </a>
 
 <br>
 
@@ -137,7 +135,6 @@ import statsmodels.api as sm # to visualise linear models in a nice way...
 malawi = pd.read_csv('/Users/lucas/Documents/UNU-CDO/courses/ml4p/ml4p-website-v2/data/malawi.csv') # import csv file and store as malawi
 
 ```
-
 :::
 
 ### 2. Get to know your data: visualisation and pre-processing
@@ -149,40 +146,34 @@ malawi = pd.read_csv('/Users/lucas/Documents/UNU-CDO/courses/ml4p/ml4p-website-v
 
 skim(data_malawi) # describes the dataset in a nice format 
 ```
+
 <br>
 
-- The dataset contains 38 variables and 11,280 observations.
+-   The dataset contains 38 variables and 11,280 observations.
 
-- Not all of these variables are relevant for our prediction model.
+-   Not all of these variables are relevant for our prediction model.
 
-- To find the labels and description of the variables, you can refer to the [paper](https://academic.oup.com/wber/article-abstract/32/3/531/2447896). 
-<br>
+-   To find the labels and description of the variables, you can refer to the [paper](https://academic.oup.com/wber/article-abstract/32/3/531/2447896). <br>
 
+\[hhsize, hhsize2, age_head, age_head2, regions, rural, never married, share_of_adults_without_education, share_of_adults_who_can_read, number of rooms, cement floor, electricity, flush toilet, soap, bed, bike, music player, coffee table, iron, garden, goats\]
 
-[hhsize, hhsize2, age_head, age_head2, regions, rural, never married, share_of_adults_without_education, share_of_adults_who_can_read, number of rooms, cement floor, electricity, flush toilet, soap, bed, bike, music player, coffee table, iron, garden, goats]
+-   Luckily for us, we have no missing values (n_missing in summary output)!
 
+    A)  Many machine learning models cannot be trained when missing values are present (some exceptions exist).
 
-- Luckily for us, we have no missing values (n_missing in summary output)!
+    B)  Dealing with missingness is a non-trivial task:
 
-    A) Many machine learning models cannot be trained when missing values are present (some exceptions exist).
-
-    B) Dealing with missingness is a non-trivial task: 
-    
-First and foremost, we should assess whether there is a pattern to missingness and if so, 
-what that means to what we can learn from our (sub)population. If there is no discernible pattern, 
-we can proceed to delete the missing values or impute them. A more detailed explanation and course of action
-can be found [here](https://stefvanbuuren.name/fimd/sec-MCAR.html).
+First and foremost, we should assess whether there is a pattern to missingness and if so, what that means to what we can learn from our (sub)population. If there is no discernible pattern, we can proceed to delete the missing values or impute them. A more detailed explanation and course of action can be found [here](https://stefvanbuuren.name/fimd/sec-MCAR.html).
 
 #### Feature selection: subsetting the dataset
 
-As part of our data pre-processing we will subset the dataframe, such that only relevant variables are left.
-* Relevant: variables/features about a household that could help us determine whether they are in poverty.
-That way, we save some memory space; but also, we can call the full set of variables in a dataframe in one go!
+As part of our data pre-processing we will subset the dataframe, such that only relevant variables are left. \* Relevant: variables/features about a household that could help us determine whether they are in poverty. That way, we save some memory space; but also, we can call the full set of variables in a dataframe in one go!
 
-```
+```         
 variables to delete (not included in the identified set above):
 [ea, EA, hhwght, psu, strataid, lnzline, case_id, eatype] 
 ```
+
 <br>
 
 **N/B**: Feature selection is a *critical process* (and we normally don't have a paper to guide us through it): from a practical point of view, a model with less predictors may be easier to interpret. Also, some models may be negatively affected by non-informative predictors. This process is similar to traditional econometric modelling, but we should not conflate predictive and explanatory modelling. Importantly, please note that we are not interested in knowing why something happens, but rather in what is likely to happen given some known data. Hence:
@@ -201,21 +192,19 @@ data_malawi <- data_malawi[,-which(colnames(data_malawi) %in% cols)] # the minus
 
 A few notes for you:
 
-- a dataframe follows the form data[rows,colums]
+-   a dataframe follows the form data\[rows,colums\]
 
-- colnames() is a function that identifies the column names of an object of class dataframe
+-   colnames() is a function that identifies the column names of an object of class dataframe
 
-- which() is an R base function that gives you the position of some value
+-   which() is an R base function that gives you the position of some value
 
-- a minus sign will delete either the identified position in the row or the column space
+-   a minus sign will delete either the identified position in the row or the column space
 
 #### Data visualisation
 
-A quick and effective way to take a first glance at our data is to plot histograms of relevant 
-(numeric) features.
+A quick and effective way to take a first glance at our data is to plot histograms of relevant (numeric) features.
 
-Recall (from the skim() dataframe summary output) that only two variables are non-numeric. However,
-we need to make a distinction between class factor and class numeric/numeric.
+Recall (from the skim() dataframe summary output) that only two variables are non-numeric. However, we need to make a distinction between class factor and class numeric/numeric.
 
 ```{r}
 # identify categorical variables to transform from class numeric to factor
@@ -235,7 +224,7 @@ for (i in 1:ncol(data_malawi)) { # iterate over the length of columns in the dat
 
 ```
 
-If you want to optimise your code, using for loops is not ideal. In R, there exists a family of functions called Apply whose purpose is to apply some function to all the elements in an object. For the time being, iterating over 38 columns is fast enough and we don't need to think about optimising our code. We'll also see an example later on on how to use one of the functions from the apply family. You can also refer to this blog (https://www.r-bloggers.com/2021/05/apply-family-in-r-apply-lapply-sapply-mapply-and-tapply/) if you want to learn more about it. 
+If you want to optimise your code, using for loops is not ideal. In R, there exists a family of functions called Apply whose purpose is to apply some function to all the elements in an object. For the time being, iterating over 38 columns is fast enough and we don't need to think about optimising our code. We'll also see an example later on on how to use one of the functions from the apply family. You can also refer to this blog (https://www.r-bloggers.com/2021/05/apply-family-in-r-apply-lapply-sapply-mapply-and-tapply/) if you want to learn more about it.
 
 Notice that we have a few variables with 2 unique values and one variable with 3 unique values. We should transform these into factor() class. Recall from the introduction tab that in object-oriented programming correctly identifying the variable type (vector class) is crucial for data manipulation and arithmetic operations. We can do this one by one, or in one shot. I'll give an example of both:
 
@@ -318,25 +307,26 @@ for (i in 1:ncol(malawi_factor)) { # Loop over all the columns in the factor df 
 llply(.data=malawi_factor, .fun=table) # create tables of all the variables in dataframe using the plyr package
 
 ```
+
 <br>
 
 What have we learned from the data visualisation?
 
-a) Nothing worrying about the data itself. McBride and Nichols did a good job of pre-processing the data for us. No pesky missing values, or unknown categories.
+a)  Nothing worrying about the data itself. McBride and Nichols did a good job of pre-processing the data for us. No pesky missing values, or unknown categories.
 
-b) From the bar plots, we can see that for the most part, people tend not to own assets.  Worryingly, there is a lack of soap, flush toilets and electricity, all of which are crucial for human capital (health and education).
+b)  From the bar plots, we can see that for the most part, people tend not to own assets. Worryingly, there is a lack of soap, flush toilets and electricity, all of which are crucial for human capital (health and education).
 
-c) From the histograms, we can see log per capita expenditure is normally distributed, but if we remove the log, it's incredibly skewed. Poverty is endemic. Households tend not to have too many educated individuals, and their size is non-trivially large (with less rooms than people need).
+c)  From the histograms, we can see log per capita expenditure is normally distributed, but if we remove the log, it's incredibly skewed. Poverty is endemic. Households tend not to have too many educated individuals, and their size is non-trivially large (with less rooms than people need).
 
 #### Relationships between features
 
 To finalise our exploration of the dataset, we should define:
 
-- the target variable (a.k.a. outcome of interest)
+-   the target variable (a.k.a. outcome of interest)
 
-- correlational insights
+-   correlational insights
 
-Let's visualise two distinct correlation matrices; for our numeric dataframe, which includes our target variable, we will plot a Pearson r correlation matrix. For our factor dataframe, to which we will add our continuous target, we will plot a Spearman rho correlation matrix. Both types of correlation coefficients are interpreted the same (0 = no correlation, 1 perfect positive correlation, -1 perfect negative correlation). 
+Let's visualise two distinct correlation matrices; for our numeric dataframe, which includes our target variable, we will plot a Pearson r correlation matrix. For our factor dataframe, to which we will add our continuous target, we will plot a Spearman rho correlation matrix. Both types of correlation coefficients are interpreted the same (0 = no correlation, 1 perfect positive correlation, -1 perfect negative correlation).
 
 ```{r, message=FALSE}
 # = = PEARSON CORRELATION MATRIX = = #
@@ -345,7 +335,8 @@ M <- cor(malawi_continuous) # create a correlation matrix of the continuous data
 corrplot(M, method="circle", addCoef.col ="black", number.cex = 0.8) # visualise it in a nice way
 
 ```
-We can already tell that the size of the household and dependent ratio are highly negatively correlated to our target variable.    
+
+We can already tell that the size of the household and dependent ratio are highly negatively correlated to our target variable.
 
 ```{r, message=FALSE}
 # = = SPEARMAN CORRELATION MATRIX = = #
@@ -358,9 +349,9 @@ corrplot(M2, method="circle", addCoef.col ="black", number.cex = 0.3) # visualis
 
 ```
 
-Ownership of some assets stands out: soap, a cement floor, electricity, a bed... ownership of these (and a couple of other) assets is positively correlated to per capita expenditure. Living in a rural area, on the other hand, is negtively correlated to our target variable. 
+Ownership of some assets stands out: soap, a cement floor, electricity, a bed... ownership of these (and a couple of other) assets is positively correlated to per capita expenditure. Living in a rural area, on the other hand, is negtively correlated to our target variable.
 
-We can also spot some correlation coefficients that equal zero. In some situations, the data generating mechanism can create predictors that only have a single unique value (i.e. a “zero-variance predictor”). For many ML models (excluding tree-based models), this may cause the model to crash or the fit to be unstable. Here, the only $0$ we've spotted is not in relation to our target variable. 
+We can also spot some correlation coefficients that equal zero. In some situations, the data generating mechanism can create predictors that only have a single unique value (i.e. a “zero-variance predictor”). For many ML models (excluding tree-based models), this may cause the model to crash or the fit to be unstable. Here, the only $0$ we've spotted is not in relation to our target variable.
 
 But we do observe some near-zero-variance predictors. Besides uninformative, these can also create unstable model fits. There's a few strategies to deal with these; the quickest solution is to remove them. A second option, which is especially interesting in scenarios with a large number of predictors/variables, is to work with penalised models. We'll discuss this option below.
 
@@ -381,35 +372,25 @@ malawi.info()
 
 ```
 
+-   The dataset contains 38 variables and 11,280 observations.
 
-- The dataset contains 38 variables and 11,280 observations.
+-   Not all of these variables are relevant for our prediction model.
 
-- Not all of these variables are relevant for our prediction model.
+-   To find the labels and description of the variables, you can refer to the [paper](https://academic.oup.com/wber/article-abstract/32/3/531/2447896). <br>
 
-- To find the labels and description of the variables, you can refer to the [paper](https://academic.oup.com/wber/article-abstract/32/3/531/2447896). 
-<br>
+\[hhsize, hhsize2, age_head, age_head2, regions, rural, never married, share_of_adults_without_education, share_of_adults_who_can_read, number of rooms, cement floor, electricity, flush toilet, soap, bed, bike, music player, coffee table, iron, garden, goats\] <br>
 
-[hhsize, hhsize2, age_head, age_head2, regions, rural, never married, share_of_adults_without_education, share_of_adults_who_can_read, number of rooms, cement floor, electricity, flush toilet, soap, bed, bike, music player, coffee table, iron, garden, goats]
-<br>
+-   Luckily for us, we have no missing values (Non-Null Count in info() output)!
 
-- Luckily for us, we have no missing values (Non-Null Count in info() output)!
+A)  Many machine learning models cannot be trained when missing values are present (some exceptions exist).
 
-A) Many machine learning models cannot be trained when missing values are present (some exceptions exist).
-
-B) Dealing with missingness is a non-trivial task: 
-First and foremost, we should assess whether there is a pattern to missingness and if so, 
-what that means to what we can learn from our (sub)population. If there is no discernible pattern, 
-we can proceed to delete the missing values or impute them. A more detailed explanation and course of action
-can be found [here](https://stefvanbuuren.name/fimd/sec-MCAR.html).
+B)  Dealing with missingness is a non-trivial task: First and foremost, we should assess whether there is a pattern to missingness and if so, what that means to what we can learn from our (sub)population. If there is no discernible pattern, we can proceed to delete the missing values or impute them. A more detailed explanation and course of action can be found [here](https://stefvanbuuren.name/fimd/sec-MCAR.html).
 
 ### Feature selection: subsetting the dataset
 
-As part of our data pre-processing we will subset the dataframe, such that only relevant variables are left.
-* Relevant: variables/features about a household/individual that could help us determine whether they are in poverty.
-That way, we save some memory space; but also, we can call the full set of variables in a dataframe in one go!
+As part of our data pre-processing we will subset the dataframe, such that only relevant variables are left. \* Relevant: variables/features about a household/individual that could help us determine whether they are in poverty. That way, we save some memory space; but also, we can call the full set of variables in a dataframe in one go!
 
-variables to delete (not included in the identified set above):
-[ea, EA, hhwght, psu, strataid, lnzline, case_id, eatype] 
+variables to delete (not included in the identified set above): \[ea, EA, hhwght, psu, strataid, lnzline, case_id, eatype\]
 
 **N/B**: Feature selection is a *critical process* (and we normally don't have a paper to guide us through it): from a practical point of view, a model with less predictors may be easier to interpret. Also, some models may be negatively affected by non-informative predictors. This process is similar to traditional econometric modelling, but we should not conflate predictive and causal modelling. Importantly, please note that we are not interested in knowing why something happens, but rather in what is likely to happen given some known data. Hence:
 
@@ -429,12 +410,11 @@ Same number of rows, but only 29 variables left. We have succesfully deleted tho
 
 ### Data visualisation
 
-A quick and effective way to take a first glance at our data is to plot histograms of relevant features.
-We can use the seaborn and matplotlib libraries to visualise our dataframe. 
+A quick and effective way to take a first glance at our data is to plot histograms of relevant features. We can use the seaborn and matplotlib libraries to visualise our dataframe.
 
-+ The distribution of each variable matters for the type of plot
-+ start by looking at the number of unique values
-+ if unique values <= 3 you are certain this is a categorical variable, and from our exploration using malawi.info() we had only integer/floats...
+-   The distribution of each variable matters for the type of plot
+-   start by looking at the number of unique values
+-   if unique values \<= 3 you are certain this is a categorical variable, and from our exploration using malawi.info() we had only integer/floats...
 
 ```{python}
 
@@ -494,19 +474,19 @@ for column in cat_df.columns:
 
 What have we learned from the data visualisation?
 
-a) Nothing worrying about the data itself. McBride and Nichols did a good job of pre-processing the data for us. No pesky missing values, or unknown categories.
+a)  Nothing worrying about the data itself. McBride and Nichols did a good job of pre-processing the data for us. No pesky missing values, or unknown categories.
 
-b) From the bar plots, we can see that for the most part, people tend not to own assets.  Worryingly, there is a lack of soap, flush toilets and electricity, all of which are crucial for human capital (health and education).
+b)  From the bar plots, we can see that for the most part, people tend not to own assets. Worryingly, there is a lack of soap, flush toilets and electricity, all of which are crucial for human capital (health and education).
 
-c) From the histograms, we can see log per capita expenditure is normally distributed, but if we remove the log, it's incredibly skewed. Poverty is endemic. Furthermore, households tend not to have too many educated individuals, and household size is non-trivially large (with less rooms than people need).
+c)  From the histograms, we can see log per capita expenditure is normally distributed, but if we remove the log, it's incredibly skewed. Poverty is endemic. Furthermore, households tend not to have too many educated individuals, and household size is non-trivially large (with less rooms than people need).
 
 ### Relationships between features
 
 To finalise our exploration of the dataset, we should define:
 
-- the target variable (a.k.a. outcome of interest)
+-   the target variable (a.k.a. outcome of interest)
 
-- correlational insights
+-   correlational insights
 
 Let's visualise two distinct correlation matrices; for our numeric dataframe, which includes our target variable, we will plot a Pearson r correlation matrix. For our factor dataframe, to which we will add our continuous target, we will plot a Spearman rho correlation matrix. Both types of correlation coefficients are interpreted the same (0 = no correlation, 1 perfect positive correlation, -1 perfect negative correlation).
 
@@ -545,37 +525,30 @@ plt.show()
 
 ```
 
-Ideally, we would print a correlation matrix with ALL the variables. For display purposes, we've separated them here. If we were interested in relationships between two variables that are not our target variable, we may want to think about a full correlation matrix. 
+Ideally, we would print a correlation matrix with ALL the variables. For display purposes, we've separated them here. If we were interested in relationships between two variables that are not our target variable, we may want to think about a full correlation matrix.
 
-From the Pearson Correlation Matrix, we can see that the size of the household and dependent ratio are highly negatively correlated to our target variable.    
+From the Pearson Correlation Matrix, we can see that the size of the household and dependent ratio are highly negatively correlated to our target variable.
 
-From the Spearman Correlation Matrix, we see that ownership of some assets stands out: soap, a cement floor, electricity, a bed... ownership of these (and a couple of other) assets is positively correlated to per capita expenditure. Living in a rural area, on the other hand, is negtively correlated to our target variable. 
+From the Spearman Correlation Matrix, we see that ownership of some assets stands out: soap, a cement floor, electricity, a bed... ownership of these (and a couple of other) assets is positively correlated to per capita expenditure. Living in a rural area, on the other hand, is negtively correlated to our target variable.
 
-We can also spot some correlation coefficients that equal zero. In some situations, the data generating mechanism can create predictors that only have a single unique value (i.e. a “zero-variance predictor”). For many ML models (excluding tree-based models), this may cause the model to crash or the fit to be unstable. Here, the only $0$ we've spotted is not in relation to our target variable. 
+We can also spot some correlation coefficients that equal zero. In some situations, the data generating mechanism can create predictors that only have a single unique value (i.e. a “zero-variance predictor”). For many ML models (excluding tree-based models), this may cause the model to crash or the fit to be unstable. Here, the only $0$ we've spotted is not in relation to our target variable.
 
 But we do observe some near-zero-variance predictors. Besides uninformative, these can also create unstable model fits. There's a few strategies to deal with these; the quickest solution is to remove them. A second option, which is especially interesting in scenarios with a large number of predictors/variables, is to work with penalised models. We'll discuss this option below.
-
-
-
 :::
 
 ### 3. Model fit: data partition and performance evaluation parameters
 
-
 We now have a general idea of the structure of the data we are working with, and what we're trying to predict: per capita expenditures, which we believe are a proxy for poverty prevalence. Measured by the log of per capita monthly expenditure in our dataset, the variable is named lnexp_pc_month.
 
-The next step is create a simple linear model (OLS) to predict per capita expenditure using the variables in our dataset,
-and introduce the elements with which we will evaluate our model.
+The next step is create a simple linear model (OLS) to predict per capita expenditure using the variables in our dataset, and introduce the elements with which we will evaluate our model.
 
 #### Data Partinioning
 
-When we want to build predictive models for machine learning purposes, it is important to have (at least) two data sets. A training data set from which our model will learn, and a test data set containing the same features as our training data set; we use the second dataset to see how well our predictive model extrapolates to other samples (i.e. is it generalisable?). To split our main data set into two, we will work with an 80/20 split. 
+When we want to build predictive models for machine learning purposes, it is important to have (at least) two data sets. A training data set from which our model will learn, and a test data set containing the same features as our training data set; we use the second dataset to see how well our predictive model extrapolates to other samples (i.e. is it generalisable?). To split our main data set into two, we will work with an 80/20 split.
 
-The 80/20 split has its origins in the Pareto Principle, which states that 'in most cases, 80% of effects from from 20% of causes'. 
-Though there are other test/train splitting options, this partitioning method is a good place to start, and indeed standard in the machine learning field. 
+The 80/20 split has its origins in the Pareto Principle, which states that 'in most cases, 80% of effects from from 20% of causes'. Though there are other test/train splitting options, this partitioning method is a good place to start, and indeed standard in the machine learning field.
 
 ::: {.panel-tabset group="language"}
-
 ## R
 
 ```{r, message=FALSE}
@@ -617,15 +590,13 @@ print(y_test)
 
 # everything looks okay, let's proceed with modelling... 
 ```
-
 :::
 
 #### Prediction with Linear Models
 
-We will start by fitting a predictive model using the training dataset; that is, our target variable *log of monthly per capita expenditures* or *lnexp_pc_month* will be a $Y$ dependent variable in a linear model $Y_i = \alpha + x'\beta_i + \epsilon_i$, and the remaining features in the data frame correspond to the row vectors $x'\beta$. 
+We will start by fitting a predictive model using the training dataset; that is, our target variable *log of monthly per capita expenditures* or *lnexp_pc_month* will be a $Y$ dependent variable in a linear model $Y_i = \alpha + x'\beta_i + \epsilon_i$, and the remaining features in the data frame correspond to the row vectors $x'\beta$.
 
 ::: {.panel-tabset group="language"}
-
 ## R
 
 ```{r, message=FALSE}
@@ -649,11 +620,11 @@ ms %>% tab_header(
 
 ```
 
-You can see that the variable region was not included in the output (this is because we already have dummies of north (not north = south), and central region). We may need to clean our dataset un some further steps. 
+You can see that the variable region was not included in the output (this is because we already have dummies of north (not north = south), and central region). We may need to clean our dataset un some further steps.
 
 Recall that one of the assumptions of a linear model is that errors are independent and identically distributed. We could run some tests to determine this, but with the contrast of the iid and robust errors (HC3) in the modelsummary output table we can already tell that this is not an issue/something to worry about in our estimations.
 
-Besides the regression output table, we can can also visualise the magnitude and significance of the coefficients with a plot. The further away the variable (dot) marker is from the $0$ line, the larger the magnitude. 
+Besides the regression output table, we can can also visualise the magnitude and significance of the coefficients with a plot. The further away the variable (dot) marker is from the $0$ line, the larger the magnitude.
 
 ```{r, message=FALSE}
 modelplot(model1) + 
@@ -664,7 +635,7 @@ modelplot(model1) +
 # The scale of the plot is large due to the intercept estimate
 ```
 
-Not unlike what we saw in out correlation matrix, household size, electricity, having a flush toilet... the magnitude of the impact of these variables on monthly per capita expenditure is significantly larger than that of other assets/predictors. 
+Not unlike what we saw in out correlation matrix, household size, electricity, having a flush toilet... the magnitude of the impact of these variables on monthly per capita expenditure is significantly larger than that of other assets/predictors.
 
 ## Python
 
@@ -702,25 +673,23 @@ print(lm_robust.summary())
 
 ```
 
-Our results are virtually the same. We'll continue with the assumption that our simple linear model is homoskedastic. 
-
+Our results are virtually the same. We'll continue with the assumption that our simple linear model is homoskedastic.
 :::
 
 #### Performance Indicators
 
 In predictive modelling, we are interested in the following performance metrics:
 
-- Model *residuals*: recall residuals are the observed value minus the predicted value. We can estimate a model's Root Mean Squared Error (RMSE) or the Mean Absolute Error (MAE). Residuals allow us to quantify the extent to which the predicted response value (for a given observation) is close to the true response value. Small RMSE or MAE values indicate that the prediction is close to the true observed value.
+-   Model *residuals*: recall residuals are the observed value minus the predicted value. We can estimate a model's Root Mean Squared Error (RMSE) or the Mean Absolute Error (MAE). Residuals allow us to quantify the extent to which the predicted response value (for a given observation) is close to the true response value. Small RMSE or MAE values indicate that the prediction is close to the true observed value.
 
-- The *p-values*: represented by stars *** (and a pre-defined critical threshold, e.g. 0.05), they point to the predictive power of each feature in the model; i.e. that the event does not occur by chance. In the same vein, the magnitude of the coefficient is also important, especially given that we are interested in explanatory power and not causality. 
+-   The *p-values*: represented by stars \*\*\* (and a pre-defined critical threshold, e.g. 0.05), they point to the predictive power of each feature in the model; i.e. that the event does not occur by chance. In the same vein, the magnitude of the coefficient is also important, especially given that we are interested in explanatory power and not causality.
 
-- The *R-squared*: arguably the go-to indicator for performance assessment. Low R^2 values are not uncommon, especially in the social sciences. However, when hoping to use a model for predictive purposes, a low R^2 is a bad sign, large number of statistically significant features notwithstanding. The drawback from relying solely on this measure is that it does not take into consideration the problem of model over-fitting; i.e. you can inflate the R-squared by adding as many variables as you want, even if those variables have little predicting power. This method will yield great results in the training data, but will under perform when extrapolating the model to the test (or indeed any other) data set.
-
+-   The *R-squared*: arguably the go-to indicator for performance assessment. Low R\^2 values are not uncommon, especially in the social sciences. However, when hoping to use a model for predictive purposes, a low R\^2 is a bad sign, large number of statistically significant features notwithstanding. The drawback from relying solely on this measure is that it does not take into consideration the problem of model over-fitting; i.e. you can inflate the R-squared by adding as many variables as you want, even if those variables have little predicting power. This method will yield great results in the training data, but will under perform when extrapolating the model to the test (or indeed any other) data set.
 
 ***Residuals***
 
 ::: {.panel-tabset group="language"}
-## R 
+## R
 
 ```{r, message=FALSE}
 # = = Model Residuals = = #
@@ -759,7 +728,6 @@ print(f"Maximum residual: {residual_max}")
 
 
 ```
-
 :::
 
 Recall that the residual is estimated as the true (observed) value minus the predicted value. Thus: the max(imum) error of 1.88 suggests that the model under-predicted expenditure by circa (log) \$2 (or \$6.5) for at least one observation. Fifty percent of the predictions (between the first and third quartiles) lie between (log) \$0.28 and (log) \$0.26 over the true value. From the estimation of the prediction residuals we obtain the popular measure of performance evaluation known as the Root Mean Squared Error (RMSE, for short).
@@ -795,12 +763,11 @@ rmse_insample = mean_squared_error(y_train, y_pred) ** 0.5  # Manually taking th
 print(rmse_insample)
 
 ```
-
 :::
 
 The RMSE (0.4271) gives us an absolute number that indicates how much our predicted values deviate from the true (observed) number. This is all in reference to the target vector (a.k.a. our outcome variable). Think of the question, *how far, on average, are the residuals away from zero?* Generally speaking, the lower the value, the better the model fit. Besides being a good measure of goodness of fit, the RMSE is also useful for comparing the ability of our model to make predictions on different (e.g. test) data sets. The in-sample RMSE should be close or equal to the out-of-sample RMSE.
 
-In this case, our RMSE is ~0.4 units away from zero. Given the range of the target variable (roughly 4 to 11), the number seems to be relatively small and close enough to zero.
+In this case, our RMSE is \~0.4 units away from zero. Given the range of the target variable (roughly 4 to 11), the number seems to be relatively small and close enough to zero.
 
 ***P-values***
 
@@ -815,7 +782,7 @@ Recall the large number of statistically significant features in our model. The 
 print(summary(model1))
 ```
 
-We have printed our model's output once more, now using the r base command summary(). The other packages (stargazer and modelsummary) are great if you want to export your results in text, html, latex format, but not necessary if you just want to print your output. 
+We have printed our model's output once more, now using the r base command summary(). The other packages (stargazer and modelsummary) are great if you want to export your results in text, html, latex format, but not necessary if you just want to print your output.
 
 ## Python
 
@@ -828,14 +795,13 @@ r2_train = r2_score(y_train, model1.predict(X_train))
 print(f"R-squared on the training dataset: {r2_train}")
 
 ```
-
 :::
 
 The estimated (Multiple) R-squared of 0.59 tells us that our model predicts around 60 per cent of the variation in the independent variable (our target, log of per capita monthly expenditures). Also note that when we have a large number of predictors, it's best to look at the Adjusted R-squared (of 0.59), which corrects or adjusts for this by only increasing when a new feature improves the model more so than what would be expected by chance.
 
 #### Out of sample predictions
 
-Now that we have built and evaluated our model in the training dataset, we can proceed to make out-of-sample predictions. That is, see how our model performs in the test dataset. 
+Now that we have built and evaluated our model in the training dataset, we can proceed to make out-of-sample predictions. That is, see how our model performs in the test dataset.
 
 ::: {.panel-tabset group="language"}
 ## R
@@ -875,15 +841,13 @@ print(f"R-squared on the test dataset: {r2_test}")
 
 
 ```
-
 :::
 
-The summary statistics for the predictions with the train and test datasets are very close to one another. This is an indication that our model extrapolates well to other datasets. Compared to the observed summary statistics of the target variable, they're relatively close, with the largest deviations observed at the minimum and maximum values. 
+The summary statistics for the predictions with the train and test datasets are very close to one another. This is an indication that our model extrapolates well to other datasets. Compared to the observed summary statistics of the target variable, they're relatively close, with the largest deviations observed at the minimum and maximum values.
 
 #### The bias-variance tradeoff in practice
 
-We previously mentioned that the RMSE metric could also be used to compare between train and test model predictions. 
-Let us estimate the out-of-sample RMSE:
+We previously mentioned that the RMSE metric could also be used to compare between train and test model predictions. Let us estimate the out-of-sample RMSE:
 
 ```{r, message=FALSE}
 
@@ -892,34 +856,35 @@ RMSE_test <- sqrt(mean(error^2))
 print(RMSE_test) # this is known as the out-of-sample RMSE
 
 ```
-Notice that the *in-sample RMSE* [$0.4271572$] is very close to the *out-of-sample RMSE* [$0.4284404$]. This means that our model makes consistent predictions across different data sets. We also know by now  that these predictions are relatively good. At least, we hit the mark around 60 per cent of the time. What we are observing here is a model that has found a balance between bias and variance. However, both measures can still improve. For one, McBride and Nichols (2018) report > 80 per cent accuracy in their poverty predictions for Malawi. But please note that, at this point, we are not replicating their approach. They document using a classification model, which means that they previously used a poverty line score and divided the sample between individuals below and above the poverty line. 
+
+Notice that the *in-sample RMSE* \[$0.4271572$\] is very close to the *out-of-sample RMSE* \[$0.4284404$\]. This means that our model makes consistent predictions across different data sets. We also know by now that these predictions are relatively good. At least, we hit the mark around 60 per cent of the time. What we are observing here is a model that has found a balance between bias and variance. However, both measures can still improve. For one, McBride and Nichols (2018) report \> 80 per cent accuracy in their poverty predictions for Malawi. But please note that, at this point, we are not replicating their approach. They document using a classification model, which means that they previously used a poverty line score and divided the sample between individuals below and above the poverty line.
 
 *What do we mean by bias in a model?*
 
-The bias is the difference between the average prediction of our model and the true (observed) value. Minimising the bias is analogous to minimising the RMSE.  
+The bias is the difference between the average prediction of our model and the true (observed) value. Minimising the bias is analogous to minimising the RMSE.
 
 *What do we mean by variance in a model?*
 
 It is the observed variability of our model prediction for a given data point (how much the model can adjust given the data set). A model with high variance would yield low error values in the training data but high errors in the test data.
 
-Hence, consistent in and out of sample RMSE scores = bias/variance balance. 
+Hence, consistent in and out of sample RMSE scores = bias/variance balance.
 
 #### Fine-tuning model parameters
 
-Can we fine-tune model parameters? The quick answer is yes! Every algorithm has a set of parameters that can be adjusted/fine-tuned to improve our estimations. Even in the case of a simple linear model, we can try our hand at fine-tuning with, for example, cross-validation. 
+Can we fine-tune model parameters? The quick answer is yes! Every algorithm has a set of parameters that can be adjusted/fine-tuned to improve our estimations. Even in the case of a simple linear model, we can try our hand at fine-tuning with, for example, cross-validation.
 
 *What is cross-validation?*
 
 Broadly speaking, it is a technique that allows us to assess the performance of our machine learning model. How so? Well, it looks at the 'stability' of the model. It's a measure of how well our model would work on new, unseen data (is this ringing a bell yet?); i.e. it has correctly observed and recorded the patterns in the data and has not captured too much noise (what we know as the error term, or what we are unable to explain with our model). K-fold cross-validation is a good place to start for such a thing. In the words of [The Internet™](https://www.javatpoint.com/cross-validation-in-machine-learning), what k-fold cross validation does is:
-   
-```
+
+```         
 Split the input dataset into K groups
     For each group:
         - Take one group as the reserve or test data set.
         - Use remaining groups as the training dataset.
         - Fit the model on the training set and evaluate the performance of the model using the test set.
-``` 
-    
+```
+
 TL;DR We're improving our splitting technique!
 
 An Illustration by [Eugenia Anello](https://eugenia-anello.medium.com/)
@@ -977,7 +942,7 @@ print(ols_kfold3)
 
 ```
 
-Having cross-validated our model with 10 folds, we can see that the results are virtually the same. We have a RMSE of around .43, an R^2 of .59, (and a MAE of .33). We ran the same model for the train, test and full datasets and find results are consistent. Recall the R^2 tells us the model's predictive ability and the RMSE and MAE the model's accuracy.
+Having cross-validated our model with 10 folds, we can see that the results are virtually the same. We have a RMSE of around .43, an R\^2 of .59, (and a MAE of .33). We ran the same model for the train, test and full datasets and find results are consistent. Recall the R\^2 tells us the model's predictive ability and the RMSE and MAE the model's accuracy.
 
 ## Python
 
@@ -1004,14 +969,7 @@ kfold_mse_scores = -cross_val_score(model_kcrossval, X, y.ravel(), cv=model_kf, 
 
 ```
 
-What is happening in the line of code that estimates the k-fold cross-validated model? Let's see if we can make sense of it:
-+ The -cross_val_score (yes, with a minus sign) is a function that is used to estimate cross-validation models. 
-+ Inside the function, we specify the type of model (model_kcrossval = LinearRegression)
-+ Inside the function, we specify which dataframe (matrix of features X, full dataset minus the target vriable)
-+ Inside the function, we specify which target variable y (full dataset), the y.ravel() is to ensure that the function reads it as a one-dimensional array
-+ Inside the function, we specify what type of cross-validation (cv) technique. Our model_kf object defines the cv technique as a k-fold cross-validation with 10 folds. 
-+ Inside the function, we select a 'scoring' = negative mean squared error. Why negate the mse? it's to explicitly tell scikit-learn (the library we are using) to minimise the mean squared errors, it's default is to maximise them. 
-<br>
+What is happening in the line of code that estimates the k-fold cross-validated model? Let's see if we can make sense of it: + The -cross_val_score (yes, with a minus sign) is a function that is used to estimate cross-validation models. + Inside the function, we specify the type of model (model_kcrossval = LinearRegression) + Inside the function, we specify which dataframe (matrix of features X, full dataset minus the target vriable) + Inside the function, we specify which target variable y (full dataset), the y.ravel() is to ensure that the function reads it as a one-dimensional array + Inside the function, we specify what type of cross-validation (cv) technique. Our model_kf object defines the cv technique as a k-fold cross-validation with 10 folds. + Inside the function, we select a 'scoring' = negative mean squared error. Why negate the mse? it's to explicitly tell scikit-learn (the library we are using) to minimise the mean squared errors, it's default is to maximise them. <br>
 
 The output that we get is the estimated mean squared error per fold, but we can also get the average of all folds and the root mean squared error that we've been using thus far.
 
@@ -1032,7 +990,7 @@ print(f"Average Root Mean Squared Error: {average_kfold_rmse}")
 
 ```
 
-Having cross-validated our model with 10 folds, we can see that the residual results are virtually the same. We have a RMSE of around .43, but what about the R^2? We need to estimate it separately.
+Having cross-validated our model with 10 folds, we can see that the residual results are virtually the same. We have a RMSE of around .43, but what about the R\^2? We need to estimate it separately.
 
 ```{python}
 # loading (again!) another metric from scikit-learn
@@ -1056,24 +1014,23 @@ print(f"Average R-squared:{average_r2_scores}")
 
 
 ```
-
 :::
-    
-**NOTE:** k-fold cross-validation replaces our original 80/20 split (we don't need to do that anymore!) Therefore, we use the full dataset in the train() function. Using the train, test and full datasets in the example above was just for pedagogical purposes but it is no longer necessary and we can use the reported estimates of R^2 (close to 1!), RMSE (close to 0!) and MAE (let's go low!) for model assessment without comparing them to another set of predictions. These reported parameters are estimated as the average of the R^2, RMSE, and MAE for all the folds. 
+
+**NOTE:** k-fold cross-validation replaces our original 80/20 split (we don't need to do that anymore!) Therefore, we use the full dataset in the train() function. Using the train, test and full datasets in the example above was just for pedagogical purposes but it is no longer necessary and we can use the reported estimates of R\^2 (close to 1!), RMSE (close to 0!) and MAE (let's go low!) for model assessment without comparing them to another set of predictions. These reported parameters are estimated as the average of the R\^2, RMSE, and MAE for all the folds.
 
 ### 4. Feature selection with Lasso linear regression
 
-An OLS regression is not the only model that can be written in the form of $Y_i = \alpha + \beta_1X_{1i}, \beta_2X_{2i},..., \beta_pX_{pi}+ u_i$. In this section we will discuss 'penalised' models, which can also be expressed as a linear relationship between parameters. Penalised regression models are also known as regression shrinkage methods, and they take their name after the colloquial term for coefficient regularisation, 'shrinkage' of estimated coefficients. The goal of penalised models, as opposed to a traditional linear model, is not to minimise bias (least squares approach), but to reduce variance by adding a constraint to the equation and effectively pushing coefficient parameters towards 0. This results in the the worse model predictors having a coefficient of zero or close to zero. 
+An OLS regression is not the only model that can be written in the form of $Y_i = \alpha + \beta_1X_{1i}, \beta_2X_{2i},..., \beta_pX_{pi}+ u_i$. In this section we will discuss 'penalised' models, which can also be expressed as a linear relationship between parameters. Penalised regression models are also known as regression shrinkage methods, and they take their name after the colloquial term for coefficient regularisation, 'shrinkage' of estimated coefficients. The goal of penalised models, as opposed to a traditional linear model, is not to minimise bias (least squares approach), but to reduce variance by adding a constraint to the equation and effectively pushing coefficient parameters towards 0. This results in the the worse model predictors having a coefficient of zero or close to zero.
 
-Consider a scenario where you have hundreds of predictors. Which covariates are truly important for our known outcome? Including all of the predictors leads to *over-fitting*. We'll find that the R^2 value is high, and conclude that our in-sample fit is good. However, this may lead to bad out-of-sample predictions. *Model selection* is a particularly challenging endeavour  when we encounter high-dimensional data; i.e. when the number of variables is close to or larger than the number of observations. Some examples where you may encounter high-dimensional data include:
+Consider a scenario where you have hundreds of predictors. Which covariates are truly important for our known outcome? Including all of the predictors leads to *over-fitting*. We'll find that the R\^2 value is high, and conclude that our in-sample fit is good. However, this may lead to bad out-of-sample predictions. *Model selection* is a particularly challenging endeavour when we encounter high-dimensional data; i.e. when the number of variables is close to or larger than the number of observations. Some examples where you may encounter high-dimensional data include:
 
-1. Cross-country analyses: we have a small and finite number of countries, but we may collect/observe as many variables as we want. 
+1.  Cross-country analyses: we have a small and finite number of countries, but we may collect/observe as many variables as we want.
 
-2. Cluster-population analyses: we wish to understand the outcome of some unique population $n$, e.g. all students from classroom A. We collect plenty of information on these students, but the sample and the population are analogous $n = N$, and thus the sample number of observations is small and finite. 
+2.  Cluster-population analyses: we wish to understand the outcome of some unique population $n$, e.g. all students from classroom A. We collect plenty of information on these students, but the sample and the population are analogous $n = N$, and thus the sample number of observations is small and finite.
 
 The LASSO - Least Absolute Shrinkage and Selection Operator imposes a shrinking penalty to those predictors that do not actually belong in the model, and reduces the size of the estimated $\beta$ coefficients towards and including zero (when the tuning parameter/ shrinkage penalty $\lambda$ is sufficiently large). Note that $lambda$ is the penalty term called *L1-norm*, and corresponds to the sum of the absolute coefficients.
 
-What does this mean for our case? Well, McBride and Nichols (2018) used two sources to compile their final dataset (which we are using). One of those sources is the Living Standards Measurement Study ([LSMS](https://www.worldbank.org/en/programs/lsms)) from the World Bank Group. These surveys collect more than 500 variables/ features per country case. You can subset the dataset with critical reasoning: using your knowledge of the phenomenon, which features might best describe it? But even then, we might still end up with a large number of features. Perhaps a LASSO approach could work here. 
+What does this mean for our case? Well, McBride and Nichols (2018) used two sources to compile their final dataset (which we are using). One of those sources is the Living Standards Measurement Study ([LSMS](https://www.worldbank.org/en/programs/lsms)) from the World Bank Group. These surveys collect more than 500 variables/ features per country case. You can subset the dataset with critical reasoning: using your knowledge of the phenomenon, which features might best describe it? But even then, we might still end up with a large number of features. Perhaps a LASSO approach could work here.
 
 Our own data is not ideal for the approach, because it has a small number of features ($29$), compared to the large number of observations ($11,280$). But let's run a lasso regression and see if my statement holds. How would I know if it holds? If the Lasso regression returns the same values for the performance assessment parameters as the OLS regression; this means that the penalisation parameter was either zero (leading back to an OLS) or too small to make a difference.
 
@@ -1106,18 +1063,15 @@ print(model_lasso) # best R^2 and RMSE is similar to the one using a linear regr
 
 ```
 
-
-
 #### Parameter-tuning in our Lasso regression
 
 Let's start with centering and scaling variables; why do we do that?
 
-*Centering and Scaling in Lasso*: Recall that the L1-norm puts constraints on the size of the coefficients of the Lasso regression. 
-The size, of course, differs based on the different scales the variables are measured. Having $1$ and up to $55$ electric gadgets at home is not the same as earning between $1000$ and $100,000$ monthly (of whichever currency you want to imagine here). There are two immediate consequences of centering and scaling (or normalising). 1) There is no longer an intercept. 2) It is easier to rank the relative magnitude of the coefficients post-shrinkage.
+*Centering and Scaling in Lasso*: Recall that the L1-norm puts constraints on the size of the coefficients of the Lasso regression. The size, of course, differs based on the different scales the variables are measured. Having $1$ and up to $55$ electric gadgets at home is not the same as earning between $1000$ and $100,000$ monthly (of whichever currency you want to imagine here). There are two immediate consequences of centering and scaling (or normalising). 1) There is no longer an intercept. 2) It is easier to rank the relative magnitude of the coefficients post-shrinkage.
 
 *Cross-validation in Lasso:* Beyond training and testing dataframes, what a k-fold (commonly 10-fold) cross validation does is resample the data to find an optimal (λ) lambda/penalisation for the lasso model and assess its predictive error. Recall: The optimal λ (lambda)/penalisation minimizes the out-of-sample (or test) mean prediction error.
 
-This tuning is already included in the chunk of code above. 
+This tuning is already included in the chunk of code above.
 
 ```{r, message=FALSE}
 
@@ -1125,8 +1079,9 @@ This tuning is already included in the chunk of code above.
 plot(model_lasso)
 cat("The x-axis is the fraction of the full solution (i.e., ordinary least squares with no penalty)")
 
-```   
-It seems that the fraction used (0.9) is close to the non-penalised model (or OLS/linear). Our original claim that this particular set-up does not call for a Lasso approach was correct. We may want to try other machine learning algorithms to see if we can improve our initial predictions! 
+```
+
+It seems that the fraction used (0.9) is close to the non-penalised model (or OLS/linear). Our original claim that this particular set-up does not call for a Lasso approach was correct. We may want to try other machine learning algorithms to see if we can improve our initial predictions!
 
 ## Python
 
@@ -1178,7 +1133,7 @@ print(f"R squared on train: {r2_train} and test: {r2_test}")
 
 ```
 
-With an in-sample RMSE of $0.51$ and an out-of-sample RMSE of $0.5$ a Lasso with a small penalisation parameter performs worse than a simple linear regression. Similarly, our R^2 estimates which were at $0.59$ before, have now decreased to $0.42$. Do we increase or decrease the regularization parameter $\alpha$ ? Let's try decreasing it first:
+With an in-sample RMSE of $0.51$ and an out-of-sample RMSE of $0.5$ a Lasso with a small penalisation parameter performs worse than a simple linear regression. Similarly, our R\^2 estimates which were at $0.59$ before, have now decreased to $0.42$. Do we increase or decrease the regularization parameter $\alpha$ ? Let's try decreasing it first:
 
 ```{python}
 
@@ -1216,53 +1171,49 @@ plt.show()
 
 ```
 
-The performance of our model with a smaller alpha (closer to $0$, or NO penalisation = simple linear regression) based on the RMSE indicates that the best performing machine learning model is still a simple linear regression, like we had initially suggested (given what we know about the structure of our data). Our dataset is not a candidate for feature selection with LASSO modelling. Also, you should know that you don't have to manually search for the best value of alpha. You can import a search algorithm, also from the scikit-learn library, called GridSearchCV. The search algorithm will search for the optimal value of alpha for you, from a pre-defined range (you do have to manually set the range yourself). 
-
+The performance of our model with a smaller alpha (closer to $0$, or NO penalisation = simple linear regression) based on the RMSE indicates that the best performing machine learning model is still a simple linear regression, like we had initially suggested (given what we know about the structure of our data). Our dataset is not a candidate for feature selection with LASSO modelling. Also, you should know that you don't have to manually search for the best value of alpha. You can import a search algorithm, also from the scikit-learn library, called GridSearchCV. The search algorithm will search for the optimal value of alpha for you, from a pre-defined range (you do have to manually set the range yourself).
 :::
 
-A final note: there is some discussion over whether k-fold or really any cross-validation technique is optimal for choosing the lambda parameter in Lasso models (see for example, this Coursera [video](https://www.coursera.org/lecture/ml-regression/choosing-the-penalty-strength-and-other-practical-issues-with-lasso-SPr8p)). 
-It is true that cross-validation is something that we want to do for ALL our machine learning models. Just make sure to make an informed choice of which cv technique you'll implement in your model. 
+A final note: there is some discussion over whether k-fold or really any cross-validation technique is optimal for choosing the lambda parameter in Lasso models (see for example, this Coursera [video](https://www.coursera.org/lecture/ml-regression/choosing-the-penalty-strength-and-other-practical-issues-with-lasso-SPr8p)). It is true that cross-validation is something that we want to do for ALL our machine learning models. Just make sure to make an informed choice of which cv technique you'll implement in your model.
 
 **A setup with multiple categorical variables is problematic with Lasso!**
 
-Lasso models do not perform well with multiple categorical variables. As is our case. Primarily because, in order to work with categorical data in lasso models we encode them as dummies (for example, north = $1$ and $0$ otherwise, center = $1$ and $0$ otherwise). Lasso will thus only consider the dummy, and not the concept of the 'region'). An alternative to that is a Group Lasso. If you'd like to read more on that, you can have a look at this [Towards Data Science Post](https://towardsdatascience.com/beyond-linear-regression-467a7fc3bafb#:~:text=Lasso%20feature%20selection%20works%20well,with%20few%20non%2Dzero%20coefficients.). 
+Lasso models do not perform well with multiple categorical variables. As is our case. Primarily because, in order to work with categorical data in lasso models we encode them as dummies (for example, north = $1$ and $0$ otherwise, center = $1$ and $0$ otherwise). Lasso will thus only consider the dummy, and not the concept of the 'region'). An alternative to that is a Group Lasso. If you'd like to read more on that, you can have a look at this [Towards Data Science Post](https://towardsdatascience.com/beyond-linear-regression-467a7fc3bafb#:~:text=Lasso%20feature%20selection%20works%20well,with%20few%20non%2Dzero%20coefficients.).
 
 ## Conclusion
 
 At this point, our best predictions are made with a linear regression algorithm, which bested a lasso model. As we progress, we will explore other common machine learning algorithms to see whether our prediction capabilities improve!.
 
-
 ## Practice at home
 
-You can replicate the exercises in Python or R using the Malawi dataset. However, if you'd like a challenge, you can also try running a Linear and a Lasso Linear model using a similar dataset for the country of Bolivia. The dataset was put together by McBride and Nichols for the same paper for which they used the Malawi dataset. 
+You can replicate the exercises in Python or R using the Malawi dataset. However, if you'd like a challenge, you can also try running a Linear and a Lasso Linear model using a similar dataset for the country of Bolivia. The dataset was put together by McBride and Nichols for the same paper for which they used the Malawi dataset.
 
-<a class="btn btn-primary" download href="data/bolivia.csv">
-  Download Bolivia df CSV
-</a>
+<a class="btn btn-primary" download href="data/bolivia.csv"> Download Bolivia df CSV </a>
 
 ## Readings
 
 *Mandatory*
 
-- An introduction to Statistical learning, Chapter 2, 3 (Regression), 5 (Cross-validation) and 6 (for more about Lasso).
+-   An introduction to Statistical learning, Chapter 2, 3 (Regression), 5 (Cross-validation) and 6 (for more about Lasso).
 
-- Athey, S. (2017). [Beyond prediction: Using big data for policy problems](https://www.science.org/doi/10.1126/science.aal4321). Science, 355(6324), 483-485.
+-   Athey, S. (2017). [Beyond prediction: Using big data for policy problems](https://www.science.org/doi/10.1126/science.aal4321). Science, 355(6324), 483-485.
 
-- Kleinberg, J., Ludwig, J., Mullainathan, S. and Obermeyer, Z., 2015. [Prediction policy problems. American Economic Review](https://www.aeaweb.org/articles?id=10.1257/aer.p20151023), 105(5), pp.491-95.
+-   Kleinberg, J., Ludwig, J., Mullainathan, S. and Obermeyer, Z., 2015. [Prediction policy problems. American Economic Review](https://www.aeaweb.org/articles?id=10.1257/aer.p20151023), 105(5), pp.491-95.
 
 *Optional readings*
 
-- Kleinberg, J., Lakkaraju, H., Leskovec, J., Ludwig, J. and Mullainathan, S., 2017. [Human decisions and machine predictions.](https://academic.oup.com/qje/article-abstract/133/1/237/4095198?redirectedFrom=fulltext) The Quarterly Journal of Economics, 133(1), pp.237-293.
+-   Kleinberg, J., Lakkaraju, H., Leskovec, J., Ludwig, J. and Mullainathan, S., 2017. [Human decisions and machine predictions.](https://academic.oup.com/qje/article-abstract/133/1/237/4095198?redirectedFrom=fulltext) The Quarterly Journal of Economics, 133(1), pp.237-293.
 
-- Hanna, R., & Olken, B. A. (2018). [Universal basic incomes versus targeted transfers: Anti-poverty programs in developing countries.](https://www.aeaweb.org/articles?id=10.1257/jep.32.4.201) Journal of Economic Perspectives, 32(4), 201-26. (exercise application)
+-   Hanna, R., & Olken, B. A. (2018). [Universal basic incomes versus targeted transfers: Anti-poverty programs in developing countries.](https://www.aeaweb.org/articles?id=10.1257/jep.32.4.201) Journal of Economic Perspectives, 32(4), 201-26. (exercise application)
 
-- McBride, L., & Nichols, A. (2018). [Retooling poverty targeting using out-of-sample validation and machine learning.](https://academic.oup.com/wber/article-abstract/32/3/531/2447896?redirectedFrom=fulltext) The World Bank Economic Review, 32(3), 531-550.pter 5.1
-
-
+-   McBride, L., & Nichols, A. (2018). [Retooling poverty targeting using out-of-sample validation and machine learning.](https://academic.oup.com/wber/article-abstract/32/3/531/2447896?redirectedFrom=fulltext) The World Bank Economic Review, 32(3), 531-550.pter 5.1
 
 <!--DISQUS COMMENTS SCRIPT-->
 
-<div id="disqus_thread"></div>
+::: {#disqus_thread}
+:::
+
+```{=html}
 <script>
     var disqus_config = function () {
     this.page.identifier = "predictionpolicy.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
@@ -1276,4 +1227,6 @@ You can replicate the exercises in Python or R using the Malawi dataset. However
     (d.head || d.body).appendChild(s);
     })();
 </script>
+```
+
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>

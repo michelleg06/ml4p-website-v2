@@ -3,6 +3,13 @@ title: "Tree-based models for classification problems"
 format: html
 ---
 
+```{r, echo=FALSE}
+#| echo: false
+library(reticulate)
+
+use_miniconda("/Users/lucas/Library/r-miniconda-arm64", required = TRUE)
+```
+
 **This section will cover:**
 
 -   Decision Trees: a classification approach
@@ -46,6 +53,9 @@ Some discussion points before the practical:
 
 As always, start by opening the libraries that you'll need to reproduce the script below. We will continue to use the Caret library for machine learning purposes, and some other general libraries for data wrangling and visualisation.
 
+::: {.panel-tabset group="language"}
+## R
+
 ```{r, message=FALSE}
 rm(list = ls()) # this line cleans your Global Environment.
 setwd("/Users/lucas/Documents/UNU-CDO/courses/ml4p/ml4p-website-v2") # set your working directory
@@ -67,6 +77,44 @@ library(RColorBrewer) # import more colours
 data_malawi <- read_csv("data/malawi.csv") # the file is directly read from the working directory/folder previously set
 
 ```
+
+## Python
+
+```{python}
+#==== Python version: 3.10.12 ====#
+
+# Opening libraries
+
+import sklearn as sk # our trusted Machine Learning library
+from sklearn.model_selection import train_test_split # split the dataset into train and test
+from sklearn.model_selection import cross_val_score # to obtain the cross-validation score
+from sklearn.model_selection import cross_validate # to perform cross-validation
+from sklearn.ensemble import RandomForestClassifier # to perform a Random Forest classification model
+from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score, ConfusionMatrixDisplay # returns performance evaluation metrics
+from sklearn.model_selection import RandomizedSearchCV # for fine-tuning parameters
+from scipy.stats import randint # generate random integer
+
+# Tree visualisation
+from sklearn.tree import export_graphviz
+from IPython.display import Image # for Jupyter Notebook users
+import graphviz as gv
+
+# Non-ML libraries
+import random # for random state 
+import csv # a library to read and write csv files 
+import numpy as np # a library for handling 
+import pandas as pd # a library to help us easily navigate and manipulate dataframes
+import seaborn as sns # a data visualisation library
+import matplotlib.pyplot as plt # a data visualisation library
+
+
+# Uploading data
+
+malawi = pd.read_csv('/Users/lucas/Documents/UNU-CDO/courses/ml4p/ml4p-website-v2/data/malawi.csv')
+
+```
+
+:::
 
 For this exercise, we will skip all the data pre-processing steps. At this point, we are all well acquainted with the Malawi dataset, and should be able to create our binary outcome, poor (or not), and clean the dataset in general. If you need to, you can always go back to the [Logistic Classification tab](classification.qmd) and repeat the data preparation process described there.
 
@@ -106,6 +154,43 @@ data_malawi <- data_malawi[,-c(1,31)] # delete columns no. 1 and 31 from the dat
 
 ```
 
+```{python, echo=FALSE}
+# preparing the dataset
+lnzline = malawi['lnzline']
+
+# Instead of deleting case_id, we will set it as an index (we did not do this last time!). 
+# This is essentially using the case_id variable as row names (and won't be included in your ML model)
+malawi = malawi.set_index('case_id')
+
+# deleting variables from pandas dataframe 
+cols2delete = ['ea', 'EA', 'hhwght', 'psu', 'strataid', 'lnzline', 'eatype', 'region']
+malawi = malawi.drop(cols2delete,axis=1) # axis=0 means delete rows and axis=1 means delete columns
+
+#==== Correctly identify each vector type: ====#
+
+# for-loop that iterates over variables in dataframe, if they have 2 unique values, transform vector into categorical
+for column in malawi:
+    if malawi[column].nunique() == 2:
+        malawi[column] = pd.Categorical(malawi[column])
+
+#==== Create a binary target variable: ====#
+
+# use numPy to create a binary vector (notice we have rounded up the threshold)
+malawi['Poor'] = np.where(malawi['lnexp_pc_month'] <= 7.555, 1, 0)
+
+# transform target variable into categorical type
+malawi['Poor'] = pd.Categorical(malawi['Poor']) # use malawi['Poor'].info() if you want to see the transformation
+
+# Final data pre-processing: remove the continuous target (as it perfectly predicts the binary target in a non-informative way)
+
+cont_target  = ['lnexp_pc_month']
+malawi = malawi.drop(cont_target , axis=1)
+
+```
+
+::: {.panel-tabset group="language"}
+## R
+
 ```{r split_and_fit_2, cache=TRUE}
 
 
@@ -139,7 +224,39 @@ If you read the final box of the print() output, you'll notice that, given our i
 
 + Kappa (adjusted accuracy): at $0.55$, it indicates that our random forest model (on the training data) seems to perform the same as out logistic model. To make a proper comparison, we need to look at the out-of-sample predictions evaluation statistics. 
 
+## Python
+
+Let's use a simple 80:20 split for train and test data subsets. 
+
+```{python python_split1}
+# First, recall the df structure
+malawi.info() # returns the column number, e.g. hhsize = column number 0, hhsize2 = 1... etc.
+
+# Then, split!
+X = malawi.iloc[:, 0:27] # x is a matrix containing all variables except the last one, which conveniently is our binary target variable
+y = malawi.iloc[:, 28] # y is a vector containing our target variable 
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=12345) # random_state is for reproducibility purposes
+```
+
+Now, let's fit a Random Forest model:
+
+```{python python_split2}
+# data fit: fit a random forest model
+
+rf = RandomForestClassifier(random_state=42) # empty random forest object
+rf.fit(X_train, y_train) # fit the rf classifier using the training data
+
+```
+
+We have now successfully trained a Random Forest model, and there is no need to go over in-sample predictions. We can simply evaluate the model's ability to make out-of-sample predictions. 
+
+:::
+
 ### Out-of-sample predictions
+
+::: {.panel-tabset group="language"}
+## R
 
 ```{r out_of_sample_predictions_1}
 
@@ -155,9 +272,35 @@ confusionMatrix(pr1, Test_df[["poor"]], positive = "Y") # positive = "Y" indicat
 
 ```
 
+## Python
+
+```{python}
+
+# predict our test-dataset target variable based on the trained model
+
+y_pred = rf.predict(X_test)
+
+# evaluate the prediction's performance (estimate accuracy score, report confusion matrix)
+    # create a confusion matrix object (we're improving from our previous confusion matrix exploration ;))
+cm = confusion_matrix(y_test, y_pred)
+
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("Precision:", precision_score(y_test, y_pred))
+print("Recall:", recall_score(y_test, y_pred))
+
+print("Confusion Matrix:", cm)
+ConfusionMatrixDisplay(confusion_matrix=cm).plot() # create confusion matrix plot
+plt.show() # display confusion matrix plot created above
+```
+
+:::
+
 Based on our out-of-sample predictions, the Random Forest algorithm seems to yield pretty similar accuracy in its predictions as the logistic classification algorithm. The performance metrics (accuracy, sensitivity, specificity, kappa) remain the same (as for most classification problems). If you want a refresher of what they mean and how to interpret them, go back one session for a more thorough explanation! 
 
 ### Fine-tuning parameters
+
+::: {.panel-tabset group="language"}
+## R
 
 We can try to improve our Random Forest model by fine-tuning two parameters: grid and cross-validation
 ```{r fine_tuning_parameters_1, cache=TRUE}
@@ -206,6 +349,71 @@ confusionMatrix(pr2, Test_df[["poor"]], positive = "Y") # positive = "Y" indicat
 
 ```
 
+## Python
+
+To improve the performance of our random forest model, we can try hyperparameter tuning. You can think of the process as optimising the learning model by defining the settings that will govern the learning process of the model. In Python, and for a random forest model, we can use RandomizedSearchCV to find the optimal parameters within a range of parameters. 
+
+```{python}
+# define hyperparameters and their ranges in a "parameter_distance" dictionary
+
+parameter_distance = {'n_estimators': randint(50,500),
+                      'max_depth': randint(1,10)
+                      }
+
+# n_estimators: the number of decision trees in the forest (at least 50 and at most 500)
+# max_depth: the maximum depth of each decision tree (at least 1 split, and at most 20 splits of the tree into branches)
+
+```
+
+There are other hyperparameters, but a search of the optimal value of these is a good start to our model optimisation!
+
+```{python}
+
+# Please note that the script below might take a while to run (don't be alarmed if you have to wait a couple of minutes)
+
+# Use a random search to find the best hyperparameters
+random_search = RandomizedSearchCV(rf, 
+                                 param_distributions = parameter_distance, 
+                                 n_iter=5, 
+                                 cv=5,
+                                 random_state=42)
+
+# Fit the random search object to the training model
+random_search.fit(X_train, y_train)
+
+# create an object / variable that containes the best hyperparameters, according to our search:
+
+best_rf_hype = random_search.best_estimator_
+print('Best random forest hyperparameters:',  random_search.best_params_)
+```
+
+**Now we can re-train our model using the retrieved hyperparameters and evaluate the out-of-sample-predictions of the model.**
+
+```{python}
+
+# for simplicity, store the best parameters again in a variable called x
+x = random_search.best_params_
+
+# Train the ranfom forest model using the best max_depth and n_estimators
+rf_best = RandomForestClassifier(**x, random_state=1234) # pass the integers from the best parameters with **
+rf_best.fit(X_train, y_train)
+
+# Make out-of-sample predictions
+y_pred_hype = rf_best.predict(X_test)
+
+# Evaluate the model
+accuracy = accuracy_score(y_test, y_pred_hype)
+recall = recall_score(y_test, y_pred_hype)
+precision = precision_score(y_test, y_pred_hype)
+
+print(f"Accuracy with best hyperparameters: {accuracy}")
+print(f"Recall with best hyperparameters: {recall}")
+print(f"Precision with best hyperparameters: {precision}")
+
+```
+
+:::
+
 Consistent with the improvements on the train set, the out-of-sample predictions also return a higher adjusted accurcacy (Kappa statistic), and improved specificity and sensitivity. Not by much (e.g. Kappa increase of $0.01$), but we'll take what we can get. 
 
 
@@ -213,7 +421,10 @@ These results also show that the biggest prediction improvements happen when we 
 
 ### Visualising our model
 
-To close the chapter, let's have a quick look at the sort of plots we can make with a Random Forest algorithm.
+To close the chapter, let's have a quick look at the sort of plots we can make with a Random Forest algorithm. While we cannot visualise the entirety of the forest, we can certainly have a look at the first two or three trees in our forest.
+
+::: {.panel-tabset group="language"}
+## R
 
 ```{r visualizing_1}
 # we'll need to re-estimate the rf model using rpart
@@ -225,6 +436,31 @@ fancyRpartPlot(MyRandomForest, palettes = c("Oranges","Blues"), main = "Visualis
 ```
 
 The fancy Rpart Plot returns the flow chart that we have now learned to call a decision tree. Recall that we have used different packages (and different specifications) for the Random Forest. So, the visualisation that we're looking at now is not the exact replica of our preferred fine-tuned model. It is, nonetheless, a good way to help you understand how classifications and decisions are made with tree-based methods. If you'd like an in-depth explanation of the plot, you can visit the [Rpart.plot pkg documentation](http://www.milbo.org/rpart-plot/prp.pdf). 
+
+## Python
+
+```{python}
+
+# Select the first (recall in python, the firs element is 0) decision-tree to display from our random forest object:
+# (Alternatively, use a for-loop to display the first two, three, four... trees)
+
+tree = rf_best.estimators_[0] # select the first tree from the foress
+
+# transform the tree into a graph object
+dot_data = export_graphviz(tree,
+                            feature_names=X_train.columns,  # names of columns selected from the X_train dataset
+                            filled=True,  
+                            max_depth=2, # how many layers/dimensions we want to display, only 2 after the initial branch in this case
+                            impurity=False, 
+                            proportion=True
+                            )
+graph = gv.Source(dot_data) # gv.Source helps us display the DOT languag source of the graph (needed for rendering the image)
+graph.render('/Users/lucas/Documents/UNU-CDO/courses/ml4p/ml4p-website-v2/assets/tree_visualisation', format='png') # this will save the tree visualisation directly into your working folder
+```
+
+![Decision Tree](assets/tree_visualisation.png){fig-align="center"}
+
+:::
 
 ## Readings
 
