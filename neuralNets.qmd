@@ -3,6 +3,13 @@ title: "An Introduction to Neural Networks"
 format: html
 ---
 
+```{r, echo=FALSE}
+#| echo: false
+library(reticulate)
+
+use_miniconda("/Users/lucas/Library/r-miniconda-arm64", required = TRUE)
+```
+
 ## What are neural networks?
 
 In this session, Prof. Dr. Robin Cowan will give is an intuitive introduction to neural networks. He has also prepared an exercise using data from [SHARE, the Survey of Health, Ageing and Retirement in Europe](https://share-eric.eu/). Please watch his video-lesson to get the intuition behind neural network algorithms and you can then follow policy-relevant application: predicting income-vulnerable older people in Europe.
@@ -13,11 +20,14 @@ In this session, Prof. Dr. Robin Cowan will give is an intuitive introduction to
 
 This is a discussion point that you can explore. But you might want to investigate what the average old-age pension is in some European countries, and what the average cost of living is. After working for more than half of your life, I'm sure you'd like to live comfortably...
 
-## R practical
+## Practical Example
 
 As always, start by opening the libraries that you'll need to reproduce the script below.
 
 Unfortunately, we are unable to share the dataset ourselves. However, if you wish to replicate this exercise at home (and use one of the many target variables that Robin has proposed to see how our model fares for those), you can request access to the dataset by creating an account with SHARE. You'll need to specify this is for learning purposes, but you won't be denied it.
+
+::: {.panel-tabset group="language"}
+## R
 
 ```{r, message=FALSE}
 rm(list = ls()) # this line cleans your Global Environment.
@@ -120,19 +130,13 @@ z1 <- z1 %>%
 
 In the English Questionnaire of the SHARE dataset, the variable asks:
 
-```         
-Thinking of your household's total monthly income, would you say that your household is able to make ends meet... (Income struggle)
-
-(the possible answers include: )
-
-    1. With great difficulty
-
-    2. With some difficulty 
-
-    3. Fairly easily 
-
-    4. Easily
-```
+       
+>Thinking of your household's total monthly income, would you say that your household is able to make ends meet...
+>
+>1. With great difficulty 
+>2. With some difficulty 
+>3. Fairly easily 
+>4. Easily
 
 Let's work with this variable to turn this into a classification problem.
 
@@ -385,6 +389,154 @@ Alternatively...
 (t1[1,1])/(t1[1,1]+t1[1,2])
 
 ```
+
+## Python
+
+```{python}
+#==== Python version: 3.10.12 ====#
+
+# Opening libraries
+
+# scikit-learn
+import sklearn as sk # our trusted Machine Learning library
+from sklearn.model_selection import train_test_split # split the dataset into train and test
+from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score, ConfusionMatrixDisplay # returns performance evaluation metrics
+from sklearn.neural_network import MLPClassifier
+
+
+# non-ML libraries
+import numpy as np # a library for numeric analysis
+import random # for random state 
+import csv # a library to read and write csv files 
+import pandas as pd # a library to help us easily navigate and manipulate dataframes
+import seaborn as sns # a data visualisation library
+import matplotlib.pyplot as plt # a data visualisation library
+from scipy.stats import randint # generate random integer
+from graphviz import Digraph
+
+
+# Uploading data
+
+SHARE = pd.read_csv('/Users/lucas/Documents/UNU-CDO/courses/ml4p/ml4p-website-v2/data/SHARE_subset.csv')
+
+```
+
+### 1. Overview of the data
+
+Let's take a quick look at what the dataset looks like.
+
+```{python}
+
+# let's start with the general dimensions and variable names
+
+print(SHARE.shape)
+
+# and variable names (comma separated)
+
+print(', '.join(SHARE.columns))
+
+# finally, missing values (best be sure!)
+
+SHARE.isnull().sum() # this sums all missing values per vector/variable
+```
+
+We have $19$ variables and $6,881$ observations and no missing values in the dataset. Let's tackle the variables now: Unnamed:0 is an ID tag, nothing to worry about. Then, we've got some traditional variables in socioeconomic analysis: female (or gender), married (or marriage status) hhsize (household size), and a few indicators about the person's educational past: books maths and language at age 10. These questions ask about a person's reading, maths and language performance when they were 10 years old (arguably a good proxy for educational relevance in the household, and thus a predictor of future employment... but take this statement with a grain of very salty salt). EduYears directly asks how many years a person studied, formally. The next variables are quite interesting: eurod is a depression scale, country_mod indicates where in Europe the person lives (Spain 724; France 250; Italy 380; Germany 276; NL 528; Poland 616); similarly, the variables country* are dummies generated from the country_mod variable. And finally, the target variable(s): inc_bin was created by Robin, and it indicates whether a person is in the first, second, third, or fourth income quartile. We will work with co007_ and co007_mod (which was generated from the previous variable). Both variables refer to income struggles:
+
+In the English Questionare of the SHARE dataset, the co007_ variable asks:
+
+>Thinking of your household's total monthly income, would you say that your household is able to make ends meet...
+>
+>1. With great difficulty 
+>2. With some difficulty 
+>3. Fairly easily 
+>4. Easily
+    
+Which Robin then recoded into a binary variable that takes on the value 1 if the person struggles to make ends meet at 2 otherwise (co007_mod). By doing so, he's turned the task into a simple classification model with neural networks. 
+
+### 2. Data Split and Fit
+
+```{python}
+# let's quickly look at the location of the relevant variables
+SHARE.info()
+
+# X = female + married + hhsize + books_age10 + maths_age10 + language_age10 + EduYears + eurod + iv009_mod + country250 + country276 + country380 + country528 + country724
+
+# Y = co007_mod 
+
+X = SHARE.iloc[:, list(range(1, 9)) + [10] + list(range(14, 19))] # since our range is discontinuous, we've used a combination of list() and range() to indicate which elemenets from the larger dataset we want contained in X. Also note that range has a start (1 here, so the second position) and and end (with the same example, 9 here, 10th position). Whilst the start is inclusive, the end is exclusive. Which means that the range will only capture elements 1 through 8. That's why the second range works even though we only have 18 variables ;). 
+y = SHARE.iloc[:, 13] # y is a vector containing our target variable, which is in position 13 of the dataframe
+
+
+# Split data into train and test
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=12345) # random_state is for reproducibility purposes
+```
+
+#### Now, let's fit a Neural Network model:
+
+```{python}
+
+# Initialise the MLPClassifier (or Multilayer Perceptron Classifier).
+# Despite the name indicating this type of neural network is used for deep learning, it can also be used for simpler classification "vanilla network" tasks
+
+nn_mlp = MLPClassifier(hidden_layer_sizes=(6,), max_iter=100000, activation='logistic', solver='sgd', random_state=12345) # the solver we're using here is the stochastic gradient descent. This is not what we used in the R practical, but there's no equivalent with the scikit-learn package, so if you peak over there, you might find some differences :).
+
+# Train the model
+nn_mlp.fit(X_train, y_train)
+
+# Predictions on the test dataset
+# Something I haven't mentioned before is that the predictions are deterministic based on the random state from the initialised model
+pred = nn_mlp.predict(X_test)
+
+# Evaluation of overall the model
+Accuracy = accuracy_score(y_test, pred)
+print(f"Overall Accuracy of our model: {Accuracy}, not bad!")
+
+```
+
+It seems like we're relatively good at predicting wether an older European citizen struggles economically. However, let's explore our model a little more. We'll start by taking a look at the proportions of strugglers and non-strugglers (our target variable):
+
+```{python}
+# recall that 1 is struggle and 2 is no struggle
+
+SHARE['co007_mod'].value_counts(normalize=True) # when you set normalize = True, you get proportions. False gives you the counts
+
+```
+
+So, about 29% struggle, and 70% do not. If we recall from previous sessions it is hard to have accurate predictions of that of which we have less... let's plot a confusion matrix and evaluate the recall (sensitivity) of our model to see how good we are at predicting strugglers. 
+
+```{python}
+# visualising a confusion matrix
+
+cm = confusion_matrix(y_test, pred)
+print("Confusion Matrix:", cm)
+ConfusionMatrixDisplay(confusion_matrix=cm).plot() # create confusion matrix plot
+plt.show() # display confusion matrix plot created above
+
+```
+
+So, the numbers have switched here: $2$ is now $1$ and $1$ is now $0$. Let's have a trip back to memory lane and remember the values that a confusion matrix provides:
+
++ True Positives (TP): 42 (actual = 0, predicted = 0)
+
++ False Negatives (FN): 381 (actual = 0, predicted = 1)
+
++ False Positives (FP): 21 (actual = 1, predicted = 0)
+
++ True Negatives (TN): 933 (actual = 1, predicted = 1)    
+    
+Based on these confusion matrix values (and the formulas provided in session 2: logistic classification), we can get our neural network model's performance metrics.
+
+Accuracy: 70%. (we got this above!). It is the proportion of true results regardless of the case. 
+Recall (Sensitivity): 35.22%  (we might want to know this, since we're trying to identify vulnerable older people). It is the proportion of correctly identified vulnerable cases. The formula (if you want to check yourself) is TP/(TP+FN) =  42/(42+381) = 0.099.
+
+Alternatively:
+```{python}
+print("Recall:", recall_score(y_test, pred))
+```
+
+
+:::
+
 
 ## Conclusion
 
