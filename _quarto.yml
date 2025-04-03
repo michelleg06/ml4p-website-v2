@@ -23,11 +23,11 @@ website:
       - policyChallenge.qmd
     tools:
       - icon: github
-        href: "https://github.com/michelleg06/Machine-Learning-for-Public-Policy"
+        href: "https://github.com/lucasboh/ml4p-website-v2"
   body-footer: |
    <div class="footer">
       Copyright &copy; 2025 Michelle González Amador & Stephan Dietrich. All rights reserved.<br>
-      [![GitHub](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/michelleg06/Machine-Learning-for-Public-Policy)
+      [![GitHub](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/lucasboh/ml4p-website-v2)
     </div>
 
 format:
