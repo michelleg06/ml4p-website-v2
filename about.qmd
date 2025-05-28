@@ -1,5 +1,25 @@
 ---
-title: "About"
+title: "About + Contact"
 ---
 
-About this site
+## Contact
+
+<div>
+<form action="https://formspree.io/f/xvgaevaj" method="POST">
+<div>
+<label for="email" class="form-label mt-4">Email address</label>
+<input type="email" class="form-control" id="email" aria-describedby="emailHelp" name="email">
+</div>
+<div>
+<label for="message" class="form-label mt-4">Your message</label>
+<textarea class="form-control" id="message" rows="3" data-lt-tmp-id="lt-176636" spellcheck="false" data-gramm="false" name="message"></textarea>
+</div>
+ <button class="submit-button btn btn-primary" type="submit">Send</button>
+</form>
+</div>
+
+<style>
+.submit-button {
+    margin-top: 24px
+}
+</style>

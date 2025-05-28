@@ -13,25 +13,22 @@ library(reticulate)
 use_miniconda("/Users/lucas/Library/r-miniconda-arm64", required = TRUE)
 ```
 
-
 If you would like to follow the course with Python, we will offer some guidance. Bear in mind that the R and Python scripts are not meant to be exact replicas of one another, this is because the languages offer different data wrangling packages. However, you'll be able to get to the core of the course content.
 
-With that said, let's start with the first difference. Python does not have a standard IDE like Rstudio for R. You can choose to work directly with the console REPL, with Jupyter notebooks or the IDE Visual Studio Code. We recommend to use VSCode, because it offers many functionalities for code-sharing and collaboration, and you can integrate AI-helpers to guide you throughout your coding tasks. 
+With that said, let's start with the first difference. Python does not have a standard IDE like Rstudio for R. You can choose to work directly with the console REPL, with Jupyter notebooks or the IDE Visual Studio Code. We recommend to use VSCode, because it offers many functionalities for code-sharing and collaboration, and you can integrate AI-helpers to guide you throughout your coding tasks.
 
-**Download VSCode and let's get started! **
+## Download VSCode and let's get started!
 
-When you open the IDE VSCode, you'll receive a prompt to start a new project.
-Please make sure that when you do, you automatically save it in a dedicated folder. This will be relevant for many reasons, but the most pressing one is that you'll want to create a Virtual Environment before starting your script. 
+When you open the IDE VSCode, you'll receive a prompt to start a new project. Please make sure that when you do, you automatically save it in a dedicated folder. This will be relevant for many reasons, but the most pressing one is that you'll want to create a Virtual Environment before starting your script.
 
-A **Python Virtual Environment**, also referred to as venv(s), is there to help us decouple and isolate package installs and manage them, independently from pkgs that are provided by the system or used by other projects. Although not strictly necessary, it is a good practice that will save us a few headaches in the future. 
+A **Python Virtual Environment**, also referred to as venv(s), is there to help us decouple and isolate package installs and manage them, independently from pkgs that are provided by the system or used by other projects. Although not strictly necessary, it is a good practice that will save us a few headaches in the future.
 
-To create a virtual environment, once you've opened a new blank project in VSC, click on shift + cmd + P (or F1) to open the Command Palette (it should display from the top of VSC). Type "Python" and select create python terminal. In the terminal, type `` python -m venv venv '' and that's it! You'll notice the appearance of a venv folder in your dedicated project folder.
+To create a virtual environment, once you've opened a new blank project in VSC, click on shift + cmd + P (or F1) to open the Command Palette (it should display from the top of VSC). Type "Python" and select create python terminal. In the terminal, type \`\` python -m venv venv '' and that's it! You'll notice the appearance of a venv folder in your dedicated project folder.
 
-Now, you'll need to install and load the libraries you'll need for your project. To install them, use the python terminal you have opened. It should be displayed in the bottom of the working environment. Use the following (which should work with both Windows and Macbook, although Mac users can also use the Homebrew package manager): 
+Now, you'll need to install and load the libraries you'll need for your project. To install them, use the python terminal you have opened. It should be displayed in the bottom of the working environment. Use the following (which should work with both Windows and Macbook, although Mac users can also use the Homebrew package manager):
 
-```
+```         
 pip install pkg_name 
-
 ```
 
 ```{bash, include=FALSE}
@@ -46,7 +43,6 @@ pip install IPython
 pip install graphviz
 ```
 
-
 ```{python}
 # Now, we can load the libraries
 
@@ -59,7 +55,7 @@ import sklearn as sk #  implement machine learning models and statistical modell
 
 With some basic libraries open, let's start with a brief introduction to Python programming. Like R, it is object oriented programming. But we call its elements differently. Python uses the following list of elements:
 
-- literals, variables, operators, delimiters, keywords, comments
+-   literals, variables, operators, delimiters, keywords, comments
 
 ```{python}
 # Assigning VARIABLES with LITERALS
@@ -73,11 +69,12 @@ print(a_string , an_integer)
 
 You'll notice that what we call an object in R, is a variable in Python. Likewise, an element in R is now a literal in Python. We'll stop with the comparisons and proceed to work with Python language for now.
 
-* In Python, the data type is derived from the literal and does not have to be described explicitly.
+-   In Python, the data type is derived from the literal and does not have to be described explicitly.
 
-* You can overwrite a variable (i.e. an object) with new information.
+-   You can overwrite a variable (i.e. an object) with new information.
 
 e.g.
+
 ```{python}
 an_integer = 7
 print(an_integer)
@@ -89,7 +86,8 @@ If you're working with a VSC script, you'll want to select a snippet of the scri
 
 Some basics:
 
-**Arithmetic operators**
+## Arithmetic operators
+
 ```{python}
 5 + 1 
 5*3 
@@ -128,7 +126,8 @@ print(many_strings)
 # python orders alphabetically :) 
 
 ```
-Let's use a toy dataset from the sklearn package to practice some basic estimations. 
+
+Let's use a toy dataset from the sklearn package to practice some basic estimations.
 
 ```{python}
  # import sklearn dataset
@@ -141,7 +140,7 @@ print(diabetes.DESCR) # DESCR is a description option from sklearn library. Be m
 
 ```
 
-Whilst there are many things you can do directly with the sklearn package options, the pandas library is the best for dataframe manipulation. 
+Whilst there are many things you can do directly with the sklearn package options, the pandas library is the best for dataframe manipulation.
 
 ```{python}
 # 1. convert the dataframe object into a pandas dataframe object
@@ -154,6 +153,7 @@ len(pandas_diabetes) # returns the length of the object (aka the number of obser
 pandas_diabetes.head() # print the first 4 observations of the variables (glimpse of your df)
 
 ```
+
 If you're working with VSC and you'd like to get a nice display of your data:
 
 install the pkg 'tabulate' (pip install tabulate) using the terminal. You may have to open a new bash terminal (that is not using the Python REPL) to install packages. If that is the case (i.e. you could not pip install in the terminal you are using), you can 'split' the terminal using the interface split prompt.
@@ -163,10 +163,10 @@ install the pkg 'tabulate' (pip install tabulate) using the terminal. You may ha
 print(pandas_diabetes.head().to_markdown())
 
 ```
+
 Some basic operations and estimation of a linear model:
 
-*Indexig with pandas is done using the .iloc[] call. 
-*To estimate a linear model (OLS), you'll need to split your data into a dependent Y and independent X variables.
+*Indexig with pandas is done using the .iloc\[\] call.* To estimate a linear model (OLS), you'll need to split your data into a dependent Y and independent X variables.
 
 Luckily for us, because the diabetes toy dataframe is from the sklearn library, you can use the target and data functions. For the same reason, we will use the diabetes dataset and not the pandas-converted dataset.
 
@@ -202,6 +202,7 @@ coefficients = pd.concat([pd.DataFrame(column_names),pd.DataFrame(np.transpose(l
 print(coefficients) # displays variable name and it's estimated coefficient. 
 
 ```
+
 The sklearn library will be our trusted Machine Learning ally. However, for general statistical analysis and easier to interpret output, there are other libraries. E.g.
 
 ```{python}
@@ -216,10 +217,11 @@ lm_2 = est.fit() # create an object that contains all the models' parameters
 print(lm_2.summary()) # print linear model parameters
 
 ```
+
 This displayed output contains all the information we may need to interpret the suitability of our linear model.
 
-We're at the end of this brief intro to Python. Notice that there's a forward structure throughout. We create an object X, which we define to be of class, say, pandas. It's class will let us use that class/library's functions by calling them after a dot: X.summary() will display a summary of the X object. 
-** Visualisation with matplotlib **
+We're at the end of this brief intro to Python. Notice that there's a forward structure throughout. We create an object X, which we define to be of class, say, pandas. It's class will let us use that class/library's functions by calling them after a dot: X.summary() will display a summary of the X object. \*\* Visualisation with matplotlib \*\*
+
 ```{python}
 import matplotlib.pyplot as plt
 
@@ -248,7 +250,7 @@ plt.plot(age, a*age+b, color='red', linestyle='--', linewidth=2)
 plt.show()
 ```
 
-**Defining functions and loops**
+## Defining functions and loops
 
 The last useful tip before we begin to use Python in earnest, is to remember that we can define functions or use loops (general flow control) to help us with our data wrangling:
 

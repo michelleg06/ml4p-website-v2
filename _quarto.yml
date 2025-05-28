@@ -20,7 +20,14 @@ website:
         - treebasedmodels.qmd
         - fairml.qmd
         - neuralNets.qmd
-      - policyChallenge.qmd
+      - text: "Collaborative Policy Challenge"
+        menu:
+        - text: "2024"
+          href: policy-challenge-2024.qmd
+        - text: "2025"
+          href: policy-challenge-2025.qmd
+      - text: "About"
+        href: about.qmd
     tools:
       - icon: github
         href: "https://github.com/lucasboh/ml4p-website-v2"

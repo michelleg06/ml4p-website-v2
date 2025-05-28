@@ -204,9 +204,24 @@ window.Quarto = {
   </li>  
     </ul>
   </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-collaborative-policy-challenge" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Collaborative Policy Challenge</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-collaborative-policy-challenge">    
+        <li>
+    <a class="dropdown-item" href="./policy-challenge-2024.html">
+ <span class="dropdown-text">2024</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./policy-challenge-2025.html">
+ <span class="dropdown-text">2025</span></a>
+  </li>  
+    </ul>
+  </li>
   <li class="nav-item">
-    <a class="nav-link" href="./policyChallenge.html"> 
-<span class="menu-text">Collaborative Policy Challenge</span></a>
+    <a class="nav-link" href="./about.html"> 
+<span class="menu-text">About</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -974,7 +989,7 @@ Prediction    Y    N
 </div>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>ConfusionMatrixDisplay(confusion_matrix<span class="op">=</span>cm).plot() <span class="co"># create confusion matrix plot</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>&lt;sklearn.metrics._plot.confusion_matrix.ConfusionMatrixDisplay object at 0x168b484d0&gt;</code></pre>
+<pre><code>&lt;sklearn.metrics._plot.confusion_matrix.ConfusionMatrixDisplay object at 0x168f110d0&gt;</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>plt.show() <span class="co"># display confusion matrix plot created above</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -1556,12 +1571,12 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
 }
 </style><div id="sk-container-id-2" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>RandomizedSearchCV(cv=5, estimator=RandomForestClassifier(random_state=42),
                    n_iter=5,
-                   param_distributions={'max_depth': &lt;scipy.stats._distn_infrastructure.rv_discrete_frozen object at 0x168bfa9f0&gt;,
-                                        'n_estimators': &lt;scipy.stats._distn_infrastructure.rv_discrete_frozen object at 0x168bb2810&gt;},
+                   param_distributions={'max_depth': &lt;scipy.stats._distn_infrastructure.rv_discrete_frozen object at 0x16d8187d0&gt;,
+                                        'n_estimators': &lt;scipy.stats._distn_infrastructure.rv_discrete_frozen object at 0x16d7f2ba0&gt;},
                    random_state=42)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br>On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden=""><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-2" type="checkbox"><label for="sk-estimator-id-2" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>RandomizedSearchCV</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.6/modules/generated/sklearn.model_selection.RandomizedSearchCV.html">?<span>Documentation for RandomizedSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></div></label><div class="sk-toggleable__content fitted"><pre>RandomizedSearchCV(cv=5, estimator=RandomForestClassifier(random_state=42),
                    n_iter=5,
-                   param_distributions={'max_depth': &lt;scipy.stats._distn_infrastructure.rv_discrete_frozen object at 0x168bfa9f0&gt;,
-                                        'n_estimators': &lt;scipy.stats._distn_infrastructure.rv_discrete_frozen object at 0x168bb2810&gt;},
+                   param_distributions={'max_depth': &lt;scipy.stats._distn_infrastructure.rv_discrete_frozen object at 0x16d8187d0&gt;,
+                                        'n_estimators': &lt;scipy.stats._distn_infrastructure.rv_discrete_frozen object at 0x16d7f2ba0&gt;},
                    random_state=42)</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-3" type="checkbox"><label for="sk-estimator-id-3" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>best_estimator_: RandomForestClassifier</div></div></label><div class="sk-toggleable__content fitted"><pre>RandomForestClassifier(max_depth=8, n_estimators=238, random_state=42)</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-4" type="checkbox"><label for="sk-estimator-id-4" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>RandomForestClassifier</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.6/modules/generated/sklearn.ensemble.RandomForestClassifier.html">?<span>Documentation for RandomForestClassifier</span></a></div></label><div class="sk-toggleable__content fitted"><pre>RandomForestClassifier(max_depth=8, n_estimators=238, random_state=42)</pre></div> </div></div></div></div></div></div></div></div></div>
 </div>
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create an object / variable that containes the best hyperparameters, according to our search:</span></span>

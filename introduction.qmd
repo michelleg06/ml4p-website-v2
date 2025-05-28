@@ -37,7 +37,6 @@ Empirical Public Policy research is primarily concerned with causality and under
 
 Machine learning is classified in three major branches:
 
-
 **1. Supervised Learning**:
 
 This course will be primarily concerned with supervised learning. Supervised learning is analogous to statistical learning: suppose that we observe a quantitative response $Y$ and $p$ predictors, $X_1, X_2,..., X_p$.
@@ -46,11 +45,9 @@ We can rewrite this in a general linear form as:
 
 $$Y = f(X) + u$$ where $u$ is an error term.
 
-
 **2. Unsupervised Learning**:
 
 Unsupervised learning is known for reading data without labels; it is more computationally complex than supervised learning (because it will look for all possible patterns in the data), but it is also more flexible than supervised learning. You can think of clustering, anomaly detection, neural networks, etc.
-
 
 **3. Reinforcement Learning**:
 
@@ -61,7 +58,6 @@ Reinforcement learning is categorised as Artificial Intelligence. It is more foc
 2.  Does not have direct instructions as to what actions to take; instead it must discover which actions yield the most reward by trying them out.
 
 3.  Not knowing where the consequences of actions, including reward signals, play out over extended time periods.
-
 
 ![](assets/sup_unsup_re.png){fig-align="center"}
 

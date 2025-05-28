@@ -175,9 +175,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
     </ul>
   </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-collaborative-policy-challenge" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Collaborative Policy Challenge</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-collaborative-policy-challenge">    
+        <li>
+    <a class="dropdown-item" href="./policy-challenge-2024.html">
+ <span class="dropdown-text">2024</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./policy-challenge-2025.html">
+ <span class="dropdown-text">2025</span></a>
+  </li>  
+    </ul>
+  </li>
   <li class="nav-item">
-    <a class="nav-link" href="./policyChallenge.html"> 
-<span class="menu-text">Collaborative Policy Challenge</span></a>
+    <a class="nav-link" href="./about.html"> 
+<span class="menu-text">About</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -191,8 +206,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#download-vscode-and-lets-get-started" id="toc-download-vscode-and-lets-get-started" class="nav-link active" data-scroll-target="#download-vscode-and-lets-get-started">Download VSCode and let’s get started!</a></li>
+  <li><a href="#arithmetic-operators" id="toc-arithmetic-operators" class="nav-link" data-scroll-target="#arithmetic-operators">Arithmetic operators</a></li>
+  <li><a href="#defining-functions-and-loops" id="toc-defining-functions-and-loops" class="nav-link" data-scroll-target="#defining-functions-and-loops">Defining functions and loops</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -218,13 +241,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <p>If you would like to follow the course with Python, we will offer some guidance. Bear in mind that the R and Python scripts are not meant to be exact replicas of one another, this is because the languages offer different data wrangling packages. However, you’ll be able to get to the core of the course content.</p>
 <p>With that said, let’s start with the first difference. Python does not have a standard IDE like Rstudio for R. You can choose to work directly with the console REPL, with Jupyter notebooks or the IDE Visual Studio Code. We recommend to use VSCode, because it offers many functionalities for code-sharing and collaboration, and you can integrate AI-helpers to guide you throughout your coding tasks.</p>
-<p><strong>Download VSCode and let’s get started! </strong></p>
+<section id="download-vscode-and-lets-get-started" class="level2">
+<h2 class="anchored" data-anchor-id="download-vscode-and-lets-get-started">Download VSCode and let’s get started!</h2>
 <p>When you open the IDE VSCode, you’ll receive a prompt to start a new project. Please make sure that when you do, you automatically save it in a dedicated folder. This will be relevant for many reasons, but the most pressing one is that you’ll want to create a Virtual Environment before starting your script.</p>
 <p>A <strong>Python Virtual Environment</strong>, also referred to as venv(s), is there to help us decouple and isolate package installs and manage them, independently from pkgs that are provided by the system or used by other projects. Although not strictly necessary, it is a good practice that will save us a few headaches in the future.</p>
 <p>To create a virtual environment, once you’ve opened a new blank project in VSC, click on shift + cmd + P (or F1) to open the Command Palette (it should display from the top of VSC). Type “Python” and select create python terminal. In the terminal, type `` python -m venv venv ’’ and that’s it! You’ll notice the appearance of a venv folder in your dedicated project folder.</p>
 <p>Now, you’ll need to install and load the libraries you’ll need for your project. To install them, use the python terminal you have opened. It should be displayed in the bottom of the working environment. Use the following (which should work with both Windows and Macbook, although Mac users can also use the Homebrew package manager):</p>
-<pre><code>pip install pkg_name 
-</code></pre>
+<pre><code>pip install pkg_name </code></pre>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Now, we can load the libraries</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -271,7 +294,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>If you’re working with a VSC script, you’ll want to select a snippet of the script and use shift + enter to only run that snippet (and not the whole code chunk).</p>
 <p>Some basics:</p>
-<p><strong>Arithmetic operators</strong></p>
+</section>
+<section id="arithmetic-operators" class="level2">
+<h2 class="anchored" data-anchor-id="arithmetic-operators">Arithmetic operators</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="dv">5</span> <span class="op">+</span> <span class="dv">1</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -446,7 +471,7 @@ memory usage: 34.7 KB</code></pre>
 </div>
 </div>
 <p>Some basic operations and estimation of a linear model:</p>
-<p><em>Indexig with pandas is done using the .iloc[] call. </em>To estimate a linear model (OLS), you’ll need to split your data into a dependent Y and independent X variables.</p>
+<p><em>Indexig with pandas is done using the .iloc[] call.</em> To estimate a linear model (OLS), you’ll need to split your data into a dependent Y and independent X variables.</p>
 <p>Luckily for us, because the diabetes toy dataframe is from the sklearn library, you can use the target and data functions. For the same reason, we will use the diabetes dataset and not the pandas-converted dataset.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>pandas_diabetes.iloc[:,<span class="dv">1</span>] <span class="co"># print first column: Name: sex, Length: 442, dtype: float64</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -565,8 +590,8 @@ Name: sex, Length: 442, dtype: float64</code></pre>
 Dep. Variable:                      y   R-squared:                       0.518
 Model:                            OLS   Adj. R-squared:                  0.507
 Method:                 Least Squares   F-statistic:                     46.27
-Date:                Thu, 03 Apr 2025   Prob (F-statistic):           3.83e-62
-Time:                        12:05:59   Log-Likelihood:                -2386.0
+Date:                Wed, 28 May 2025   Prob (F-statistic):           3.83e-62
+Time:                        15:50:25   Log-Likelihood:                -2386.0
 No. Observations:                 442   AIC:                             4794.
 Df Residuals:                     431   BIC:                             4839.
 Df Model:                          10                                         
@@ -653,7 +678,9 @@ Notes:
 </div>
 </div>
 </div>
-<p><strong>Defining functions and loops</strong></p>
+</section>
+<section id="defining-functions-and-loops" class="level2">
+<h2 class="anchored" data-anchor-id="defining-functions-and-loops">Defining functions and loops</h2>
 <p>The last useful tip before we begin to use Python in earnest, is to remember that we can define functions or use loops (general flow control) to help us with our data wrangling:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb55"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="co"># for loops, to iterate over some length and repeat an operation, e.g.</span></span>
@@ -695,6 +722,7 @@ Mon âge est 1000</code></pre>
 <p><a class="btn btn-primary" download="" href="scripts/Intro2Python.py"> Download Intro to Python script </a></p>
 
 
+</section>
 
 <div class="footer">
 Copyright © 2025 Michelle González Amador &amp; Stephan Dietrich. All rights reserved.<br> <a href="https://github.com/lucasboh/ml4p-website-v2"><img src="https://img.shields.io/badge/GitHub-Repository-blue?logo=github.png" class="img-fluid" alt="GitHub"></a>

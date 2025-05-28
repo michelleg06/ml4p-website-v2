@@ -204,9 +204,24 @@ window.Quarto = {
   </li>  
     </ul>
   </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-collaborative-policy-challenge" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Collaborative Policy Challenge</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-collaborative-policy-challenge">    
+        <li>
+    <a class="dropdown-item" href="./policy-challenge-2024.html">
+ <span class="dropdown-text">2024</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./policy-challenge-2025.html">
+ <span class="dropdown-text">2025</span></a>
+  </li>  
+    </ul>
+  </li>
   <li class="nav-item">
-    <a class="nav-link" href="./policyChallenge.html"> 
-<span class="menu-text">Collaborative Policy Challenge</span></a>
+    <a class="nav-link" href="./about.html"> 
+<span class="menu-text">About</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -1147,8 +1162,8 @@ Levels: NotNorth North</code></pre>
 
     <script>
 
-      function styleCell_50xutxp7dj5nqmy6k4iu(i, j, css_id) {
-          var table = document.getElementById("tinytable_50xutxp7dj5nqmy6k4iu");
+      function styleCell_et4ob2uuckxr3mdfniqo(i, j, css_id) {
+          var table = document.getElementById("tinytable_et4ob2uuckxr3mdfniqo");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -1158,7 +1173,7 @@ Levels: NotNorth North</code></pre>
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_50xutxp7dj5nqmy6k4iu');
+        var table = document.getElementById('tinytable_et4ob2uuckxr3mdfniqo');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -1166,8 +1181,8 @@ Levels: NotNorth North</code></pre>
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_50xutxp7dj5nqmy6k4iu(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_50xutxp7dj5nqmy6k4iu");
+      function spanCell_et4ob2uuckxr3mdfniqo(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_et4ob2uuckxr3mdfniqo");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -1197,15 +1212,15 @@ Levels: NotNorth North</code></pre>
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 9, j: 2 }, { i: 9, j: 3 }, { i: 9, j: 7 }, { i: 9, j: 1 }, { i: 9, j: 5 }, { i: 9, j: 6 }, { i: 9, j: 0 }, { i: 9, j: 4 }, { i: 9, j: 8 },  ], css_id: 'tinytable_css_wnbgyp4pwy9byhieme6d',}, 
-          { positions: [ { i: 2, j: 2 }, { i: 6, j: 0 }, { i: 3, j: 0 }, { i: 2, j: 1 }, { i: 3, j: 1 }, { i: 1, j: 0 }, { i: 2, j: 0 }, { i: 6, j: 1 }, { i: 4, j: 0 }, { i: 5, j: 0 }, { i: 2, j: 3 }, { i: 7, j: 0 }, { i: 8, j: 0 }, { i: 5, j: 3 }, { i: 3, j: 2 }, { i: 1, j: 1 }, { i: 5, j: 2 }, { i: 6, j: 2 }, { i: 4, j: 1 }, { i: 5, j: 1 }, { i: 2, j: 4 }, { i: 7, j: 1 }, { i: 8, j: 1 }, { i: 5, j: 4 }, { i: 3, j: 3 }, { i: 1, j: 2 }, { i: 8, j: 4 }, { i: 6, j: 3 }, { i: 4, j: 2 }, { i: 8, j: 3 }, { i: 2, j: 5 }, { i: 7, j: 2 }, { i: 8, j: 2 }, { i: 5, j: 5 }, { i: 3, j: 4 }, { i: 1, j: 3 }, { i: 8, j: 5 }, { i: 6, j: 4 }, { i: 4, j: 3 }, { i: 1, j: 6 }, { i: 2, j: 6 }, { i: 7, j: 3 }, { i: 1, j: 5 }, { i: 5, j: 6 }, { i: 3, j: 5 }, { i: 1, j: 4 }, { i: 8, j: 6 }, { i: 6, j: 5 }, { i: 4, j: 4 }, { i: 1, j: 7 }, { i: 2, j: 7 }, { i: 7, j: 4 }, { i: 4, j: 7 }, { i: 5, j: 7 }, { i: 3, j: 6 }, { i: 4, j: 6 }, { i: 8, j: 7 }, { i: 6, j: 6 }, { i: 4, j: 5 }, { i: 1, j: 8 }, { i: 2, j: 8 }, { i: 7, j: 5 }, { i: 4, j: 8 }, { i: 5, j: 8 }, { i: 3, j: 7 }, { i: 7, j: 8 }, { i: 8, j: 8 }, { i: 6, j: 7 }, { i: 7, j: 7 }, { i: 6, j: 8 }, { i: 3, j: 8 }, { i: 7, j: 6 },  ], css_id: 'tinytable_css_d432xrgob4thlcc90boy',}, 
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 4 }, { i: 0, j: 8 }, { i: 0, j: 2 }, { i: 0, j: 3 }, { i: 0, j: 7 }, { i: 0, j: 1 }, { i: 0, j: 5 }, { i: 0, j: 6 },  ], css_id: 'tinytable_css_2m8t9nsjfrne26ybjojj',}, 
+          { positions: [ { i: 2, j: 2 }, { i: 6, j: 0 }, { i: 3, j: 0 }, { i: 2, j: 1 }, { i: 3, j: 1 }, { i: 1, j: 0 }, { i: 2, j: 0 }, { i: 6, j: 1 }, { i: 4, j: 0 }, { i: 5, j: 0 }, { i: 2, j: 3 }, { i: 7, j: 0 }, { i: 8, j: 0 }, { i: 5, j: 3 }, { i: 3, j: 2 }, { i: 1, j: 1 }, { i: 5, j: 2 }, { i: 6, j: 2 }, { i: 4, j: 1 }, { i: 5, j: 1 }, { i: 2, j: 4 }, { i: 7, j: 1 }, { i: 8, j: 1 }, { i: 5, j: 4 }, { i: 3, j: 3 }, { i: 1, j: 2 }, { i: 8, j: 4 }, { i: 6, j: 3 }, { i: 4, j: 2 }, { i: 8, j: 3 }, { i: 2, j: 5 }, { i: 7, j: 2 }, { i: 8, j: 2 }, { i: 5, j: 5 }, { i: 3, j: 4 }, { i: 1, j: 3 }, { i: 8, j: 5 }, { i: 6, j: 4 }, { i: 4, j: 3 }, { i: 1, j: 6 }, { i: 2, j: 6 }, { i: 7, j: 3 }, { i: 1, j: 5 }, { i: 5, j: 6 }, { i: 3, j: 5 }, { i: 1, j: 4 }, { i: 8, j: 6 }, { i: 6, j: 5 }, { i: 4, j: 4 }, { i: 1, j: 7 }, { i: 2, j: 7 }, { i: 7, j: 4 }, { i: 4, j: 7 }, { i: 5, j: 7 }, { i: 3, j: 6 }, { i: 4, j: 6 }, { i: 8, j: 7 }, { i: 6, j: 6 }, { i: 4, j: 5 }, { i: 1, j: 8 }, { i: 2, j: 8 }, { i: 7, j: 5 }, { i: 4, j: 8 }, { i: 5, j: 8 }, { i: 3, j: 7 }, { i: 7, j: 8 }, { i: 8, j: 8 }, { i: 6, j: 7 }, { i: 7, j: 7 }, { i: 6, j: 8 }, { i: 3, j: 8 }, { i: 7, j: 6 },  ], css_id: 'tinytable_css_yy6czwsijhpp6m1ihmtr',}, 
+          { positions: [ { i: 9, j: 2 }, { i: 9, j: 3 }, { i: 9, j: 7 }, { i: 9, j: 1 }, { i: 9, j: 5 }, { i: 9, j: 6 }, { i: 9, j: 0 }, { i: 9, j: 4 }, { i: 9, j: 8 },  ], css_id: 'tinytable_css_l8lg6v8j9fkr6i4ndr72',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 4 }, { i: 0, j: 8 }, { i: 0, j: 2 }, { i: 0, j: 3 }, { i: 0, j: 7 }, { i: 0, j: 1 }, { i: 0, j: 5 }, { i: 0, j: 6 },  ], css_id: 'tinytable_css_0lne7zrec4zknnwfo59u',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_50xutxp7dj5nqmy6k4iu(cell.i, cell.j, group.css_id);
+                  styleCell_et4ob2uuckxr3mdfniqo(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -1213,12 +1228,12 @@ Levels: NotNorth North</code></pre>
 
     <style>
       /* tinytable css entries after */
-      .table td.tinytable_css_wnbgyp4pwy9byhieme6d, .table th.tinytable_css_wnbgyp4pwy9byhieme6d { text-align: left; border-bottom: solid #d3d8dc 0.1em; }
-      .table td.tinytable_css_d432xrgob4thlcc90boy, .table th.tinytable_css_d432xrgob4thlcc90boy { text-align: left; }
-      .table td.tinytable_css_2m8t9nsjfrne26ybjojj, .table th.tinytable_css_2m8t9nsjfrne26ybjojj { text-align: left; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+      .table td.tinytable_css_yy6czwsijhpp6m1ihmtr, .table th.tinytable_css_yy6czwsijhpp6m1ihmtr { text-align: left; }
+      .table td.tinytable_css_l8lg6v8j9fkr6i4ndr72, .table th.tinytable_css_l8lg6v8j9fkr6i4ndr72 { text-align: left; border-bottom: solid #d3d8dc 0.1em; }
+      .table td.tinytable_css_0lne7zrec4zknnwfo59u, .table th.tinytable_css_0lne7zrec4zknnwfo59u { text-align: left; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
     </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_50xutxp7dj5nqmy6k4iu" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_et4ob2uuckxr3mdfniqo" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -1244,7 +1259,7 @@ Levels: NotNorth North</code></pre>
                   <td>4.8</td>
                   <td>7.3</td>
                   <td>11.1</td>
-                  <td><img src="./tinytable_assets/id2kycuqyomthb98ajhp4b.png" style="height: 1em;"></td>
+                  <td><img src="./tinytable_assets/idofhbu4xpfxojlg83uk5a.png" style="height: 1em;"></td>
                 </tr>
                 <tr>
                   <td>hhsize</td>
@@ -1255,7 +1270,7 @@ Levels: NotNorth North</code></pre>
                   <td>1.0</td>
                   <td>4.0</td>
                   <td>27.0</td>
-                  <td><img src="./tinytable_assets/idpzabe2zgzcb7oqateer0.png" style="height: 1em;"></td>
+                  <td><img src="./tinytable_assets/ido1cziwn6qp4ji6to9nsq.png" style="height: 1em;"></td>
                 </tr>
                 <tr>
                   <td>hhsize2</td>
@@ -1266,7 +1281,7 @@ Levels: NotNorth North</code></pre>
                   <td>1.0</td>
                   <td>16.0</td>
                   <td>729.0</td>
-                  <td><img src="./tinytable_assets/idwelkf9cqw083rp9c3nlh.png" style="height: 1em;"></td>
+                  <td><img src="./tinytable_assets/id8lseea6xnejndy17dnjs.png" style="height: 1em;"></td>
                 </tr>
                 <tr>
                   <td>agehead</td>
@@ -1277,7 +1292,7 @@ Levels: NotNorth North</code></pre>
                   <td>10.0</td>
                   <td>39.0</td>
                   <td>104.0</td>
-                  <td><img src="./tinytable_assets/idbv6ttluahn63qtmicvpi.png" style="height: 1em;"></td>
+                  <td><img src="./tinytable_assets/idqpvdz01hsdetwc5zl1di.png" style="height: 1em;"></td>
                 </tr>
                 <tr>
                   <td>agehead2</td>
@@ -1288,7 +1303,7 @@ Levels: NotNorth North</code></pre>
                   <td>100.0</td>
                   <td>1521.0</td>
                   <td>10816.0</td>
-                  <td><img src="./tinytable_assets/iddx4l1d1bozqamjelt2fl.png" style="height: 1em;"></td>
+                  <td><img src="./tinytable_assets/id8p0guuhmdalvs8f54o25.png" style="height: 1em;"></td>
                 </tr>
                 <tr>
                   <td>sharenoedu</td>
@@ -1299,7 +1314,7 @@ Levels: NotNorth North</code></pre>
                   <td>0.0</td>
                   <td>0.0</td>
                   <td>1.0</td>
-                  <td><img src="./tinytable_assets/id5oh0mz4ijjqt1zm8zbha.png" style="height: 1em;"></td>
+                  <td><img src="./tinytable_assets/idk6oefjigonq79jii55iz.png" style="height: 1em;"></td>
                 </tr>
                 <tr>
                   <td>shareread</td>
@@ -1310,7 +1325,7 @@ Levels: NotNorth North</code></pre>
                   <td>0.0</td>
                   <td>0.7</td>
                   <td>1.0</td>
-                  <td><img src="./tinytable_assets/id7xwmqvht45mado08qxdg.png" style="height: 1em;"></td>
+                  <td><img src="./tinytable_assets/idsbfu7i62lpy4ihr2hih1.png" style="height: 1em;"></td>
                 </tr>
                 <tr>
                   <td>nrooms</td>
@@ -1321,7 +1336,7 @@ Levels: NotNorth North</code></pre>
                   <td>0.0</td>
                   <td>2.0</td>
                   <td>16.0</td>
-                  <td><img src="./tinytable_assets/idtr2brdf1k0ajju1w98qo.png" style="height: 1em;"></td>
+                  <td><img src="./tinytable_assets/idsimoyx9lhrddw1hw2fz3.png" style="height: 1em;"></td>
                 </tr>
                 <tr>
                   <td>dependratio</td>
@@ -1332,7 +1347,7 @@ Levels: NotNorth North</code></pre>
                   <td>0.0</td>
                   <td>1.0</td>
                   <td>9.0</td>
-                  <td><img src="./tinytable_assets/idsn4ok4iw0ynua526cd6g.png" style="height: 1em;"></td>
+                  <td><img src="./tinytable_assets/idkvjh2a4ublaazbf23ixx.png" style="height: 1em;"></td>
                 </tr>
         </tbody>
       </table>
@@ -3458,8 +3473,8 @@ Note:               *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
 Dep. Variable:         lnexp_pc_month   R-squared:                       0.599
 Model:                            OLS   Adj. R-squared:                  0.598
 Method:                 Least Squares   F-statistic:                     498.3
-Date:                Thu, 03 Apr 2025   Prob (F-statistic):               0.00
-Time:                        12:06:47   Log-Likelihood:                -5189.2
+Date:                Wed, 28 May 2025   Prob (F-statistic):               0.00
+Time:                        15:51:20   Log-Likelihood:                -5189.2
 No. Observations:                9024   AIC:                         1.043e+04
 Df Residuals:                    8996   BIC:                         1.063e+04
 Df Model:                          27                                         
@@ -3518,8 +3533,8 @@ strong multicollinearity or other numerical problems.</code></pre>
 Dep. Variable:         lnexp_pc_month   R-squared:                       0.599
 Model:                            OLS   Adj. R-squared:                  0.598
 Method:                 Least Squares   F-statistic:                     431.9
-Date:                Thu, 03 Apr 2025   Prob (F-statistic):               0.00
-Time:                        12:06:48   Log-Likelihood:                -5189.2
+Date:                Wed, 28 May 2025   Prob (F-statistic):               0.00
+Time:                        15:51:20   Log-Likelihood:                -5189.2
 No. Observations:                9024   AIC:                         1.043e+04
 Df Residuals:                    8996   BIC:                         1.063e+04
 Df Model:                          27                                         
