@@ -2,24 +2,92 @@
 title: "About + Contact"
 ---
 
-## Contact
 
 <div>
-<form action="https://formspree.io/f/xvgaevaj" method="POST">
-<div>
-<label for="email" class="form-label mt-4">Email address</label>
-<input type="email" class="form-control" id="email" aria-describedby="emailHelp" name="email">
-</div>
-<div>
-<label for="message" class="form-label mt-4">Your message</label>
-<textarea class="form-control" id="message" rows="3" data-lt-tmp-id="lt-176636" spellcheck="false" data-gramm="false" name="message"></textarea>
-</div>
- <button class="submit-button btn btn-primary" type="submit">Send</button>
+<script src="https://formspree.io/js/formbutton-v1.min.js" defer></script>
+<script>
+  /* paste this line in verbatim */
+  window.formbutton=window.formbutton||function(){(formbutton.q=formbutton.q||[]).push(arguments)};
+  /* customize formbutton below*/    
+  formbutton("create", {
+    action: "https://formspree.io/f/xvgaevaj",
+    title: "How can we help?",
+    fields: [
+      {
+        type: "email",
+        label: "E-mail:",
+        name: "email",
+        required: true,
+        placeholder: "your@email.com"
+      },
+      {
+        type: "textarea",
+        label: "Message:",
+        name: "message",
+        placeholder: "What's on your mind?",
+      },
+      { type: "submit" }      
+    ],
+    styles: {
+      title: {
+        backgroundColor: "gray"
+      },
+      button: {
+        backgroundColor: "gray"
+      }
+    }
+  });
+</script>
+
+<form
+  action="https://formspree.io/f/xvgaevaj"
+  method="POST"
+  style="max-width: 600px; margin: 2rem auto; padding: 2rem; background-color: #F0F4FF; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-family: sans-serif;"
+>
+  <h2 style="margin-top: 0; color: #3a2d1b;">Get in Touch</h2>
+
+  <label style="display: block; margin-bottom: 1rem;">
+    <span style="display: block; font-weight: 600; color: #5c4a36; margin-bottom: 0.25rem;">Your e-mail:</span>
+    <input
+      type="email"
+      name="email"
+      required
+      style="width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 8px;"
+    >
+  </label>
+
+  <label style="display: block; margin-bottom: 1rem;">
+    <span style="display: block; font-weight: 600; color: #5c4a36; margin-bottom: 0.25rem;">Your message:</span>
+    <textarea
+      name="message"
+      rows="5"
+      required
+      style="width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 8px; resize: vertical;"
+    ></textarea>
+  </label>
+
+  <button
+  class="submit-button"
+    type="submit"
+  >
+    Send
+  </button>
 </form>
 </div>
 
 <style>
 .submit-button {
-    margin-top: 24px
+  background-color: cornflowerblue;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+  background-color: #4A78C2;
 }
 </style>
