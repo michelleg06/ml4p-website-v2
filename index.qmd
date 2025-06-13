@@ -3,7 +3,7 @@ title: "An Introduction to Machine Learning for Public Policy"
 toc: false
 ---
 
-![](assets/ML4PP.png){fig-align="center"}
+![](assets/ML4PP.png){fig-align="center" width=380}
 
 Machine learning has become an increasingly integral part of public policies. Solving prediction policy problems requires tools that are tuned to minimizing prediction errors, but also frameworks to ensure that models are fair. Even more importantly, it requires multi-disciplinary teams to develop solutions that match the complexity of public policy problems.
 
@@ -14,10 +14,10 @@ To conclude the course, there will be a **Collaborative Policy Challenge**, whic
 ## Course Contents
 
 2.  [Introduction to Machine Learning for Public Policy](/introduction.qmd)
-1.  Gentle Introduction to [R and Rstudio](r-intro.qmd), and [Python](/python-intro.qmd)
-3.  Regularization (Coming soon)
-4.  [Classification](classification.qmd)
-5.  Forecasting (Coming soon)
-6.  [Tree-based Methods](treebasedmodels.qmd)
-7.  [Fair Machine Learning](fairml.qmd)
-8.  [Neural Networks](neuralNets.qmd)
+3.  Gentle Introduction to [R and Rstudio](r-intro.qmd), and [Python](/python-intro.qmd)
+4.  Regularization (Coming soon)
+5.  [Classification](classification.qmd)
+6.  Forecasting (Coming soon)
+7.  [Tree-based Methods](treebasedmodels.qmd)
+8.  [Fair Machine Learning](fairml.qmd)
+9.  [Neural Networks](neuralNets.qmd)
