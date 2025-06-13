@@ -1,10 +1,45 @@
 ---
 title: "About + Contact"
+format: html
 ---
+```{=html}
+<h2>Course coordinators</h2>
 
+<div class="coordinator">
+  <div class="image-container">
+      <img src="assets/dietrich.png" >
+  </div>
+  <div class="text">
+    <h3>Dr. Stephan Dietrich</h3>
+    <p class="subtitle">Economics, Assistant Professor, Maastricht University & United Nations University - MERIT</p>
+    <p class="description">
+    Stephan researches the use of data in public policy making, focusing on validating existing approaches to measure and utilize data for policy design and implementation. This includes verifying that automated decision-making systems are unbiased and fair, and ensuring that food security assessments based on national statistics are accurate. His work also explores new approaches to measure phenomena relevant to policy design and assessment, such as using subjective well-being data to measure global warming damages and applying social sensing tools for remote polling of preferences and opinions. He is particularly interested in applications involving food prices and insurance mechanisms in food insecure regions, targeting of social policies, and taxation. As an academic lecturer, Stephan teaches courses at the Master's and PhD level, including introductory data science and machine learning for public policy.
+    </p>
+  </div>
+</div>
 
-<div>
+<div class="coordinator">
+  <div class="image-container">
+      <img src="assets/michelle.png" >
+  </div>
+  <div class="text">
+    <h3>Dr. Michelle González Amador</h3>
+    <p class="subtitle">Economics, Postdoctoral researcher, Wageningen University & Research</p>
+    <p>
+      <a href="https://www.m-gonzalezamador.com/" target="_blank">Personal Website</a> | <a href="mailto:michelle.gonzalezamador@wur.nl" target="_blank">michelle.gonzalezamador@wur.nl</a> | <a href="https://github.com/michelleg06" target="_blank">GitHub</a> | <a href="https://www.linkedin.com/in/michelle-gonzalez-amador06/?originalSubdomain=nl" target="_blank">LinkedIn</a> | <a href="https://bsky.app/profile/michelleg06.bsky.social" target="_blank">BlueSky</a>
+    </p>
+    <p class="description">
+    Michelle is a postdoctoral researcher at Wageningen University's Economic Research Institute, specializing in complex socioeconomic systems and human capital investment. She employs econometric, algorithmic, and experimental methods to study how people interact in and with unequal systems, technology, and education. Her research is primarily driven by informing the design and implementation of public policies. Michelle co-organizes the <a href="https://bridges.eaamo.org/" target="_blank">EAAMO-Bridges</a> Summer of Science program for indigenous women in Latin America and has consulted for the World Bank, International Labour Organization, and Maastricht University. Her research interests include causal inference econometrics, machine learning for social good, social network analysis, and economic development.
+    </p>
+  </div>
+</div>
+```
+
+```{=html}
 <script src="https://formspree.io/js/formbutton-v1.min.js" defer></script>
+```
+
+```{=html}
 <script>
   /* paste this line in verbatim */
   window.formbutton=window.formbutton||function(){(formbutton.q=formbutton.q||[]).push(arguments)};
@@ -38,44 +73,77 @@ title: "About + Contact"
     }
   });
 </script>
+```
 
-<form
-  action="https://formspree.io/f/xvgaevaj"
-  method="POST"
-  style="max-width: 600px; margin: 2rem auto; padding: 2rem; background-color: #F0F4FF; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-family: sans-serif;"
->
-  <h2 style="margin-top: 0; color: #3a2d1b;">Get in Touch</h2>
+<form action="https://formspree.io/f/xvgaevaj" method="POST" style="max-width: 600px; margin: 2rem auto; padding: 2rem; background-color: #F0F4FF; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-family: sans-serif;">
 
-  <label style="display: block; margin-bottom: 1rem;">
-    <span style="display: block; font-weight: 600; color: #5c4a36; margin-bottom: 0.25rem;">Your e-mail:</span>
-    <input
+<h2 style="margin-top: 0; color: #3a2d1b;">
+
+Get in Touch
+
+</h2>
+
+<label style="display: block; margin-bottom: 1rem;"> [Your e-mail:]{style="display: block; font-weight: 600; color: #5c4a36; margin-bottom: 0.25rem;"} <input
       type="email"
       name="email"
       required
       style="width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 8px;"
-    >
-  </label>
+    > </label>
 
-  <label style="display: block; margin-bottom: 1rem;">
-    <span style="display: block; font-weight: 600; color: #5c4a36; margin-bottom: 0.25rem;">Your message:</span>
-    <textarea
+<label style="display: block; margin-bottom: 1rem;"> [Your message:]{style="display: block; font-weight: 600; color: #5c4a36; margin-bottom: 0.25rem;"}
+
+```{=html}
+<textarea
       name="message"
       rows="5"
       required
       style="width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 8px; resize: vertical;"
     ></textarea>
-  </label>
+```
 
-  <button
-  class="submit-button"
-    type="submit"
-  >
-    Send
-  </button>
+</label>
+
+<button class="submit-button" type="submit">
+
+Send
+
+</button>
+
 </form>
+
 </div>
 
+```{=html}
 <style>
+.coordinator {
+    margin-bottom: 40px;
+}
+
+.coordinator .image-container {
+  max-width: 200px;
+}
+
+.coordinator .image-container img {
+  border-radius: 50%;
+  display: block;
+  width: 100%;
+}
+
+.coordinator .subtitle {
+  font-style: italic;
+}
+
+@media screen and (min-width: 600px) {
+  .coordinator {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .coordinator .image-container {
+    min-width: 200px;
+  }
+}
+
 .submit-button {
   background-color: cornflowerblue;
   color: white;
@@ -85,9 +153,11 @@ title: "About + Contact"
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  height: 50px;
 }
 
 .submit-button:hover {
   background-color: #4A78C2;
 }
 </style>
+```
