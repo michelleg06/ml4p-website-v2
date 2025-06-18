@@ -1,0 +1,1045 @@
+---
+title: "Prediction Policy Problems"
+format: html
+---
+
+```{r, echo=FALSE}
+#| echo: false
+library(reticulate)
+
+use_miniconda("/Users/lucas/Library/r-miniconda-arm64", required = TRUE)
+```
+
+**This section will cover:**
+
+-   Prediction Policy problems
+
+-   Inference vs. prediction for policy analysis
+
+-   Prediction framework: training - test data
+
+-   Training error vs. test error
+
+-   Assessing accuracy: bias-variance trade-off
+
+<br>
+
+## Introducing the Prediction Policy Framework
+
+In the video-lecture below you'll be given a brief introduction to the prediction policy framework, and a primer on machine learning. Please take a moment to watch the 20 minute video.
+
+{{< video https://youtu.be/sFbKe4O0tEQ >}}
+
+### Predicting social assistance beneficiaries
+
+A key challenge in designing social policies is identifying individuals in need of social assistance. With tight budgets, it's crucial to allocate resources efficiently, targeting benefits to those who need them most. However, identifying needs can be difficult, and misclassifications can have severe and irreversible effects on people in need.
+
+Consider a social protection program that allocates food vouchers to families with children at risk of malnutrition, or a program that provides needs-based school grants. What happens when limited resources are given to those who don't need them, while those who need them most are excluded? Case Study: Predicting Cash-Transfer Programme Beneficiaries in Malawi
+
+In this section, we'll work with real-world data from Malawi to predict beneficiaries of a cash-transfer program: individuals living in poverty who need government assistance to make ends meet. The data comes from Malawi's Living Standards Measurement Study 2019/2020, publicly available at the [World Bank data catalogue](https://www.google.com/url?q=https%3A%2F%2Fmicrodata.worldbank.org%2Findex.php%2Fcatalog%2F3818). The dataset comprises responses from 11,434 households to a comprehensive list of questions regarding household composition, economic activities, assets, savings, education, and more. Note that the data set is a *.dta* STATA file.
+
+Each row in the tabular[^1] data represents a household, while each column represents a question. The values show the household's response, and the column headers carry the name and number of the question in the questionnaire. For example, the variable `hh_f10` refers to the household questionnaire **(hh)**, the housing module **(module F)**, and question number **10**. By looking up this question in the questionnaire, we find that the values in the column `hh_f10` refer to the question **"How many separate rooms do the members of your household occupy?"**
+
+[^1]: Table consisting of rows and columns.
+
+#### Discussion Points
+
+In the next sessions, we'll discuss the following key points:
+
+-   Why is this a prediction policy problem?
+
+    -   Is it a regression or a classification problem?
+
+-   Which variables and characteristics should we include in the prediction model to make a significant difference?
+
+-   Programmatically, what type of characteristics do we want to consider for the prediction model?
+
+-   Technically, how do we select which variables to include in a prediction model?
+
+-   What are the practical implications of the bias-variance trade-off in this application?
+
+-   What are the potential risks of a data-driven targeting approach?
+
+These points will serve as our starting point for critically thinking about the use of machine learning in public policies.
+
+Please share your questions and feedback with the community in the discussion box at the bottom of this page!
+
+## Practical Example
+
+You can download the dataset by clicking on the button below.
+
+<a class="btn btn-primary" download href="data/malawi.dta"> Download Malawi.dta </a>
+
+<br>
+
+The script below is a step by step on how to go about coding a predictive model using a *linear regression*. Despite its simplicity and transparency, i.e. the ease with which we can interpret its results, a linear model is not without challenges in machine learning.
+
+### 1. Preliminaries: working directory, libraries, data upload.
+
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+#| message: false
+#| warning: false
+
+# Libraries for data-wrangling
+library(tidyverse)   # Collection of packages for data manipulation and visualization
+library(skimr)       # Quick data profiling and summary statistics
+library(haven)       # Import foreign statistical formats into R
+library(fastDummies) # Convert variables into binary (dummy variables) fastly
+
+# Libraries for data analysis and visualization
+library(corrplot)     # Correlation matrix visualization
+library(modelsummary) # Model output summarization and tables
+library(gt)           # Table formatting and presentation
+library(stargazer)    # Statistical model output visualization
+
+# Machine Learning library
+library(caret)        # Machine learning functions and model training
+
+
+```
+
+## Python
+
+```{python}
+
+
+# Libraries for data-wrangling
+import pandas as pd # Data manipulation and analysis with DataFrames
+import numpy as np  # Numerical computing and array operations
+import os           # Operating system interface for file/directory operations
+import skimpy       # Quick data profiling and summary statistics 
+
+# Libraries for data analysis and visualization
+import matplotlib.pyplot as plt                       # Basic plotting and visualization
+import seaborn as sns                                 # Statistical data visualization built on matplotlib
+import pickle                                         # Object serialization for saving/loading Python objects
+
+
+# Machine Learning Library
+from sklearn.model_selection import train_test_split  # Split datasets into train/test sets
+from sklearn.linear_model import LinearRegression     # OLS regression
+from sklearn.metrics import root_mean_squared_error   # Estimate RMSE
+from sklearn.metrics import r2_score                  # Estimate R^2
+from sklearn.preprocessing import StandardScaler      # Feature scaling and normalization
+
+```
+
+:::
+
+
+**Loading the dataset**
+The data set comes as .dta file (STATA file) and not as a standard comma separated file (.csv). While the file has the same tabular structure, STATA files have variable labels, i.e. short texts that describe the variables with rather cryptic variable names. We can preserve these variable lables and store them as a separate object that we can use for quick variable look-ups.
+
+::: {.panel-tabset group="language"}
+## R
+```{r}
+
+# Set working directory
+setwd('/Users/lucas/Documents/UNU-CDO/courses/ml4p/ml4p-website-v2')
+
+# Read the Stata file with labels preserved
+malawi <- read_dta("data/malawi.dta")
+
+# Get variable labels
+variable_labels <- sapply(malawi, function(x) attr(x, "label"))
+
+# List all variables and their corresponding labels. For more details, check the questionnaire. Variable names correspond to the question numbers (hh=household module; com=community module)
+print(variable_labels)
+
+```
+
+## Python
+```{python}
+
+# Set working directory
+os.chdir('/Users/lucas/Documents/UNU-CDO/courses/ml4p/ml4p-website-v2')
+
+# Load malawi.dta variable labels
+iterator = pd.read_stata('data/malawi.dta', iterator=True)
+variable_labels = iterator.variable_labels()
+
+# List all variables and their corresponding labels. For more details, check the questionnaire. Variable names correspond to the question numbers (hh=household module; com=community module)
+print(variable_labels)
+
+# Read the Stata(.dta) file an import is a pandas dataframe
+df = pd.read_stata('data/malawi.dta')
+
+```
+
+:::
+
+### 2. Get to know your data: pre-processing and data familiarization.
+
+::: {.panel-tabset group="language"}
+
+## R
+```{r}
+#| error: true
+#| warning: true
+#| message: true
+
+# Let's have a look at our data frame 'malawi'
+head(malawi)
+
+```
+
+## Python
+```{python}
+
+# Let`s have a look at our data frame 'df'. df.head() returns the first 5 rows of our data set df.
+df.head()
+
+```
+
+:::
+
+**Variable Selection**
+
+Finding the best set of predictor variables is a complicated task. In some applications, the number of variables (predictors/columns) can be huge, even exceeding the number of observations (rows). This prompts us to define strategies to select our predictors. Beyond technical considerations, we first need to conceptually define which variables can or cannot be included in the model. This includes programmatic, conceptual, or ethical considerations.
+
+In our case, we have 272 variables (columns). The ideal predictor measures a household characteristic that can be easily observed by social assistance program officers when our model is deployed in practice. Why does it need to be easily observable? If people apply for social assistance programs, they may provide false information in order to obtain benefits. Even if the targeting criteria are not published, households form beliefs about admission criteria, and some may try to appear as poor as possible. For empirical evidence from Indonesia, have a look at this [paper](https://www.sciencedirect.com/science/article/pii/S2666551420300012). House characteristics would be an example of a good predictor, e.g. Is there a bathroom in the house?
+
+For now, we select a few variables from the data to illustrate the code. Later, your task will be to improve the model by improving variable selection and thus the model. When selecting variables, don't forget to include the target variable (the variable we want to predict). For this exercise, we will use the variables `rexpaggpc` (consumption per capita) and `poor` (consumption poverty) as target variables.
+
+To select variables, you can use the questionnaire or the list of variable lables ('variable_labels').
+
+::: {.panel-tabset group="language"}
+
+## R
+
+```{r}
+
+# Let's pick a few variables that are traditionally used for Proxy Means Tests
+vars <- c('poor','rexpaggpc', 'district', 'urban', 'hh_f06', 'hh_f08', 'hh_f09', 'hh_f10', 'hh_f19', 'hh_f41', 'Bed', 'Desk', 'Fan', 'Refrigerator', 'Table', 'dist_road', 'adulteq')
+
+# Keep only the subset of columns of df that are in the object vars (contains the columns we selected)
+malawi <- malawi[vars]
+
+# Show variable labels for the selected variables
+for (var in vars) {
+  cat(var, ":", variable_labels[var], "\n")
+}
+
+```
+
+## Python
+
+```{python}
+
+# Let's pick a few variables that are traditionally used for Proxy Means Tests
+vars = ['poor','rexpaggpc', 'district', 'urban' , 'hh_f06', 'hh_f08', 'hh_f09', 'hh_f10', 'hh_f19',  'hh_f41', 'Bed', 'Desk', 'Fan', 'Refrigerator', 'Table', 'dist_road', 'adulteq']
+
+# Keep only the subset of columns of df that are in the object vars (contains the columns we selected)
+df = df[vars]
+
+# Show variable_labels for the selected variables vars
+for var in vars:
+    print(f"{var} : {variable_labels[var]}")
+
+```
+
+:::
+
+
+Now that we have selected our predictors and the target variable(s), we should summarize and describe our data to get a feeling for the variable types, the distribution of variable values, missing values, and variable correlations.
+
+:::{.panel-tabset group="language"}
+
+## R
+
+```{r}
+
+# Summary statistics provides a first glance of the data
+skim(malawi)
+
+```
+
+## Python
+```{python}
+
+# Summary statistics provides a first glance of the data
+skimpy.skim(df)
+
+```
+
+:::
+
+The output shows that most of the variables are of type categorical,  coded with numbers. However, the 'numbers' area ssigned arbitrarily and a ranking of numbers might not be meaningful. For instance `district` = 2 is not 'more' than `district` = 1, they're simply different districts. What's more, many ML (machine learning) models require a binary encoding for categorical variables.
+
+:::{.panel-tabset group="language"}
+
+## R
+```{r}
+
+# In R, all variables were identified as numeric, despite knowing from the label that they are categorical (e.g. poor coded 0 for no, 1 for yes). This has to do with how the haven package loads labelled STATA data. To correctly assign variable types we'll have to do several things.
+
+# 1. First, let's examine the structure better
+cat("Examining variable types and patterns:\n")
+
+# 2. Function to detect if a variable should be categorical
+is_categorical_variable <- function(x, var_name) {
+  # Check if it has value labels (common for categorical in Stata)
+  has_value_labels <- !is.null(attr(x, "labels"))
+  
+  # Check number of unique values relative to total observations
+  n_unique <- length(unique(x[!is.na(x)]))
+  n_total <- length(x[!is.na(x)])
+  
+  # Rule: if fewer than 10 unique values OR less than 5% unique values, likely categorical
+  few_unique <- (n_unique <= 10) | (n_unique / n_total < 0.05)
+  
+  # Check if values look like codes (integers from 0 or 1)
+  is_integer_like <- all(x[!is.na(x)] == floor(x[!is.na(x)]))
+  small_range <- (max(x, na.rm = TRUE) - min(x, na.rm = TRUE)) <= 20
+  
+  # Special cases: known categorical variable patterns
+  is_known_categorical <- grepl("district|urban|poor", var_name, ignore.case = TRUE)
+  
+  return(has_value_labels | (few_unique & is_integer_like & small_range) | is_known_categorical)
+}
+
+# 3. Apply the function to identify categorical variables
+categorical_candidates <- sapply(names(malawi), function(var_name) {
+  is_categorical_variable(malawi[[var_name]], var_name)
+})
+
+cat("Identified categorical variables:\n")
+print(names(malawi)[categorical_candidates])
+
+# 14 out of 17 variables should be categorical
+
+# 4. Convert identified variables to factors
+for (var_name in names(malawi)[categorical_candidates]) {
+  # Convert to factor, preserving value labels if they exist
+  if (!is.null(attr(malawi[[var_name]], "labels"))) {
+    # Use value labels for factor levels
+    labels_attr <- attr(malawi[[var_name]], "labels")
+    malawi[[var_name]] <- factor(malawi[[var_name]], 
+                                levels = labels_attr, 
+                                labels = names(labels_attr))
+  } else {
+    # Simple conversion to factor
+    malawi[[var_name]] <- as.factor(malawi[[var_name]])
+  }
+}
+
+# When converting data types in R, labels may be lost
+# Restore labels after conversion
+for(var in names(malawi)) {
+  if(!is.null(variable_labels[[var]])) {
+    attr(malawi[[var]], "label") <- variable_labels[[var]]
+  }
+}
+
+# Sanity check
+for(var in names(malawi)) {
+  cat(sprintf("%-20s %s\n", 
+              paste0(var, " (", class(malawi[[var]]), "):"), 
+              attr(malawi[[var]], "label") %||% "No label"))
+}
+
+
+# 5. Create dummy variables for factors with more than 2 levels (keep labels)
+factors_multi_level <- names(malawi)[sapply(malawi, function(x) {
+  is.factor(x) && nlevels(x) > 2
+})]
+
+cat("Multiple-level factors to convert:", paste(factors_multi_level, collapse = ", "), "\n")
+
+# FINALLY
+
+# 6. Create dummy variables using caret
+dummy_vars <- dummyVars(~ ., data = malawi, fullRank = TRUE)
+malawi <- data.frame(predict(dummy_vars, newdata = malawi))
+  
+cat("Dataset now has", ncol(malawi), "columns after dummy variable creation\n")
+
+# Another Sanity Check
+for(var in names(malawi)) {
+  cat(sprintf("%-20s %s\n", 
+              paste0(var, " (", class(malawi[[var]]), "):"), 
+              attr(malawi[[var]], "label") %||% "No label"))
+}
+
+# Convert binary variables to factors using sapply (after dummyVars we lost the correct object type again, oops)
+binary_vars <- sapply(malawi, function(x) length(unique(x[!is.na(x)])) == 2)
+malawi[binary_vars] <- lapply(malawi[binary_vars], as.factor)
+
+cat("
+How R stores dummy variables:
+    E.g. For poor.Poor:
+
+1 = the household IS poor
+0 = the household is NOT poor
+
+R's dummyVars() with fullRank = TRUE creates binary (0/1) dummy variables where:
+
+The variable name format is: original_variable.category_name
+1 means that observation belongs to that category
+0 means it doesn't belong to that category
+The first category is dropped to avoid multicollinearity (that's why we don't see poor.NotPoor or similar)
+
+")
+
+```
+
+## Python
+```{python}
+
+# Let's encode all object variables that have more than 2 unique values as categorical variables
+for col in df.select_dtypes(include=['object']).columns:
+    if df[col].nunique() > 2:
+        df[col] = df[col].astype('category')
+
+# Convert these categorical variables to binary variables
+df = pd.get_dummies(df, drop_first=True)
+
+# Note that we get one binary variable for each category of the categorical variable. The first category is dropped to avoid multi-collinearity.
+
+```
+
+:::
+
+The summary output also indicated that we have missing values. In our case, the variable `dist_roaod` has 8 missing values ('NA' values -> Not Available). Many machine learning models cannot be trained when missing values are present (several exceptions exist).
+
+Dealing with missingness is a non-trivial task: First and foremost, we should assess whether there is a pattern to missingness and if so, what that means to what we can learn from our (sub)population. If there is no discernible pattern, we can proceed to delete the missing values or impute them. A more detailed explanation and course of action can be found [here](https://stefvanbuuren.name/fimd/ch-introduction.html).
+
+In our application, we'll remove the NA values from the data.
+
+:::{.panel-tabset group="language"}
+
+## R
+```{r}
+malawi <- na.omit(malawi)
+```
+
+## Python
+
+```{python}
+df = df.dropna()
+```
+
+:::
+
+To finalise our exploration of the dataset, we should:
+
+- visualize the target variable (a.k.a. outcome of interest)
+
+- have a look at correlations
+
+:::{.panel-tabset group="language"}
+
+## R
+```{r}
+
+# Histogram of the target variable
+ggplot(malawi, aes(x = rexpaggpc)) +
+ geom_histogram(binwidth = 600) +
+ labs(title = 'Distribution of Consumption p.c.',
+      x = 'Consumption p.c.',
+      y = 'Frequency')
+
+```
+
+```{r}
+
+# Summary statistics for rexpaggpc using tidy syntax (notice our fun pipe operator, we'll talk about this syntax in the future)
+
+malawi$rexpaggpc |> summary()
+
+```
+
+Our target variable has a long right tail, i.e. there are few households with very large consumption levels. At the same time, we have many observations close to zero pointing at a high level of poverty. The data was already cleaned by the LSMS team, and not further data cleaning is required in this case.
+
+In the last step, we visualize a correlation matrix. The correlation coefficients are interpreted as 0 = no correlation, 1 =perfect positive correlation, and -1 =perfect negative correlation.
+
+```{r}
+
+# Pearson correlation matrix
+# cor() only takes fully numeric attributes (i.e. variables), for the sake of the correlation matrix, we will create a numeric copy of our malawi df
+# Convert binary factor variables to numeric (0 = 0, 1 = 1)
+malawi_cor <- as.data.frame(lapply(malawi, function(x) if (is.factor(x)) as.numeric(as.character(x)) else x))
+pearson_corr_matrix <- cor(malawi_cor, method = "pearson", use = "complete.obs")
+corrplot(pearson_corr_matrix, method = "circle", type = "upper", 
+         tl.cex = 0.5, # labels' text size
+         tl.srt = 45,   # rotate text labels
+         diag = FALSE)  # hide the diagonal (optional, try both!)
+
+```
+
+The first column visualizes the correlation coefficients with `rexpaggpc` (consumption per capita), the target variable. The results shows strong correlations of the target variable with the household size, assets (tables etc.), some sanitary and housing categories, as well as region indicators. Not surprisingly, consumption per capita is highly correlated with the household poverty status, a binary indicator that is based on consumption levels and that will be used as the target variable in our next session.
+
+We can also spot some correlation coefficients that equal zero. In some situations, the data generating mechanism can create predictors that only have a single unique value (i.e. a 'zero-variance predictor'). For many ML models (excluding tree-based models), this may cause the model to crash or the fit to be unstable. Here, the only one we’ve spotted is not in relation to our target variable. But we do observe some near-zero-variance predictors. Besides uninformative, these can also create unstable model fits. There’s a few strategies to deal with these; the quickest solution is to remove them. A second option, which is especially interesting in scenarios with a large number of variables, is to work with penalized models (Ridge and Lasso regressions). We’ll discuss this option at a later stage.
+
+## Python
+
+```{python}
+
+# Histogram of the target variable
+plt.figure(figsize=(10, 5))
+sns.histplot(df['rexpaggpc'], kde=False)
+plt.title('Distribution of Consumption p.c.')
+plt.xlabel('Consumption p.c.')
+plt.ylabel('Frequency')
+plt.show()
+
+```
+
+```{python}
+
+df.rexpaggpc.describe()
+
+```
+
+Our target variable has a long right tail, i.e. there are few households with very large consumption levels. At the same time, we have many observations close to zero pointing at a high level of poverty. The data was already cleaned by the LSMS team, and not further data cleaning is required in this case.
+
+In the last step, we visualize a correlation matrix. The correlation coefficients are interpreted as 0 = no correlation, 1 =perfect positive correlation, and -1 =perfect negative correlation.
+
+```{python}
+
+# Spearman correlation matrix 
+pearson_corr_matrix = df.corr(method='pearson')
+plt.figure(figsize=(15, 8))
+sns.heatmap(pearson_corr_matrix, annot=False, cmap='coolwarm', fmt='.2f', linewidths=0.5, annot_kws={'size': 6})
+plt.title("Pearson's r Correlation Matrix")
+plt.show()
+
+```
+
+The first column visualizes the correlation coefficients with `rexpaggpc` (consumption per capita), the target variable. The results shows strong correlations of the target variable with the household size, assets (tables etc.), some sanitary and housing categories, as well as region indicators. Not surprisingly, consumption per capita is highly correlated with the household poverty status, a binary indicator that is based on consumption levels and that will be used as the target variable in our next session.
+
+We can also spot some correlation coefficients that equal zero. In some situations, the data generating mechanism can create predictors that only have a single unique value (i.e. a 'zero-variance predictor'). For many ML models (excluding tree-based models), this may cause the model to crash or the fit to be unstable. Here, the only one we’ve spotted is not in relation to our target variable. But we do observe some near-zero-variance predictors. Besides uninformative, these can also create unstable model fits. There’s a few strategies to deal with these; the quickest solution is to remove them. A second option, which is especially interesting in scenarios with a large number of variables, is to work with penalized models (Ridge and Lasso regressions). We’ll discuss this option at a later stage.
+
+:::
+
+### 3. A primer on ML prediction
+
+#### Partition into Training and Test Data
+
+We now have a general idea of the structure of the data we are working with, and what we’re trying to predict: per capita consumption, which we believe is a proxy for poverty prevalence. The next step is create a simple linear model (OLS) to predict the target variable using the variables in our dataset, and introduce the elements with which we will evaluate our model.
+
+##### Data Partinioning
+
+When we want to build predictive models for machine learning purposes, it is important to have (at least) two data sets. A training data set from which our model will learn, and a test data set containing the same features as our training data set; we use the second dataset to see how well our predictive model extrapolates to other samples (i.e. is it generalizable?). To split our main data set into two, we will work with a 80/20 split.
+
+The 80/20 split has its origins in the Pareto Principle, which states that 'in most cases, 80% of effects from from 20% of causes'. Though there are other test/train splitting options, this partitioning method is a good place to start, and indeed standard in the machine learning field.
+
+**Feature organization**
+
+Our data contains the variables we want to predict, i.e. the target variables (consumption per capita: `rexpaggpc`; poverty status: Py `poor_Poor`/ R `poor.Poor`) and the predictors (all other variables). let's put the target variables in a separate dataframe.
+
+:::{.panel-tabset group="language"}
+
+## R
+
+```{r}
+
+
+target <- malawi[c('rexpaggpc', 'poor.Poor')]
+
+# Remove target from malawi
+malawi <- malawi[!names(malawi) %in% c('rexpaggpc', 'poor.Poor')]
+
+```
+
+Next, we split the data into 80% training and test data using createDataPartition() from caret. We will use 80% of the data for training and 20% for testing. We will also set a random seed via `set.seed()` to ensure that the results are reproducible.
+
+```{r}
+
+# Set seed for reproducibility
+set.seed(1234)
+
+# Create train/test split based on target variable
+train_idx <- createDataPartition(target$rexpaggpc, p = .8, list = FALSE, times = 1) 
+
+# creates indices based on target distribution and 80/20 rule
+# using stratification based on rexpaggpc (continuous) when we later want to model poor.Poor (binary) could potentially be suboptimal, but it's generally not a major problem
+# a stratified approach (which we use here) is generally better for model evaluation.
+
+# Split both features and targets
+Train_df <- malawi[train_idx, ]
+Test_df <- malawi[-train_idx, ]
+
+Train_target <- target[train_idx, ]
+Test_target <- target[-train_idx, ]
+
+```
+
+Let's check the shape of the dataframes. The test and training data must have the same predictors and the target and predictors data must have the same length.
+
+```{r}
+
+# Check the dimensions of the dataframes
+cat("Train_df dimensions:", dim(Train_df), "\n")
+cat("Test_df dimensions:", dim(Test_df), "\n")
+cat("Train_target dimensions:", dim(Train_target), "\n") 
+cat("Test_target dimensions:", dim(Test_target), "\n")
+
+```
+
+Before fitting models, we must standardize our variables. We use caret's `preProcess` with `center` and `scale` options that subtract each variable's mean from all values and divide by the variable's standard deviation. This transforms variables to have zero mean and unit variance, measuring values as standard deviations from the mean.
+
+Standardization ensures that coefficients or weights assigned to each variable are comparable across different scales. Without it, comparing the effect of a one-unit increase in distance to the nearest road (measured in kilometers) versus a one-unit increase in household size (measured in people) would be meaningless. For many machine learning algorithms, this comparability is essential—standardization prevents variables with larger scales from dominating the model simply due to their magnitude rather than their predictive importance.
+
+```{r}
+
+# Standardize variables
+preproc <- preProcess(Train_df, method = c("center", "scale"))
+Train_df <- predict(preproc, Train_df)
+Test_df <- predict(preproc, Test_df)
+
+```
+
+## Python
+
+```{python}
+
+target = df[['rexpaggpc', 'poor_Poor']]
+
+# Remove target from df
+df = df.drop(['rexpaggpc', 'poor_Poor'], axis=1)
+
+```
+
+Next, we split the data into 80% training and test data using train_test_split() from sklearn. We will use 80% of the data for training and 20% for testing. We will also set a random seed via `random_state` to ensure that the results are reproducible.
+
+```{python}
+
+X_train, X_test, y_train, y_test=train_test_split(df,target['rexpaggpc'], test_size=0.2, random_state=1234)
+
+```
+
+Let's check the shape of the dataframes. The test and training data must have the same predictors and the target and predictors data must have the same length.
+
+```{python}
+
+# Check the dimensions of the dataframes
+
+print(f"X_train dimensions: {X_train.shape}")
+print(f"X_test dimensions: {X_test.shape}")
+print(f"y_train dimensions: {y_train.shape}")
+print(f"y_test dimensions: {y_test.shape}")
+
+```
+
+Before fitting models, we must standardize our variables. We use `sklearn`'s `Standard Scaler` that subtracts each variable's mean from all values and divides by the variable's standard deviation. This transforms variables to have zero mean and unit variance, measuring values as standard deviations from the mean.
+
+Standardization ensures that coefficients or weights assigned to each variable are comparable across different scales. Without it, comparing the effect of a one-unit increase in distance to the nearest road (measured in kilometers) versus a one-unit increase in household size (measured in people) would be meaningless. For many machine learning algorithms, this comparability is essential—standardization prevents variables with larger scales from dominating the model simply due to their magnitude rather than their predictive importance.
+
+```{python}
+
+# Standardize variables
+
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+```
+
+:::
+
+#### Orinary Least Squares [OLS] (a simple linear regression)
+
+We can now run our first prediction model!
+
+:::{.panel-tabset group="language"}
+
+## R
+```{r}
+# Fit simple linear regression model
+#linear <- lm(Train_target$rexpaggpc ~ ., data = Train_df) # only run this line if you want to see an error! :)
+
+# Oh oh, an error?
+single_value_cols <- sapply(Train_df, function(x) length(unique(x)) <= 1)
+names(single_value_cols[single_value_cols])
+
+# Seems like we have one factor variable with only one level! = hh_f10.9
+# What to do with it? 
+
+# Let's inspect it first:
+names(single_value_cols[single_value_cols])
+str(Train_df$hh_f10.9)
+# two-factors?! This happens often when we split the data and "accidentally" end up with a train or test data with only one category for a two category var.
+# See the actual values
+table(Train_df$hh_f10.9) # ... Ah, our hypothesis was right! All values are bunched in the 0 category!
+
+# Remove the problematic variable
+Train_df <- Train_df[, -which(names(Train_df) == "hh_f10.9")]
+Test_df <- Test_df[, -which(names(Test_df) == "hh_f10.9")] # same here, both datasets should be the same! 
+
+# Check our dfs
+cat("Train_df dimensions:", dim(Train_df), "\n")
+cat("Test_df dimensions:", dim(Test_df), "\n")
+# One variable less than before, we're good to go.
+
+
+# Now fit your model
+linear <- lm(Train_target$rexpaggpc ~ ., data = Train_df)
+
+```
+
+In R, we can retrieve the model's fit metrics (and more) in one go, inclduing:
+- Coefficients
+- Standard errors
+- t-statistics
+- p-values
+- Model fit statistics
+
+```{r}
+# Print the linear model's metrics using modelsummary (notice our beautiful pipe operators are at it again here)
+modelsummary(
+  list("linear (Test_df)" = linear),
+  output = "gt",
+  fmt = 2,  # controls decimal places
+  statistic = "({std.error})",  # show standard errors in parentheses!
+  stars = TRUE, # indicate statistical significance with stars *
+  column_labels = "linear (test df)"
+) |>
+  tab_header(
+    title = md("**Regression Results**")
+  ) |>
+  tab_options(
+    table.font.size = "small",
+    data_row.padding = px(2),
+    heading.title.font.size = 16,
+    row_group.as_column = TRUE
+  )
+
+
+```
+
+Or alternatively, just the coefficients (for those following both R and Python that would like to keep things as similar as possible)
+
+```{r}
+
+# Just coefficients
+coef(linear)
+
+```
+
+**Feature importance**
+
+How relevant are my predictors?
+
+```{r}
+
+# Plot coefficients (feature importance)
+coef_data <- data.frame(
+ Feature = names(coef(linear))[-1],  # exclude intercept
+ Coefficient = coef(linear)[-1]     # exclude intercept
+)
+
+ggplot(coef_data, aes(x = Coefficient, y = reorder(Feature, Coefficient))) +
+ geom_col() +
+ labs(title = "Feature Importance",
+      x = "Coefficient", 
+      y = "Feature") +
+ theme(axis.text.y = element_text(size = 6))
+
+```
+
+Which variable coefficients exhibit the highest and lowest values?
+
+```{r}
+coefs <- sort(coef(linear)[-1])  # Exclude intercept
+head(coefs, 5)  # Lowest
+tail(coefs, 5)  # Highest
+```
+
+## Python
+
+```{python}
+# Fit simple linear regression model
+linear = LinearRegression()
+linear.fit(X_train, y_train)
+```
+
+```{python}
+# Print the linear model's coefficients
+print(linear.coef_)
+```
+
+**Feature importance**
+
+How relevant are my predictors?
+
+```{python}
+# Plot coefficients (feature importance)
+def plot_feature_importances(model):
+    n_features=df.shape[1]
+    plt.barh(np.arange(n_features),model.coef_ , align='center')
+    plt.yticks(np.arange(n_features),df.columns.values)
+    #reduce y-axis font size
+    plt.yticks(fontsize=6)
+    plt.xlabel("coefficient")
+    plt.ylabel("Feature")
+    plt.ylim(-1, n_features)
+    plt.title("Feature importance")
+    #increase figure size
+    plt.figure(figsize=(15, 10))
+    plt.show()
+plot_feature_importances(linear)
+
+```
+
+Which variable coefficients exhibit the highest and lowest values?
+
+```{python}
+coefs = pd.Series(linear.coef_, index=df.columns)
+coefs = coefs.sort_values()
+print(coefs.head())
+print(coefs.tail())
+```
+
+:::
+
+#### Performance Indicators
+
+In predictive modeling, there are various performance metrics for different use cases and policy preferences. In the following, we'll consider two of the most popular metrics for regression:
+
+1. **Model residuals:** Recall that residuals are the observed value minus the predicted value. We can estimate a model's Root Mean Squared Error (RMSE) or the Mean Absolute Error (MAE). Residuals allow us to quantify how close the predicted response value is to the true response value for a given observation. Small RMSE or MAE values indicate that predictions are close to the true observed values.
+
+2. **The R-squared:** Arguably the go-to indicator for performance assessment. Low $R^2$ values are not uncommon, especially in the social sciences. However, when hoping to use a model for predictive purposes, a low $R^2$ is a bad sign, regardless of having a large number of statistically significant features. The drawback of relying solely on this measure is that it does not consider the problem of model overfitting; i.e., you can inflate the R-squared by adding as many variables as you want, even if those variables have little predictive power. This approach will yield great results on the training data but will underperform when extrapolating the model to the test (or any other) dataset.
+
+**Residuals:**
+
+:::{.panel-tabset group="language"}
+
+## R
+
+```{r}
+
+# Let's use the model to predict the target variable
+y_pred_train <- predict(linear, Train_df)
+
+# Now, calculate residuals. Recall: observed - predicted
+residuals <- Train_target$rexpaggpc - y_pred_train
+
+# Describe the distribution of residuals
+summary(residuals)
+
+```
+
+```{r}
+#| echo: false
+# Store specific values for inline use
+max_residual_r <- max(residuals)
+```
+
+Recall that the residual is estimated as the true (observed) value minus the predicted value. Thus: the max(imum) error of `{r} max_residual_r` suggests that the model under-predicted expenditure by this amount for at least one observation. From the estimation of the predicted residuals we obtain the popular measure of performance evaluation known as the Root Mean Squared Error (RMSE, for short).
+
+```{r}
+#Manually
+
+# Calculate the RMSE for the training dataset, or the in-sample RMSE
+rmse_insample_manual <- sqrt(mean(residuals^2))
+
+# Using the caret() library
+# Calculate the RMSE for the training dataset, or the in-sample RMSE
+rmse_insample_caret <- RMSE(y_pred_train, Train_target$rexpaggpc)
+
+```
+
+
+The RMSE (`{r} round(rmse_insample_caret, 0)`) gives us an absolute number that indicates how much our predicted values deviate from the true (observed) number. This is all in reference to the target variable. Think of the question: How far, on average, are the residuals away from zero? Generally speaking, the lower the value, the better the model fit. Besides being a good measure of goodness of fit, the RMSE is also useful for comparing the ability of our model to make predictions on different (e.g. test) data sets. The in-sample RMSE should be close or equal to the out-of-sample RMSE. In this case, our RMSE is ~`{r} round(rmse_insample_caret, 0)` units away from zero.
+
+## Python
+
+```{python}
+
+# Let's use the model to predict the target variable
+y_pred_train = linear.predict(X_train)
+
+# Now, calculate residuals. Recall: observed - predicted
+residuals = y_train - y_pred_train
+
+# Describe the distribution of residuals
+residuals.describe()
+```
+
+```{python}
+#| echo: false
+# Store specific values for inline use
+max_residual_py = residuals.max()
+
+```
+
+Recall that the residual is estimated as the true (observed) value minus the predicted value. Thus: the max(imum) error of `{python} max_residual_py` suggests that the model under-predicted expenditure by *this* amount for at least one observation. From the estimation of the predicted residuals we obtain the popular measure of performance evaluation known as the Root Mean Squared Error (RMSE, for short).
+
+```{python}
+# Calculate the RMSE for the training dataset, or the in-sample RMSE
+rmse_insample_py = root_mean_squared_error(y_train, y_pred_train)
+```
+
+The RMSE (`{python} round(rmse_insample_py, 0)`) gives us an absolute number that indicates how much our predicted values deviate from the true (observed) number. This is all in reference to the target variable. Think of the question: How far, on average, are the residuals away from zero? Generally speaking, the lower the value, the better the model fit. Besides being a good measure of goodness of fit, the RMSE is also useful for comparing the ability of our model to make predictions on different (e.g. test) data sets. The in-sample RMSE should be close or equal to the out-of-sample RMSE. In this case, our RMSE is ~`{python} round(rmse_insample_py, 0)` units away from zero.
+
+:::
+
+**R-squared**
+
+:::{.panel-tabset group="language"}
+
+## R
+
+```{r}
+r2_train <- summary(linear)$r.squared
+print(r2_train)
+```
+
+The estimated (Multiple) R-squared of `{r} round(r2_train, 3)` tells us that our model predicts around `{r} round(r2_train * 100, 1)` percent of the variation in the target variable (consumption per capita). Also note that when we have a large number of predictors, it's best to look at the Adjusted R-squared, which corrects or adjusts for this by only increasing when a new feature improves the model more so than what would be expected by chance.
+
+## Python
+
+```{python}
+r2_train = r2_score(y_train, linear.predict(X_train))
+print(r2_train)
+```
+
+The estimated (Multiple) R-squared of `{python round(r2_train, 3)}` tells us that our model predicts around `{python round(r2_train * 100, 1)}` percent of the variation in the target variable (consumption per capita). Also note that when we have a large number of predictors, it’s best to look at the Adjusted R-squared, which corrects or adjusts for this by only increasing when a new feature improves the model more so than what would be expected by chance.
+
+:::
+
+#### Out-of-sample predictions
+
+Now that we have built and evaluated our model in the training dataset, we can proceed to make out-of-sample predictions. That is, see how our model performs in the test dataset.
+
+:::{.panel-tabset group="language"}
+
+## R
+
+```{r}
+
+# Predict y(target) values based on the test data model, with model trained on training data
+y_pred <- predict(linear, Test_df)
+
+# In summary, train and test prediction quality of the model
+cat("Root mean squared error on training set:", sprintf("%.2f", RMSE(y_pred_train, Train_target$rexpaggpc)), "\n")
+cat("R2 on training set:", sprintf("%.2f", summary(linear)$r.squared), "\n")
+
+cat("Root mean squared error on test set:", sprintf("%.2f", RMSE(y_pred, Test_target$rexpaggpc)), "\n")
+cat("R2 on test set:", sprintf("%.2f", cor(Test_target$rexpaggpc, y_pred)^2), "\n")
+
+```
+
+## Python
+
+```{python}
+# Predict y(target) values based on the test data model, with model trained on
+y_pred = linear.predict(X_test)
+
+# In summary, train and test prediction quality of the model
+print("Root mean squared error on training set: %.2f" % root_mean_squared_error(y_train, y_pred_train))
+print("R2 on training set: %.2f" % r2_score(y_train, y_pred_train))
+
+print("Root mean squared error on test set: %.2f" % root_mean_squared_error(y_test, y_pred))
+print("R2 on test set: %.2f" % r2_score(y_test, y_pred))
+
+```
+
+:::
+
+The summary statistics for the predictions with the train and test datasets are not so close to one another. This is an indication that our model doesn't necessarily extrapolate well to other datasets. Compared to the observed summary statistics of the target variable, they’re relatively close, with the largest deviations observed at the minimum and maximum values.
+
+**What do we mean by bias in a model?**
+
+The bias is the difference between the average prediction of our model and the true (observed) value. Minimizing the bias is analogous to minimizing the RMSE.
+
+**What do we mean by variance in a model?**
+
+It is the observed variability of our model prediction for a given data point (how much the model can adjust given the data set). A model with high variance would yield low error values in the training data but high errors in the test data.
+
+Hence, consistent in and out-of-sample RMSE scores = bias/variance balance. This describes the **bias-variance trade-off**. We can reduce the bias by overfitting the model to the training data, but that comes at the expense of increased variance. Finding the optimal balance between bias and variance is the key challenge of any prediction model.
+
+#### A final task
+
+We are almost done with **Session 1**. Before we close the session, we need to store our data and our prediction model for the next session. Fitting our OLS model is fast and could be easily reproduced in the next session. However, for large models and more complicated settings, it can take very long to find and fit the best model. After building a complicated model, we want to make sure to save it securely for future deployment.
+
+:::{.panel-tabset group="language"}
+
+## R
+
+```{r}
+# Save the data frames
+saveRDS(Train_df, "Train_df.rds")
+saveRDS(Test_df, "Test_df.rds")
+saveRDS(Train_target, "Train_target.rds")
+saveRDS(Test_target, "Test_target.rds")
+saveRDS(malawi, "malawi.rds")
+saveRDS(target, "target.rds")
+
+# Save the fitted model
+saveRDS(linear, "linear_model.rds")
+```
+
+## Python
+
+```{python}
+
+# Save the data frames
+with open('X_train.pkl', 'wb') as f:
+    pickle.dump(X_train, f)
+with open('X_test.pkl', 'wb') as f:
+    pickle.dump(X_test, f)
+with open('y_train.pkl', 'wb') as f:
+    pickle.dump(y_train, f)
+with open('y_test.pkl', 'wb') as f:
+    pickle.dump(y_test, f)
+with open('df.pkl', 'wb') as f:
+    pickle.dump(df, f)
+with open('target.pkl', 'wb') as f:
+    pickle.dump(target, f)
+# Save the fitted model
+with open('linear_model.pkl', 'wb') as f:
+    pickle.dump(linear, f)
+
+```
+
+:::
+
+## Readings
+
+- An introduction to Statistical learning;  Chapters 2, 3 (Regression)
+
+- Athey, S. (2017). Beyond prediction: Using big data for policy problems. Science, 355(6324), 483-485.
+
+- Kleinberg, J., Ludwig, J., Mullainathan, S. and Obermeyer, Z., 2015. Prediction policy problems. American Economic Review, 105(5), pp.491-95.
+
+## Assignment:
+
+- Why is this a prediction policy problem? What would be a causal inference problem in this setting?
+
+- Which variables would you include in the model? How would you select the predictors?
+
+- Give an example of a variable that should not be included.
+
+- Try to improve the baseline model. You can select other predictors or/and transform them (e.g., use quadratic transformations of predictors or interact predictors). Report and share your model specification and performance indicators with your cohort. Are there any noteworthy patterns?
+
+Note:
+Your assignment will be shared with another course participant, and you will receive someone else's assignment. Responses can be concise, and it usually helps if you can share your code. Try to make it as easy as possible for your reviewer to read your code and responses!
+If you don't know a response and you are lost, formulate questions so that your reviewer can try to help you. Please also use the Forum to post your questions. The cohort wants to help and learn from your discussions. For instance, if you and your reviewer can resolve questions, post them. Or if you have received a helpful explanation from your reviewer, please also share it with the group.
+
+<!--DISQUS COMMENTS SCRIPT-->
+
+::: {#disqus_thread}
+:::
+
+```{=html}
+<script>
+    var disqus_config = function () {
+    this.page.identifier = "predictionpolicy.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+
+    
+    (function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+    s.src = 'https://unu-merit.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();
+</script>
+```
+
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>

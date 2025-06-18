@@ -15,7 +15,8 @@ website:
         - python-intro.qmd
       - text: "Content"
         menu:
-        - predictionpolicy.qmd 
+        - text: "Prediction Policy Problems"
+          href: session_1.qmd
         - classification.qmd
         - treebasedmodels.qmd
         - fairml.qmd
