@@ -5,22 +5,35 @@ format: html
 
 In last year’s (2024) edition of the Machine Learning for Public Policy course, we partnered with the United Nations High Commissioner for Refugees (UNHCR, for short) Innovation Office to bring you a live policy challenge, with the topic “Artificial Intelligence for Operational Support to the Forcibly Displaced”
 
-<div class="policy-challenge-winner-container">
-<div class="image-container">
+::::: policy-challenge-winner-container
+::: image-container
 ![](assets/policy-challenge-winner.jpeg){fig-align="left"}
-</div>
+:::
+
 <div>
-<p class="policy-challenge-quote">For me, beyond the general learnings from the course, it was incredibly enriching to be part of such a multidisciplinary team during the final challenge. The collaboration between people from social sciences and computer science truly mirrored real-world work environments. It pushed us to think outside the box and taught us how to work effectively with individuals from diverse cultures and backgrounds.</p>
-<p class="policy-challenge-quote">— Inés Alejo Fernández, member of the winning team of the 2024 edition of the Policy Challenge</p>
-</div>
+
+<p class="policy-challenge-quote">
+
+For me, beyond the general learnings from the course, it was incredibly enriching to be part of such a multidisciplinary team during the final challenge. The collaboration between people from social sciences and computer science truly mirrored real-world work environments. It pushed us to think outside the box and taught us how to work effectively with individuals from diverse cultures and backgrounds.
+
+</p>
+
+<p class="policy-challenge-quote">
+
+— Inés Alejo Fernández, member of the winning team of the 2024 edition of the Policy Challenge
+
+</p>
 
 </div>
+:::::
 
 Rebeca Moreno Jiménez, Lead Data Scientist at UNHCR Innovation, gave a brief lecture on how UNHCR uses Machine Learning and other technological innovations for human mobility policies; she introduced us to the live policy the UNHCR Innovation Office prepared for us. You can find the recording of the session below:
 
-{{< video https://youtu.be/l7s3k2TlQeY?si=ezqWJ0tPGP1sX0Fa >}}
+{{< video https://youtu.be/DOAqFjUQKWs >}}
 
 ![](assets/policy_challenge_banner2.png){fig-align="center"}
+
+```{=html}
 <style>
 .policy-challenge-winner-container .image-container img {
     border-radius: 50%;
@@ -46,3 +59,4 @@ Rebeca Moreno Jiménez, Lead Data Scientist at UNHCR Innovation, gave a brief le
     }
 }
 </style>
+```
