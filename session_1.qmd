@@ -28,9 +28,9 @@ use_miniconda("/Users/lucas/Library/r-miniconda-arm64", required = TRUE)
 
 ## Introducing the Prediction Policy Framework
 
-In the video-lecture below you'll be given a brief introduction to the prediction policy framework, and a primer on machine learning. Please take a moment to watch the 20 minute video.
+<!-- In the video-lecture below you'll be given a brief introduction to the prediction policy framework, and a primer on machine learning. Please take a moment to watch the 20 minute video. -->
 
-{{< video https://youtu.be/sFbKe4O0tEQ >}}
+<!-- {{< video https://youtu.be/sFbKe4O0tEQ >}} -->
 
 ### Predicting social assistance beneficiaries
 
