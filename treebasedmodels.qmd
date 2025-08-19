@@ -17,6 +17,9 @@ use_miniconda("/Users/lucas/Library/r-miniconda-arm64", required = TRUE)
 
 <br>
 
+![](assets/robot-pictures/RandomForestRobot.png){fig-align="center" width="380"}
+
+
 ## A general overview of tree-based methods
 
 An introduction to Tree-based machine learning models is given to us by [Dr. Francisco Rosales](https://www.linkedin.com/in/fraroma/), Assistant Professor at ESAN University (Perú) and Lead Data Scientist ([BREIN](https://www.linkedin.com/company/breinhub/)). You can watch the pre-recorded session below:
@@ -113,7 +116,6 @@ import matplotlib.pyplot as plt # a data visualisation library
 malawi = pd.read_csv('/Users/lucas/Documents/UNU-CDO/courses/ml4p/ml4p-website-v2/data/malawi.csv')
 
 ```
-
 :::
 
 For this exercise, we will skip all the data pre-processing steps. At this point, we are all well acquainted with the Malawi dataset, and should be able to create our binary outcome, poor (or not), and clean the dataset in general. If you need to, you can always go back to the [Logistic Classification tab](classification.qmd) and repeat the data preparation process described there.
@@ -216,17 +218,17 @@ print(rf_train)
 
 If you read the final box of the print() output, you'll notice that, given our input Y and X features, and no other information, the optimal random forest model, uses the following:
 
-+ mtry = 2: mtry is the number of variables to sample at random at each split. This is the number we feed to the recursive partitioning algorithm.  At each split, the algorithm will search mtry (=2) variables (a completely different set from the previous split) chosen at random, and pick the best split point.
+-   mtry = 2: mtry is the number of variables to sample at random at each split. This is the number we feed to the recursive partitioning algorithm. At each split, the algorithm will search mtry (=2) variables (a completely different set from the previous split) chosen at random, and pick the best split point.
 
-+ splitrule = gini: the splitting rule/algorithm used. Gini, or the Gini Impurity is a probability that ranges from $0$ to $1$. The lower the value, the more pure the node. Recall that a node that is $100\%$ pure includes only data from a single class (no noise!), and therefore the splitting stops.
+-   splitrule = gini: the splitting rule/algorithm used. Gini, or the Gini Impurity is a probability that ranges from $0$ to $1$. The lower the value, the more pure the node. Recall that a node that is $100\%$ pure includes only data from a single class (no noise!), and therefore the splitting stops.
 
-+ Accuracy (or $1$ - the error rate): at $0.81$, it improves from our eager learner classification (logistic) approach by $0.01$ and it is highly accurate. 
+-   Accuracy (or $1$ - the error rate): at $0.81$, it improves from our eager learner classification (logistic) approach by $0.01$ and it is highly accurate.
 
-+ Kappa (adjusted accuracy): at $0.55$, it indicates that our random forest model (on the training data) seems to perform the same as out logistic model. To make a proper comparison, we need to look at the out-of-sample predictions evaluation statistics. 
+-   Kappa (adjusted accuracy): at $0.55$, it indicates that our random forest model (on the training data) seems to perform the same as out logistic model. To make a proper comparison, we need to look at the out-of-sample predictions evaluation statistics.
 
 ## Python
 
-Let's use a simple 80:20 split for train and test data subsets. 
+Let's use a simple 80:20 split for train and test data subsets.
 
 ```{python python_split1}
 # First, recall the df structure
@@ -249,8 +251,7 @@ rf.fit(X_train, y_train) # fit the rf classifier using the training data
 
 ```
 
-We have now successfully trained a Random Forest model, and there is no need to go over in-sample predictions. We can simply evaluate the model's ability to make out-of-sample predictions. 
-
+We have now successfully trained a Random Forest model, and there is no need to go over in-sample predictions. We can simply evaluate the model's ability to make out-of-sample predictions.
 :::
 
 ### Out-of-sample predictions
@@ -292,10 +293,9 @@ print("Confusion Matrix:", cm)
 ConfusionMatrixDisplay(confusion_matrix=cm).plot() # create confusion matrix plot
 plt.show() # display confusion matrix plot created above
 ```
-
 :::
 
-Based on our out-of-sample predictions, the Random Forest algorithm seems to yield pretty similar accuracy in its predictions as the logistic classification algorithm. The performance metrics (accuracy, sensitivity, specificity, kappa) remain the same (as for most classification problems). If you want a refresher of what they mean and how to interpret them, go back one session for a more thorough explanation! 
+Based on our out-of-sample predictions, the Random Forest algorithm seems to yield pretty similar accuracy in its predictions as the logistic classification algorithm. The performance metrics (accuracy, sensitivity, specificity, kappa) remain the same (as for most classification problems). If you want a refresher of what they mean and how to interpret them, go back one session for a more thorough explanation!
 
 ### Fine-tuning parameters
 
@@ -303,6 +303,7 @@ Based on our out-of-sample predictions, the Random Forest algorithm seems to yie
 ## R
 
 We can try to improve our Random Forest model by fine-tuning two parameters: grid and cross-validation
+
 ```{r fine_tuning_parameters_1, cache=TRUE}
 
 # prepare the grid (create a larger random draw space)
@@ -351,7 +352,7 @@ confusionMatrix(pr2, Test_df[["poor"]], positive = "Y") # positive = "Y" indicat
 
 ## Python
 
-To improve the performance of our random forest model, we can try hyperparameter tuning. You can think of the process as optimising the learning model by defining the settings that will govern the learning process of the model. In Python, and for a random forest model, we can use RandomizedSearchCV to find the optimal parameters within a range of parameters. 
+To improve the performance of our random forest model, we can try hyperparameter tuning. You can think of the process as optimising the learning model by defining the settings that will govern the learning process of the model. In Python, and for a random forest model, we can use RandomizedSearchCV to find the optimal parameters within a range of parameters.
 
 ```{python}
 # define hyperparameters and their ranges in a "parameter_distance" dictionary
@@ -411,13 +412,11 @@ print(f"Recall with best hyperparameters: {recall}")
 print(f"Precision with best hyperparameters: {precision}")
 
 ```
-
 :::
 
-Consistent with the improvements on the train set, the out-of-sample predictions also return a higher adjusted accurcacy (Kappa statistic), and improved specificity and sensitivity. Not by much (e.g. Kappa increase of $0.01$), but we'll take what we can get. 
+Consistent with the improvements on the train set, the out-of-sample predictions also return a higher adjusted accurcacy (Kappa statistic), and improved specificity and sensitivity. Not by much (e.g. Kappa increase of $0.01$), but we'll take what we can get.
 
-
-These results also show that the biggest prediction improvements happen when we make big decisions - such as foregoing the variability of continuous outcomes in favour of classes. Exploring classification algorithms - in this case a logistic and a random forest model - was definitely worthwhile, but did not yield large returns on our predictive abilities. 
+These results also show that the biggest prediction improvements happen when we make big decisions - such as foregoing the variability of continuous outcomes in favour of classes. Exploring classification algorithms - in this case a logistic and a random forest model - was definitely worthwhile, but did not yield large returns on our predictive abilities.
 
 ### Visualising our model
 
@@ -435,7 +434,7 @@ MyRandomForest <- rpart(poor ~ ., data = Train_df)
 fancyRpartPlot(MyRandomForest, palettes = c("Oranges","Blues"), main = "Visualising nodes and splits") 
 ```
 
-The fancy Rpart Plot returns the flow chart that we have now learned to call a decision tree. Recall that we have used different packages (and different specifications) for the Random Forest. So, the visualisation that we're looking at now is not the exact replica of our preferred fine-tuned model. It is, nonetheless, a good way to help you understand how classifications and decisions are made with tree-based methods. If you'd like an in-depth explanation of the plot, you can visit the [Rpart.plot pkg documentation](http://www.milbo.org/rpart-plot/prp.pdf). 
+The fancy Rpart Plot returns the flow chart that we have now learned to call a decision tree. Recall that we have used different packages (and different specifications) for the Random Forest. So, the visualisation that we're looking at now is not the exact replica of our preferred fine-tuned model. It is, nonetheless, a good way to help you understand how classifications and decisions are made with tree-based methods. If you'd like an in-depth explanation of the plot, you can visit the [Rpart.plot pkg documentation](http://www.milbo.org/rpart-plot/prp.pdf).
 
 ## Python
 
@@ -459,16 +458,13 @@ graph.render('/Users/lucas/Documents/UNU-CDO/courses/ml4p/ml4p-website-v2/assets
 ```
 
 ![Decision Tree](assets/tree_visualisation.png){fig-align="center"}
-
 :::
 
 ## Readings
 
 *Optional Readings*
 
-- Dietrich et al. (2022) - [Economic Development, weather shocks, and child marriage in South Asia: A machine learning approach.](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0271373)
-
-
+-   Dietrich et al. (2022) - [Economic Development, weather shocks, and child marriage in South Asia: A machine learning approach.](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0271373)
 
 <!--DISQUS COMMENTS SCRIPT-->
 

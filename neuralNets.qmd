@@ -10,6 +10,8 @@ library(reticulate)
 use_miniconda("/Users/lucas/Library/r-miniconda-arm64", required = TRUE)
 ```
 
+![](assets/robot-pictures/NeuralNetRobot2.png){fig-align="center" width="380"}
+
 ## What are neural networks?
 
 In this session, Prof. Dr. Robin Cowan will give is an intuitive introduction to neural networks. He has also prepared an exercise using data from [SHARE, the Survey of Health, Ageing and Retirement in Europe](https://share-eric.eu/). Please watch his video-lesson to get the intuition behind neural network algorithms and you can then follow policy-relevant application: predicting income-vulnerable older people in Europe.
@@ -130,13 +132,12 @@ z1 <- z1 %>%
 
 In the English Questionnaire of the SHARE dataset, the variable asks:
 
-       
->Thinking of your household's total monthly income, would you say that your household is able to make ends meet...
+> Thinking of your household's total monthly income, would you say that your household is able to make ends meet...
 >
->1. With great difficulty 
->2. With some difficulty 
->3. Fairly easily 
->4. Easily
+> 1.  With great difficulty
+> 2.  With some difficulty
+> 3.  Fairly easily
+> 4.  Easily
 
 Let's work with this variable to turn this into a classification problem.
 
@@ -440,18 +441,18 @@ print(', '.join(SHARE.columns))
 SHARE.isnull().sum() # this sums all missing values per vector/variable
 ```
 
-We have $19$ variables and $6,881$ observations and no missing values in the dataset. Let's tackle the variables now: Unnamed:0 is an ID tag, nothing to worry about. Then, we've got some traditional variables in socioeconomic analysis: female (or gender), married (or marriage status) hhsize (household size), and a few indicators about the person's educational past: books maths and language at age 10. These questions ask about a person's reading, maths and language performance when they were 10 years old (arguably a good proxy for educational relevance in the household, and thus a predictor of future employment... but take this statement with a grain of very salty salt). EduYears directly asks how many years a person studied, formally. The next variables are quite interesting: eurod is a depression scale, country_mod indicates where in Europe the person lives (Spain 724; France 250; Italy 380; Germany 276; NL 528; Poland 616); similarly, the variables country* are dummies generated from the country_mod variable. And finally, the target variable(s): inc_bin was created by Robin, and it indicates whether a person is in the first, second, third, or fourth income quartile. We will work with co007_ and co007_mod (which was generated from the previous variable). Both variables refer to income struggles:
+We have $19$ variables and $6,881$ observations and no missing values in the dataset. Let's tackle the variables now: Unnamed:0 is an ID tag, nothing to worry about. Then, we've got some traditional variables in socioeconomic analysis: female (or gender), married (or marriage status) hhsize (household size), and a few indicators about the person's educational past: books maths and language at age 10. These questions ask about a person's reading, maths and language performance when they were 10 years old (arguably a good proxy for educational relevance in the household, and thus a predictor of future employment... but take this statement with a grain of very salty salt). EduYears directly asks how many years a person studied, formally. The next variables are quite interesting: eurod is a depression scale, country_mod indicates where in Europe the person lives (Spain 724; France 250; Italy 380; Germany 276; NL 528; Poland 616); similarly, the variables country\* are dummies generated from the country_mod variable. And finally, the target variable(s): inc_bin was created by Robin, and it indicates whether a person is in the first, second, third, or fourth income quartile. We will work with co007\_ and co007_mod (which was generated from the previous variable). Both variables refer to income struggles:
 
-In the English Questionare of the SHARE dataset, the co007_ variable asks:
+In the English Questionare of the SHARE dataset, the co007\_ variable asks:
 
->Thinking of your household's total monthly income, would you say that your household is able to make ends meet...
+> Thinking of your household's total monthly income, would you say that your household is able to make ends meet...
 >
->1. With great difficulty 
->2. With some difficulty 
->3. Fairly easily 
->4. Easily
-    
-Which Robin then recoded into a binary variable that takes on the value 1 if the person struggles to make ends meet at 2 otherwise (co007_mod). By doing so, he's turned the task into a simple classification model with neural networks. 
+> 1.  With great difficulty
+> 2.  With some difficulty
+> 3.  Fairly easily
+> 4.  Easily
+
+Which Robin then recoded into a binary variable that takes on the value 1 if the person struggles to make ends meet at 2 otherwise (co007_mod). By doing so, he's turned the task into a simple classification model with neural networks.
 
 ### 2. Data Split and Fit
 
@@ -502,7 +503,7 @@ SHARE['co007_mod'].value_counts(normalize=True) # when you set normalize = True,
 
 ```
 
-So, about 29% struggle, and 70% do not. If we recall from previous sessions it is hard to have accurate predictions of that of which we have less... let's plot a confusion matrix and evaluate the recall (sensitivity) of our model to see how good we are at predicting strugglers. 
+So, about 29% struggle, and 70% do not. If we recall from previous sessions it is hard to have accurate predictions of that of which we have less... let's plot a confusion matrix and evaluate the recall (sensitivity) of our model to see how good we are at predicting strugglers.
 
 ```{python}
 # visualising a confusion matrix
@@ -516,27 +517,24 @@ plt.show() # display confusion matrix plot created above
 
 So, the numbers have switched here: $2$ is now $1$ and $1$ is now $0$. Let's have a trip back to memory lane and remember the values that a confusion matrix provides:
 
-+ True Positives (TP): 42 (actual = 0, predicted = 0)
+-   True Positives (TP): 42 (actual = 0, predicted = 0)
 
-+ False Negatives (FN): 381 (actual = 0, predicted = 1)
+-   False Negatives (FN): 381 (actual = 0, predicted = 1)
 
-+ False Positives (FP): 21 (actual = 1, predicted = 0)
+-   False Positives (FP): 21 (actual = 1, predicted = 0)
 
-+ True Negatives (TN): 933 (actual = 1, predicted = 1)    
-    
+-   True Negatives (TN): 933 (actual = 1, predicted = 1)
+
 Based on these confusion matrix values (and the formulas provided in session 2: logistic classification), we can get our neural network model's performance metrics.
 
-Accuracy: 70%. (we got this above!). It is the proportion of true results regardless of the case. 
-Recall (Sensitivity): 35.22%  (we might want to know this, since we're trying to identify vulnerable older people). It is the proportion of correctly identified vulnerable cases. The formula (if you want to check yourself) is TP/(TP+FN) =  42/(42+381) = 0.099.
+Accuracy: 70%. (we got this above!). It is the proportion of true results regardless of the case. Recall (Sensitivity): 35.22% (we might want to know this, since we're trying to identify vulnerable older people). It is the proportion of correctly identified vulnerable cases. The formula (if you want to check yourself) is TP/(TP+FN) = 42/(42+381) = 0.099.
 
 Alternatively:
+
 ```{python}
 print("Recall:", recall_score(y_test, pred))
 ```
-
-
 :::
-
 
 ## Conclusion
 

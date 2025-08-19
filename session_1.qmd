@@ -24,6 +24,8 @@ use_miniconda("/Users/lucas/Library/r-miniconda-arm64", required = TRUE)
 
 <br>
 
+![](assets/robot-pictures/predpod.png){fig-align="center" width="380"}
+
 ## Introducing the Prediction Policy Framework
 
 In the video-lecture below you'll be given a brief introduction to the prediction policy framework, and a primer on machine learning. Please take a moment to watch the 20 minute video.
@@ -126,15 +128,13 @@ from sklearn.metrics import r2_score                  # Estimate R^2
 from sklearn.preprocessing import StandardScaler      # Feature scaling and normalization
 
 ```
-
 :::
 
-
-**Loading the dataset**
-The data set comes as .dta file (STATA file) and not as a standard comma separated file (.csv). While the file has the same tabular structure, STATA files have variable labels, i.e. short texts that describe the variables with rather cryptic variable names. We can preserve these variable lables and store them as a separate object that we can use for quick variable look-ups.
+**Loading the dataset** The data set comes as .dta file (STATA file) and not as a standard comma separated file (.csv). While the file has the same tabular structure, STATA files have variable labels, i.e. short texts that describe the variables with rather cryptic variable names. We can preserve these variable lables and store them as a separate object that we can use for quick variable look-ups.
 
 ::: {.panel-tabset group="language"}
 ## R
+
 ```{r}
 
 # Set working directory
@@ -152,6 +152,7 @@ print(variable_labels)
 ```
 
 ## Python
+
 ```{python}
 
 # Set working directory
@@ -168,14 +169,13 @@ print(variable_labels)
 df = pd.read_stata('data/malawi.dta')
 
 ```
-
 :::
 
 ### 2. Get to know your data: pre-processing and data familiarization.
 
 ::: {.panel-tabset group="language"}
-
 ## R
+
 ```{r}
 #| error: true
 #| warning: true
@@ -187,13 +187,13 @@ head(malawi)
 ```
 
 ## Python
+
 ```{python}
 
 # Let`s have a look at our data frame 'df'. df.head() returns the first 5 rows of our data set df.
 df.head()
 
 ```
-
 :::
 
 **Variable Selection**
@@ -207,7 +207,6 @@ For now, we select a few variables from the data to illustrate the code. Later, 
 To select variables, you can use the questionnaire or the list of variable lables ('variable_labels').
 
 ::: {.panel-tabset group="language"}
-
 ## R
 
 ```{r}
@@ -240,14 +239,11 @@ for var in vars:
     print(f"{var} : {variable_labels[var]}")
 
 ```
-
 :::
-
 
 Now that we have selected our predictors and the target variable(s), we should summarize and describe our data to get a feeling for the variable types, the distribution of variable values, missing values, and variable correlations.
 
-:::{.panel-tabset group="language"}
-
+::: {.panel-tabset group="language"}
 ## R
 
 ```{r}
@@ -258,20 +254,20 @@ skim(malawi)
 ```
 
 ## Python
+
 ```{python}
 
 # Summary statistics provides a first glance of the data
 skimpy.skim(df)
 
 ```
-
 :::
 
-The output shows that most of the variables are of type categorical,  coded with numbers. However, the 'numbers' area ssigned arbitrarily and a ranking of numbers might not be meaningful. For instance `district` = 2 is not 'more' than `district` = 1, they're simply different districts. What's more, many ML (machine learning) models require a binary encoding for categorical variables.
+The output shows that most of the variables are of type categorical, coded with numbers. However, the 'numbers' area ssigned arbitrarily and a ranking of numbers might not be meaningful. For instance `district` = 2 is not 'more' than `district` = 1, they're simply different districts. What's more, many ML (machine learning) models require a binary encoding for categorical variables.
 
-:::{.panel-tabset group="language"}
-
+::: {.panel-tabset group="language"}
 ## R
+
 ```{r}
 
 # In R, all variables were identified as numeric, despite knowing from the label that they are categorical (e.g. poor coded 0 for no, 1 for yes). This has to do with how the haven package loads labelled STATA data. To correctly assign variable types we'll have to do several things.
@@ -387,6 +383,7 @@ The first category is dropped to avoid multicollinearity (that's why we don't se
 ```
 
 ## Python
+
 ```{python}
 
 # Let's encode all object variables that have more than 2 unique values as categorical variables
@@ -400,18 +397,17 @@ df = pd.get_dummies(df, drop_first=True)
 # Note that we get one binary variable for each category of the categorical variable. The first category is dropped to avoid multi-collinearity.
 
 ```
-
 :::
 
-The summary output also indicated that we have missing values. In our case, the variable `dist_roaod` has 8 missing values ('NA' values -> Not Available). Many machine learning models cannot be trained when missing values are present (several exceptions exist).
+The summary output also indicated that we have missing values. In our case, the variable `dist_roaod` has 8 missing values ('NA' values -\> Not Available). Many machine learning models cannot be trained when missing values are present (several exceptions exist).
 
 Dealing with missingness is a non-trivial task: First and foremost, we should assess whether there is a pattern to missingness and if so, what that means to what we can learn from our (sub)population. If there is no discernible pattern, we can proceed to delete the missing values or impute them. A more detailed explanation and course of action can be found [here](https://stefvanbuuren.name/fimd/ch-introduction.html).
 
 In our application, we'll remove the NA values from the data.
 
-:::{.panel-tabset group="language"}
-
+::: {.panel-tabset group="language"}
 ## R
+
 ```{r}
 malawi <- na.omit(malawi)
 ```
@@ -421,18 +417,17 @@ malawi <- na.omit(malawi)
 ```{python}
 df = df.dropna()
 ```
-
 :::
 
 To finalise our exploration of the dataset, we should:
 
-- visualize the target variable (a.k.a. outcome of interest)
+-   visualize the target variable (a.k.a. outcome of interest)
 
-- have a look at correlations
+-   have a look at correlations
 
-:::{.panel-tabset group="language"}
-
+::: {.panel-tabset group="language"}
 ## R
+
 ```{r}
 
 # Histogram of the target variable
@@ -512,7 +507,6 @@ plt.show()
 The first column visualizes the correlation coefficients with `rexpaggpc` (consumption per capita), the target variable. The results shows strong correlations of the target variable with the household size, assets (tables etc.), some sanitary and housing categories, as well as region indicators. Not surprisingly, consumption per capita is highly correlated with the household poverty status, a binary indicator that is based on consumption levels and that will be used as the target variable in our next session.
 
 We can also spot some correlation coefficients that equal zero. In some situations, the data generating mechanism can create predictors that only have a single unique value (i.e. a 'zero-variance predictor'). For many ML models (excluding tree-based models), this may cause the model to crash or the fit to be unstable. Here, the only one we’ve spotted is not in relation to our target variable. But we do observe some near-zero-variance predictors. Besides uninformative, these can also create unstable model fits. There’s a few strategies to deal with these; the quickest solution is to remove them. A second option, which is especially interesting in scenarios with a large number of variables, is to work with penalized models (Ridge and Lasso regressions). We’ll discuss this option at a later stage.
-
 :::
 
 ### 3. A primer on ML prediction
@@ -531,8 +525,7 @@ The 80/20 split has its origins in the Pareto Principle, which states that 'in m
 
 Our data contains the variables we want to predict, i.e. the target variables (consumption per capita: `rexpaggpc`; poverty status: Py `poor_Poor`/ R `poor.Poor`) and the predictors (all other variables). let's put the target variables in a separate dataframe.
 
-:::{.panel-tabset group="language"}
-
+::: {.panel-tabset group="language"}
 ## R
 
 ```{r}
@@ -638,16 +631,15 @@ X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
 
 ```
-
 :::
 
-#### Orinary Least Squares [OLS] (a simple linear regression)
+#### Orinary Least Squares \[OLS\] (a simple linear regression)
 
 We can now run our first prediction model!
 
-:::{.panel-tabset group="language"}
-
+::: {.panel-tabset group="language"}
 ## R
+
 ```{r}
 # Fit simple linear regression model
 #linear <- lm(Train_target$rexpaggpc ~ ., data = Train_df) # only run this line if you want to see an error! :)
@@ -681,12 +673,7 @@ linear <- lm(Train_target$rexpaggpc ~ ., data = Train_df)
 
 ```
 
-In R, we can retrieve the model's fit metrics (and more) in one go, inclduing:
-- Coefficients
-- Standard errors
-- t-statistics
-- p-values
-- Model fit statistics
+In R, we can retrieve the model's fit metrics (and more) in one go, inclduing: - Coefficients - Standard errors - t-statistics - p-values - Model fit statistics
 
 ```{r}
 # Print the linear model's metrics using modelsummary (notice our beautiful pipe operators are at it again here)
@@ -793,21 +780,19 @@ coefs = coefs.sort_values()
 print(coefs.head())
 print(coefs.tail())
 ```
-
 :::
 
 #### Performance Indicators
 
 In predictive modeling, there are various performance metrics for different use cases and policy preferences. In the following, we'll consider two of the most popular metrics for regression:
 
-1. **Model residuals:** Recall that residuals are the observed value minus the predicted value. We can estimate a model's Root Mean Squared Error (RMSE) or the Mean Absolute Error (MAE). Residuals allow us to quantify how close the predicted response value is to the true response value for a given observation. Small RMSE or MAE values indicate that predictions are close to the true observed values.
+1.  **Model residuals:** Recall that residuals are the observed value minus the predicted value. We can estimate a model's Root Mean Squared Error (RMSE) or the Mean Absolute Error (MAE). Residuals allow us to quantify how close the predicted response value is to the true response value for a given observation. Small RMSE or MAE values indicate that predictions are close to the true observed values.
 
-2. **The R-squared:** Arguably the go-to indicator for performance assessment. Low $R^2$ values are not uncommon, especially in the social sciences. However, when hoping to use a model for predictive purposes, a low $R^2$ is a bad sign, regardless of having a large number of statistically significant features. The drawback of relying solely on this measure is that it does not consider the problem of model overfitting; i.e., you can inflate the R-squared by adding as many variables as you want, even if those variables have little predictive power. This approach will yield great results on the training data but will underperform when extrapolating the model to the test (or any other) dataset.
+2.  **The R-squared:** Arguably the go-to indicator for performance assessment. Low $R^2$ values are not uncommon, especially in the social sciences. However, when hoping to use a model for predictive purposes, a low $R^2$ is a bad sign, regardless of having a large number of statistically significant features. The drawback of relying solely on this measure is that it does not consider the problem of model overfitting; i.e., you can inflate the R-squared by adding as many variables as you want, even if those variables have little predictive power. This approach will yield great results on the training data but will underperform when extrapolating the model to the test (or any other) dataset.
 
 **Residuals:**
 
-:::{.panel-tabset group="language"}
-
+::: {.panel-tabset group="language"}
 ## R
 
 ```{r}
@@ -843,8 +828,7 @@ rmse_insample_caret <- RMSE(y_pred_train, Train_target$rexpaggpc)
 
 ```
 
-
-The RMSE (`{r} round(rmse_insample_caret, 0)`) gives us an absolute number that indicates how much our predicted values deviate from the true (observed) number. This is all in reference to the target variable. Think of the question: How far, on average, are the residuals away from zero? Generally speaking, the lower the value, the better the model fit. Besides being a good measure of goodness of fit, the RMSE is also useful for comparing the ability of our model to make predictions on different (e.g. test) data sets. The in-sample RMSE should be close or equal to the out-of-sample RMSE. In this case, our RMSE is ~`{r} round(rmse_insample_caret, 0)` units away from zero.
+The RMSE (`{r} round(rmse_insample_caret, 0)`) gives us an absolute number that indicates how much our predicted values deviate from the true (observed) number. This is all in reference to the target variable. Think of the question: How far, on average, are the residuals away from zero? Generally speaking, the lower the value, the better the model fit. Besides being a good measure of goodness of fit, the RMSE is also useful for comparing the ability of our model to make predictions on different (e.g. test) data sets. The in-sample RMSE should be close or equal to the out-of-sample RMSE. In this case, our RMSE is \~`{r} round(rmse_insample_caret, 0)` units away from zero.
 
 ## Python
 
@@ -874,14 +858,12 @@ Recall that the residual is estimated as the true (observed) value minus the pre
 rmse_insample_py = root_mean_squared_error(y_train, y_pred_train)
 ```
 
-The RMSE (`{python} round(rmse_insample_py, 0)`) gives us an absolute number that indicates how much our predicted values deviate from the true (observed) number. This is all in reference to the target variable. Think of the question: How far, on average, are the residuals away from zero? Generally speaking, the lower the value, the better the model fit. Besides being a good measure of goodness of fit, the RMSE is also useful for comparing the ability of our model to make predictions on different (e.g. test) data sets. The in-sample RMSE should be close or equal to the out-of-sample RMSE. In this case, our RMSE is ~`{python} round(rmse_insample_py, 0)` units away from zero.
-
+The RMSE (`{python} round(rmse_insample_py, 0)`) gives us an absolute number that indicates how much our predicted values deviate from the true (observed) number. This is all in reference to the target variable. Think of the question: How far, on average, are the residuals away from zero? Generally speaking, the lower the value, the better the model fit. Besides being a good measure of goodness of fit, the RMSE is also useful for comparing the ability of our model to make predictions on different (e.g. test) data sets. The in-sample RMSE should be close or equal to the out-of-sample RMSE. In this case, our RMSE is \~`{python} round(rmse_insample_py, 0)` units away from zero.
 :::
 
 **R-squared**
 
-:::{.panel-tabset group="language"}
-
+::: {.panel-tabset group="language"}
 ## R
 
 ```{r}
@@ -899,15 +881,13 @@ print(r2_train)
 ```
 
 The estimated (Multiple) R-squared of `{python round(r2_train, 3)}` tells us that our model predicts around `{python round(r2_train * 100, 1)}` percent of the variation in the target variable (consumption per capita). Also note that when we have a large number of predictors, it’s best to look at the Adjusted R-squared, which corrects or adjusts for this by only increasing when a new feature improves the model more so than what would be expected by chance.
-
 :::
 
 #### Out-of-sample predictions
 
 Now that we have built and evaluated our model in the training dataset, we can proceed to make out-of-sample predictions. That is, see how our model performs in the test dataset.
 
-:::{.panel-tabset group="language"}
-
+::: {.panel-tabset group="language"}
 ## R
 
 ```{r}
@@ -938,7 +918,6 @@ print("Root mean squared error on test set: %.2f" % root_mean_squared_error(y_te
 print("R2 on test set: %.2f" % r2_score(y_test, y_pred))
 
 ```
-
 :::
 
 The summary statistics for the predictions with the train and test datasets are not so close to one another. This is an indication that our model doesn't necessarily extrapolate well to other datasets. Compared to the observed summary statistics of the target variable, they’re relatively close, with the largest deviations observed at the minimum and maximum values.
@@ -957,8 +936,7 @@ Hence, consistent in and out-of-sample RMSE scores = bias/variance balance. This
 
 We are almost done with **Session 1**. Before we close the session, we need to store our data and our prediction model for the next session. Fitting our OLS model is fast and could be easily reproduced in the next session. However, for large models and more complicated settings, it can take very long to find and fit the best model. After building a complicated model, we want to make sure to save it securely for future deployment.
 
-:::{.panel-tabset group="language"}
-
+::: {.panel-tabset group="language"}
 ## R
 
 ```{r}
@@ -996,30 +974,27 @@ with open('linear_model.pkl', 'wb') as f:
     pickle.dump(linear, f)
 
 ```
-
 :::
 
 ## Readings
 
-- An introduction to Statistical learning;  Chapters 2, 3 (Regression)
+-   An introduction to Statistical learning; Chapters 2, 3 (Regression)
 
-- Athey, S. (2017). Beyond prediction: Using big data for policy problems. Science, 355(6324), 483-485.
+-   Athey, S. (2017). Beyond prediction: Using big data for policy problems. Science, 355(6324), 483-485.
 
-- Kleinberg, J., Ludwig, J., Mullainathan, S. and Obermeyer, Z., 2015. Prediction policy problems. American Economic Review, 105(5), pp.491-95.
+-   Kleinberg, J., Ludwig, J., Mullainathan, S. and Obermeyer, Z., 2015. Prediction policy problems. American Economic Review, 105(5), pp.491-95.
 
 ## Assignment:
 
-- Why is this a prediction policy problem? What would be a causal inference problem in this setting?
+-   Why is this a prediction policy problem? What would be a causal inference problem in this setting?
 
-- Which variables would you include in the model? How would you select the predictors?
+-   Which variables would you include in the model? How would you select the predictors?
 
-- Give an example of a variable that should not be included.
+-   Give an example of a variable that should not be included.
 
-- Try to improve the baseline model. You can select other predictors or/and transform them (e.g., use quadratic transformations of predictors or interact predictors). Report and share your model specification and performance indicators with your cohort. Are there any noteworthy patterns?
+-   Try to improve the baseline model. You can select other predictors or/and transform them (e.g., use quadratic transformations of predictors or interact predictors). Report and share your model specification and performance indicators with your cohort. Are there any noteworthy patterns?
 
-Note:
-Your assignment will be shared with another course participant, and you will receive someone else's assignment. Responses can be concise, and it usually helps if you can share your code. Try to make it as easy as possible for your reviewer to read your code and responses!
-If you don't know a response and you are lost, formulate questions so that your reviewer can try to help you. Please also use the Forum to post your questions. The cohort wants to help and learn from your discussions. For instance, if you and your reviewer can resolve questions, post them. Or if you have received a helpful explanation from your reviewer, please also share it with the group.
+Note: Your assignment will be shared with another course participant, and you will receive someone else's assignment. Responses can be concise, and it usually helps if you can share your code. Try to make it as easy as possible for your reviewer to read your code and responses! If you don't know a response and you are lost, formulate questions so that your reviewer can try to help you. Please also use the Forum to post your questions. The cohort wants to help and learn from your discussions. For instance, if you and your reviewer can resolve questions, post them. Or if you have received a helpful explanation from your reviewer, please also share it with the group.
 
 <!--DISQUS COMMENTS SCRIPT-->
 
