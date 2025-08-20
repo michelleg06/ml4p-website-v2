@@ -1,0 +1,108 @@
+---
+title: "Contact"
+format: html
+
+---
+
+```{=html}
+<script src="https://formspree.io/js/formbutton-v1.min.js" defer></script>
+```
+
+```{=html}
+<script>
+  /* paste this line in verbatim */
+  window.formbutton=window.formbutton||function(){(formbutton.q=formbutton.q||[]).push(arguments)};
+  /* customize formbutton below*/    
+  formbutton("create", {
+    action: "https://formspree.io/f/xvgaevaj",
+    title: "How can we help?",
+    fields: [
+      {
+        type: "email",
+        label: "E-mail:",
+        name: "email",
+        required: true,
+        placeholder: "your@email.com"
+      },
+      {
+        type: "textarea",
+        label: "Message:",
+        name: "message",
+        placeholder: "What's on your mind?",
+      },
+      { type: "submit" }      
+    ],
+    styles: {
+      title: {
+        backgroundColor: "gray"
+      },
+      button: {
+        backgroundColor: "gray"
+      }
+    }
+  });
+</script>
+```
+
+<form action="https://formspree.io/f/xvgaevaj" method="POST" style="max-width: 600px; margin: 2rem auto; padding: 2rem; background-color: #F0F4FF; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-family: sans-serif;">
+
+<h2 style="margin-top: 0; color: #3a2d1b;">
+
+Contact
+
+</h2>
+
+<label style="display: block; margin-bottom: 1rem;"> [Your e-mail:]{style="display: block; font-weight: 600; color: #5c4a36; margin-bottom: 0.25rem;"} <input
+      type="email"
+      name="email"
+      required
+      style="width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 8px;"
+    > </label>
+
+<label style="display: block; margin-bottom: 1rem;"> [Your message:]{style="display: block; font-weight: 600; color: #5c4a36; margin-bottom: 0.25rem;"}
+
+```{=html}
+<textarea
+      name="message"
+      rows="5"
+      required
+      style="width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 8px; resize: vertical;"
+    ></textarea>
+```
+
+</label>
+
+<button class="submit-button" type="submit">
+
+Send
+
+</button>
+
+</form>
+
+</div>
+
+
+```{=html}
+<style>
+.title {
+display: none;
+}
+
+  .submit-button {
+    background-color: cornflowerblue;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    height: 50px;
+  }
+
+  .submit-button:hover {
+    background-color: #4A78C2;
+  }
+</style>
+```

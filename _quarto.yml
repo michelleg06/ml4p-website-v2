@@ -29,6 +29,8 @@ website:
           href: policy-challenge-2025.qmd
       - text: "About"
         href: about.qmd
+      - text: "Contact"
+        href: contact.qmd
     tools:
       - icon: github
         href: "https://github.com/lucasboh/ml4p-website-v2"

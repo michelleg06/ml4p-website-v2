@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Introduction – Machine Learning for Public Policy</title>
+<title>Contact – Machine Learning for Public Policy</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -67,35 +67,6 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -190,7 +161,7 @@ window.Quarto = {
 <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./contact.html"> 
+    <a class="nav-link active" href="./contact.html" aria-current="page"> 
 <span class="menu-text">Contact</span></a>
   </li>  
 </ul>
@@ -205,26 +176,15 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#about-this-course" id="toc-about-this-course" class="nav-link active" data-scroll-target="#about-this-course">About this course</a></li>
-  <li><a href="#a-general-introduction-to-machine-learning-for-public-policy" id="toc-a-general-introduction-to-machine-learning-for-public-policy" class="nav-link" data-scroll-target="#a-general-introduction-to-machine-learning-for-public-policy">A general introduction to Machine learning for Public Policy</a>
-  <ul class="collapse">
-  <li><a href="#how-does-a-machine-learn" id="toc-how-does-a-machine-learn" class="nav-link" data-scroll-target="#how-does-a-machine-learn">How does a Machine Learn?</a></li>
-  </ul></li>
-  <li><a href="#next-steps" id="toc-next-steps" class="nav-link" data-scroll-target="#next-steps">Next steps</a></li>
-  </ul>
-</nav>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Introduction</h1>
+<h1 class="title">Contact</h1>
 </div>
 
 
@@ -241,69 +201,80 @@ window.Quarto = {
 </header>
 
 
-<p>At its core, machine learning is primarily interested in making sense of complex data. A machine learning algorithm’s job is to read data and identify patterns that can be used for: prediction, feature-relevance detection, model-free classification, among other actions.</p>
-<section id="about-this-course" class="level2">
-<h2 class="anchored" data-anchor-id="about-this-course">About this course</h2>
-<p><strong>Please watch our Welcome video to meet the organisers and hear from Alex Hunns about the dynamics of the course.In case you do not make it until the end, here are some highlights:</strong></p>
-<ul>
-<li><p>It is a (mostly) self-paced and fully online course.</p></li>
-<li><p>We provide a non-exhaustive way to go about using the R and Python languages for basic Machine Learning purposes. Some of you may be able to optimise a few lines of code, and we encourage that!</p></li>
-<li><p>There are social hours in gather.town. Join so that you can meet other Machine Learners around the globe!</p></li>
-<li><p>There are no grades to this course. If you attend the Collaborative Policy Event, you may be eligible for some form of certification.</p></li>
-<li><p>The content is introductory.</p></li>
-<li><p>Be respectful and kind to other participants!</p></li>
-</ul>
-<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/sILhz3dqfqM?si=ni7aYqoJ9VXUQyN0" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
-</section>
-<section id="a-general-introduction-to-machine-learning-for-public-policy" class="level2">
-<h2 class="anchored" data-anchor-id="a-general-introduction-to-machine-learning-for-public-policy">A general introduction to Machine learning for Public Policy</h2>
-<p>Empirical Public Policy research is primarily concerned with causality and understanding counterfactuals. What is the impact of Policy or Programme X on Population Outcome Y? What would have happened in the absence of such a policy? However, there are policy problems that may be solved without necessarily looking for a causal link. We call these `prediction policy problems’ (<a href="https://www.aeaweb.org/articles?id=10.1257/aer.p20151023">Kleinberg et al.&nbsp;2015</a>). Some examples include:</p>
-<ul>
-<li><p>Allocating fire and health inspectors in cities (<a href="https://www.aeaweb.org/articles?id=10.1257/aer.p20161027">Glaeser et al.&nbsp;2016</a>).</p></li>
-<li><p>Predicting unemployment spell length to help workers decide on savings rates and job search strategies.</p></li>
-<li><p>Predicting highest risk youth for targeting interventions (<a href="https://www.aeaweb.org/articles?id=10.1257/aer.101.3.288">Chandler,Levitt, and List 2011</a>).</p></li>
-</ul>
-<section id="how-does-a-machine-learn" class="level3">
-<h3 class="anchored" data-anchor-id="how-does-a-machine-learn">How does a Machine Learn?</h3>
-<p>Machine learning is classified in three major branches:</p>
-<p><strong>1. Supervised Learning</strong>:</p>
-<p>This course will be primarily concerned with supervised learning. Supervised learning is analogous to statistical learning: suppose that we observe a quantitative response <span class="math inline">\(Y\)</span> and <span class="math inline">\(p\)</span> predictors, <span class="math inline">\(X_1, X_2,..., X_p\)</span>.</p>
-<p>We can rewrite this in a general linear form as:</p>
-<p><span class="math display">\[Y = f(X) + u\]</span> where <span class="math inline">\(u\)</span> is an error term.</p>
-<p><strong>2. Unsupervised Learning</strong>:</p>
-<p>Unsupervised learning is known for reading data without labels; it is more computationally complex than supervised learning (because it will look for all possible patterns in the data), but it is also more flexible than supervised learning. You can think of clustering, anomaly detection, neural networks, etc.</p>
-<p><strong>3. Reinforcement Learning</strong>:</p>
-<p>Reinforcement learning is categorised as Artificial Intelligence. It is more focused on goal-directed learning from interaction than are other approaches to machine learning. As per <a href="https://web.stanford.edu/class/psych209/Readings/SuttonBartoIPRLBook2ndEd.pdf">Sutton and Barto (2015)</a>, the three most distinguishing features of reinforcement learning are:</p>
-<ol type="1">
-<li><p>Being closed-loop; i.e.&nbsp;the learning system’s actions influence its later inputs.</p></li>
-<li><p>Does not have direct instructions as to what actions to take; instead it must discover which actions yield the most reward by trying them out.</p></li>
-<li><p>Not knowing where the consequences of actions, including reward signals, play out over extended time periods.</p></li>
-</ol>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="assets/sup_unsup_re.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
-</figure>
-</div>
-<p><strong>Relevant trade-offs in Machine Learning</strong></p>
-<ul>
-<li><p>Flexibility vs.&nbsp;interpretability: not all found patterns are directly interpretable.</p></li>
-<li><p>Prediction vs.&nbsp;inference: high predictive power does not allow for proper inference.</p></li>
-<li><p>Goodness-of-fit vs.&nbsp;over-fitting: how do we know <em>when</em> the fit is good?</p></li>
-</ul>
-</section>
-</section>
-<section id="next-steps" class="level2">
-<h2 class="anchored" data-anchor-id="next-steps">Next steps</h2>
-<p>Now is time to start programming! Choose between R and Python to follow the course. We have prepared an introduction, so you can get started:</p>
-<p><a href="./r-intro.html">An introduction to R programming</a></p>
-<p><a href="./python-intro.html">An introduction to Python programming</a></p>
-
-
-</section>
-
+<script src="https://formspree.io/js/formbutton-v1.min.js" defer=""></script>
+<script>
+  /* paste this line in verbatim */
+  window.formbutton=window.formbutton||function(){(formbutton.q=formbutton.q||[]).push(arguments)};
+  /* customize formbutton below*/    
+  formbutton("create", {
+    action: "https://formspree.io/f/xvgaevaj",
+    title: "How can we help?",
+    fields: [
+      {
+        type: "email",
+        label: "E-mail:",
+        name: "email",
+        required: true,
+        placeholder: "your@email.com"
+      },
+      {
+        type: "textarea",
+        label: "Message:",
+        name: "message",
+        placeholder: "What's on your mind?",
+      },
+      { type: "submit" }      
+    ],
+    styles: {
+      title: {
+        backgroundColor: "gray"
+      },
+      button: {
+        backgroundColor: "gray"
+      }
+    }
+  });
+</script>
+<form action="https://formspree.io/f/xvgaevaj" method="POST" style="max-width: 600px; margin: 2rem auto; padding: 2rem; background-color: #F0F4FF; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-family: sans-serif;">
+<h2 style="margin-top: 0; color: #3a2d1b;" class="anchored">
+<p>Contact</p>
+</h2>
+<p><label style="display: block; margin-bottom: 1rem;"> <span style="display: block; font-weight: 600; color: #5c4a36; margin-bottom: 0.25rem;">Your e-mail:</span> <input type="email" name="email" required="" style="width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 8px;"> </label></p>
+<p><label style="display: block; margin-bottom: 1rem;"> <span style="display: block; font-weight: 600; color: #5c4a36; margin-bottom: 0.25rem;">Your message:</span></label></p>
+<textarea name="message" rows="5" required="" style="width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 8px; resize: vertical;"></textarea>
+<p></p>
+<button class="submit-button" type="submit">
+<p>Send</p>
+</button>
+</form>
 <div class="footer">
 Copyright © 2025 Michelle González Amador &amp; Stephan Dietrich. All rights reserved.<br> <a href="https://github.com/lucasboh/ml4p-website-v2"><img src="https://img.shields.io/badge/GitHub-Repository-blue?logo=github.png" class="img-fluid" alt="GitHub"></a>
-</div></main> <!-- /main -->
+</div></main></div>
+<style>
+.title {
+display: none;
+}
+
+  .submit-button {
+    background-color: cornflowerblue;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    height: 50px;
+  }
+
+  .submit-button:hover {
+    background-color: #4A78C2;
+  }
+</style>
+
+
+
+ <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
@@ -721,7 +692,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
-</div> <!-- /content -->
+ <!-- /content -->
 
 
 
