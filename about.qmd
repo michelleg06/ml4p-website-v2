@@ -18,9 +18,9 @@ toc: false
       <div class="text">
         <h3>Dr. Stephan Dietrich</h3>
         <p class="subtitle">Economics, Assistant Professor, Maastricht University & United Nations University - MERIT</p>
-        <p>
+        <div class="icons-container">
           <a href="https://www.linkedin.com/in/stephan-dietrich-data/?originalSubdomain=nl" target="_blank"><i style = "color:#204eb6;" class="bi bi-linkedin "></i></a>
-        </p>
+        </div>
         <a class="expand" href="#" onclick="toggleDescription(this); return false;">+ info</a>
       </div>
     </div>
@@ -85,9 +85,9 @@ toc: false
       <div class="text">
         <h3>Dr. Francisco Rosales</h3>
         <p class="subtitle">Founder and CEO @ Center For Advanced Analytics | Ph.D. in Mathematics</p>
-        <p>
+        <div class="icons-container">
           <a href="https://www.linkedin.com/in/fraroma/" target="_blank"><i style = "color:#204eb6;" class="bi bi-linkedin "></i></a>
-        </p>
+        </div>
         <a class="expand" href="#" onclick="toggleDescription(this); return false;">+ info</a>
       </div>
     </div>
@@ -320,6 +320,7 @@ Send
   .profile .icons-container {
     display: flex;
     gap: 8px;
+    margin-bottom: 16px;
   }
 
   .expand {
