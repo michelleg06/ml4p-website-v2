@@ -19,7 +19,7 @@ toc: false
         <h3>Dr. Stephan Dietrich</h3>
         <p class="subtitle">Economics, Assistant Professor, Maastricht University & United Nations University - MERIT</p>
         <p>
-          <a href="https://www.linkedin.com/in/stephan-dietrich-data/?originalSubdomain=nl" target="_blank">LinkedIn</a>
+          <a href="https://www.linkedin.com/in/stephan-dietrich-data/?originalSubdomain=nl" target="_blank"><i style = "color:#204eb6;" class="bi bi-linkedin "></i></a>
         </p>
         <a class="expand" href="#" onclick="toggleDescription(this); return false;">+ info</a>
       </div>
@@ -46,14 +46,14 @@ toc: false
       <div class="text">
         <h3>Dr. Michelle González Amador</h3>
         <p class="subtitle">Economics, Postdoctoral researcher, Wageningen University & Research</p>
-        <p>
-          <a href="https://www.m-gonzalezamador.com/" target="_blank">Personal Website</a> | <a
-            href="mailto:michelle.gonzalezamador@wur.nl" target="_blank">michelle.gonzalezamador@wur.nl</a> | <a
-            href="https://github.com/michelleg06" target="_blank">GitHub</a> | <a
+        <div class="icons-container">
+          <a href="https://www.m-gonzalezamador.com/" target="_blank"><i class="bi bi-globe2"></i></a>  <a
+            href="mailto:michelle.gonzalezamador@wur.nl" target="_blank" title="michelle.gonzalezamador@wur.nl"><i class="bi bi-envelope"></i></a>  <a
+            href="https://github.com/michelleg06" target="_blank"><i class="bi bi-github"></i></a>  <a
             href="https://www.linkedin.com/in/michelle-gonzalez-amador06/?originalSubdomain=nl"
-            target="_blank">LinkedIn</a>
-          | <a href="https://bsky.app/profile/michelleg06.bsky.social" target="_blank">BlueSky</a>
-        </p>
+            target="_blank"><i style = "color:#204eb6;" class="bi bi-linkedin "></i></a>
+           <a href="https://bsky.app/profile/michelleg06.bsky.social" target="_blank"><i class="bi bi-bluesky"></i></a>
+        </div>
         <a class="expand" href="#" onclick="toggleDescription(this); return false;">+ info</a>
       </div>
     </div>
@@ -83,10 +83,10 @@ toc: false
         <img src="assets/profiles/francisco_rosales.jpeg" alt="Francisco Rosales">
       </div>
       <div class="text">
-        <h3>Francisco Rosales</h3>
+        <h3>Dr. Francisco Rosales</h3>
         <p class="subtitle">Founder and CEO @ Center For Advanced Analytics | Ph.D. in Mathematics</p>
         <p>
-          <a href="https://www.linkedin.com/in/fraroma/" target="_blank">LinkedIn</a>
+          <a href="https://www.linkedin.com/in/fraroma/" target="_blank"><i style = "color:#204eb6;" class="bi bi-linkedin "></i></a>
         </p>
         <a class="expand" href="#" onclick="toggleDescription(this); return false;">+ info</a>
       </div>
@@ -113,11 +113,12 @@ toc: false
         <img src="assets/profiles/juba_ziani.jpeg" alt="Juba Ziani">
       </div>
       <div class="text">
-        <h3>Juba Ziani</h3>
+        <h3>Dr. Juba Ziani</h3>
         <p class="subtitle">Assistant Professor in ISyE at Georgia Tech</p>
-        <p>
-          <a href="https://www.linkedin.com/in/jubaziani/" target="_blank">LinkedIn</a>
-        </p>
+        <div class="icons-container">
+          <a href="https://www.linkedin.com/in/jubaziani/" target="_blank"><i style = "color:#204eb6;" class="bi bi-linkedin "></i></a>
+          <a href="https://sites.gatech.edu/juba-ziani/" target="_blank"><i class="bi bi-globe2"></i></a>
+        </div>
         <a class="expand" href="#" onclick="toggleDescription(this); return false;">+ info</a>
       </div>
     </div>
@@ -139,8 +140,11 @@ toc: false
         <img src="assets/profiles/robin_cowan.webp" alt="Robin Cowan">
       </div>
       <div class="text">
-        <h3>Robin Cowan</h3>
+        <h3>Dr. Robin Cowan</h3>
         <p class="subtitle">Professor of the Economics of Technical Change at the University of Maastricht</p>
+        <div class="icons-container">
+          <a href="https://cowan.unu-merit.nl/" target="_blank"><i class="bi bi-globe2"></i></a>
+        </div>
         <a class="expand" href="#" onclick="toggleDescription(this); return false;">+ info</a>
       </div>
     </div>
@@ -170,9 +174,10 @@ toc: false
       <div class="text">
         <h3>Lucas Boh</h3>
         <p class="subtitle">Project Coordinator and Research Assistant at UNU-MERIT</p>
-        <p>
-          <a href="https://www.linkedin.com/in/lucas-boh-405770169/" target="_blank">LinkedIn</a>
-        </p>
+        <div class="icons-container">
+          <a href="https://www.linkedin.com/in/lucas-boh-405770169/" target="_blank"><i style = "color:#204eb6;" class="bi bi-linkedin "></i></a>
+          <a href="https://lucasboh.com" target="_blank"><i class="bi bi-globe2"></i></a>
+        </div>
         <a class="expand" href="#" onclick="toggleDescription(this); return false;">+ info</a>
       </div>
     </div>
@@ -311,6 +316,11 @@ Send
   .profile .subtitle {
     font-style: italic;
   }
+  
+  .profile .icons-container {
+    display: flex;
+    gap: 8px;
+  }
 
   .expand {
     color: #204EB6;
@@ -339,7 +349,7 @@ Send
   }
 
   .profile .description.expanded {
-    max-height: 500px;
+    max-height: 650px;
     opacity: 1;
     padding-top: 18px;
     border-top: 1px solid rgba(0, 0, 0, 0.1);
