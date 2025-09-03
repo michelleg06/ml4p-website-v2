@@ -365,7 +365,7 @@ Split the input dataset into $k$ groups
 
 TL;DR We're improving our splitting technique (re: train/test datasets)!
 
-![Cross-Validation: An Illustration by Eugenia Anello](cv.png)
+![Cross-Validation: An Illustration by Eugenia Anello](assets/cv.png)
 
 ```{r}
 # Use Lasso with cross-validation to find the best lambda
@@ -800,7 +800,7 @@ Split the input dataset into $k$ groups
 
 TL;DR We're improving our splitting technique!
 
-![Cross-Validation: An Illustration by Eugenia Anello](cv.png)
+![Cross-Validation: An Illustration by Eugenia Anello](assets/cv.png)
 
 ```{python}
 #use lasso and cross-validation to find the best alpha
