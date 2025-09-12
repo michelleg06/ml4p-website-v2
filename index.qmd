@@ -179,10 +179,16 @@ To conclude the course, there will be a **Collaborative Policy Challenge**, whic
 3.  [Prediction Framework/OLS](session_1.qmd)
 4.  [Lasso/Regularization/Parameter tuning](session_2.qmd)
 5.  [Classification](classification.qmd)
-6.  Forecasting (Coming soon)
 7.  [Tree-based Methods](treebasedmodels.qmd)
 8.  [Fair Machine Learning](fairml.qmd)
 9.  [Neural Networks](neuralNets.qmd)
+6.  [Forecasting (Coming soon)](session_5.qmd) 
+10. [More complex architectures (Coming soon)](session_8.qmd)
+11. [Transformer Models (Coming soon)](session_9.qmd)
+12. [Policy data/data biases/synthetic data (Coming soon)](session_10.qmd)
+13. [Agents (Coming soon)](session_11.qmd)
+14. [Alignment (Coming soon)](session_12.qmd)
+15. [Causality (Coming soon)](session_13.qmd)
 
 
 ```{=html}

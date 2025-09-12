@@ -23,7 +23,21 @@ website:
         - treebasedmodels.qmd
         - fairml.qmd
         - neuralNets.qmd
-      - text: "Collaborative Policy Challenge"
+        - text: "Forecasting (Coming soon)"
+          href: session_5.qmd
+        - text: "More complex architectures (Coming soon)"
+          href: session_8.qmd
+        - text: "Transformer Models (Coming soon)"
+          href: session_9.qmd
+        - text: "Policy data/data biases/synthetic data (Coming soon)"
+          href: session_10.qmd
+        - text: "Agents (Coming soon)"
+          href: session_11.qmd
+        - text: "Alignment (Coming soon)"
+          href: session_12.qmd
+        - text: "Causality (Coming soon)"
+          href: session_13.qmd
+      - text: "Policy Challenge"
         menu:
         - text: "2024"
           href: policy-challenge-2024.qmd
