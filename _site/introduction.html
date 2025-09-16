@@ -243,7 +243,7 @@ window.Quarto = {
    
   <ul>
   <li><a href="#about-this-course" id="toc-about-this-course" class="nav-link active" data-scroll-target="#about-this-course">About this course</a></li>
-  <li><a href="#a-general-introduction-to-machine-learning-for-public-policy" id="toc-a-general-introduction-to-machine-learning-for-public-policy" class="nav-link" data-scroll-target="#a-general-introduction-to-machine-learning-for-public-policy">A general introduction to Machine learning for Public Policy</a>
+  <li><a href="#quick-intro" id="toc-quick-intro" class="nav-link" data-scroll-target="#quick-intro">Quick Intro</a>
   <ul class="collapse">
   <li><a href="#how-does-a-machine-learn" id="toc-how-does-a-machine-learn" class="nav-link" data-scroll-target="#how-does-a-machine-learn">How does a Machine Learn?</a></li>
   </ul></li>
@@ -273,39 +273,47 @@ window.Quarto = {
 </header>
 
 
-<p>At its core, machine learning is primarily interested in making sense of complex data. A machine learning algorithm’s job is to read data and identify patterns that can be used for: prediction, feature-relevance detection, model-free classification, among other actions.</p>
+<p>At its core, machine learning is primarily interested in making sense of complex data. A <code>machine learning</code> algorithm’s job is to read data and identify patterns that can be used for: prediction, feature-relevance detection, model-free classification, among other actions.</p>
 <section id="about-this-course" class="level2">
 <h2 class="anchored" data-anchor-id="about-this-course">About this course</h2>
-<p><strong>Please watch our Welcome video to meet the organisers and hear from Alex Hunns about the dynamics of the course.In case you do not make it until the end, here are some highlights:</strong></p>
 <ul>
 <li><p>It is a (mostly) self-paced and fully online course.</p></li>
-<li><p>We provide a non-exhaustive way to go about using the R and Python languages for basic Machine Learning purposes. Some of you may be able to optimise a few lines of code, and we encourage that!</p></li>
-<li><p>There are social hours in gather.town. Join so that you can meet other Machine Learners around the globe!</p></li>
-<li><p>There are no grades to this course. If you attend the Collaborative Policy Event, you may be eligible for some form of certification.</p></li>
-<li><p>The content is introductory.</p></li>
-<li><p>Be respectful and kind to other participants!</p></li>
+<li><p>We provide a non-exhaustive way to go about using the R and Python languages for basic Machine Learning purposes. Some of you may be able to optimize a few lines of code, and we encourage that!</p></li>
+<li><p>The content is introductory. However, if it is a good stepping stone for more advanced projects. We are happy to provide advice on how to move forward with learning content or project implementation if that is the case.</p></li>
+<li><p>Every so often, we (the <a href="./about.html">coordinators</a>) offer a guided and interactive version of this course. Feel free to reach out to us for more information on dates or specific use-cases via our <a href="./contact.html">contact form</a> or email us at <a href="mailto:machinelearning4publicpolicy@gmail.com">machinelearning4publicpolicy@gmail.com</a>.</p></li>
+<li><p>We also host <em>collaborative</em> policy challenges, for which we encourage course participants from different fields to form groups and tackle societal challenges posed by an international organization using <code>machine learning</code> techniques. For more on this, check out the <a href="./policy-challenge-2024.html">policy challenge</a> tab on our website.</p></li>
 </ul>
-<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/sILhz3dqfqM?si=ni7aYqoJ9VXUQyN0" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
 </section>
-<section id="a-general-introduction-to-machine-learning-for-public-policy" class="level2">
-<h2 class="anchored" data-anchor-id="a-general-introduction-to-machine-learning-for-public-policy">A general introduction to Machine learning for Public Policy</h2>
-<p>Empirical Public Policy research is primarily concerned with causality and understanding counterfactuals. What is the impact of Policy or Programme X on Population Outcome Y? What would have happened in the absence of such a policy? However, there are policy problems that may be solved without necessarily looking for a causal link. We call these `prediction policy problems’ (<a href="https://www.aeaweb.org/articles?id=10.1257/aer.p20151023">Kleinberg et al.&nbsp;2015</a>). Some examples include:</p>
-<ul>
-<li><p>Allocating fire and health inspectors in cities (<a href="https://www.aeaweb.org/articles?id=10.1257/aer.p20161027">Glaeser et al.&nbsp;2016</a>).</p></li>
-<li><p>Predicting unemployment spell length to help workers decide on savings rates and job search strategies.</p></li>
-<li><p>Predicting highest risk youth for targeting interventions (<a href="https://www.aeaweb.org/articles?id=10.1257/aer.101.3.288">Chandler,Levitt, and List 2011</a>).</p></li>
-</ul>
+<section id="quick-intro" class="level2">
+<h2 class="anchored" data-anchor-id="quick-intro">Quick Intro</h2>
 <section id="how-does-a-machine-learn" class="level3">
 <h3 class="anchored" data-anchor-id="how-does-a-machine-learn">How does a Machine Learn?</h3>
 <p>Machine learning is classified in three major branches:</p>
 <p><strong>1. Supervised Learning</strong>:</p>
-<p>This course will be primarily concerned with supervised learning. Supervised learning is analogous to statistical learning: suppose that we observe a quantitative response <span class="math inline">\(Y\)</span> and <span class="math inline">\(p\)</span> predictors, <span class="math inline">\(X_1, X_2,..., X_p\)</span>.</p>
-<p>We can rewrite this in a general linear form as:</p>
-<p><span class="math display">\[Y = f(X) + u\]</span> where <span class="math inline">\(u\)</span> is an error term.</p>
+<p>This course is primarily concerned with supervised learning. Supervised learning is analogous to statistical learning: suppose that we observe a quantitative response <span class="math inline">\(Y\)</span> and <span class="math inline">\(k\)</span> predictors, <span class="math inline">\(X_1, X_2,..., X_k\)</span>.</p>
+<p>We can rewrite this in a general functional form as:</p>
+<p><span class="math display">\[Y = f(X) + u\]</span></p>
+<p>where <span class="math inline">\(u\)</span> is an error term.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+A quick note
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Note that we do impose linearity on the supervised learning fomulation.</p>
+</div>
+</div>
+</div>
 <p><strong>2. Unsupervised Learning</strong>:</p>
 <p>Unsupervised learning is known for reading data without labels; it is more computationally complex than supervised learning (because it will look for all possible patterns in the data), but it is also more flexible than supervised learning. You can think of clustering, anomaly detection, neural networks, etc.</p>
 <p><strong>3. Reinforcement Learning</strong>:</p>
-<p>Reinforcement learning is categorised as Artificial Intelligence. It is more focused on goal-directed learning from interaction than are other approaches to machine learning. As per <a href="https://web.stanford.edu/class/psych209/Readings/SuttonBartoIPRLBook2ndEd.pdf">Sutton and Barto (2015)</a>, the three most distinguishing features of reinforcement learning are:</p>
+<p>Reinforcement learning is categorized as Artificial Intelligence. It is more focused on goal-directed learning from interaction than are other approaches to machine learning. As per <a href="https://web.stanford.edu/class/psych209/Readings/SuttonBartoIPRLBook2ndEd.pdf">Sutton and Barto (2015)</a>, the three most distinguishing features of reinforcement learning are:</p>
 <ol type="1">
 <li><p>Being closed-loop; i.e.&nbsp;the learning system’s actions influence its later inputs.</p></li>
 <li><p>Does not have direct instructions as to what actions to take; instead it must discover which actions yield the most reward by trying them out.</p></li>
@@ -313,7 +321,8 @@ window.Quarto = {
 </ol>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="assets/sup_unsup_re.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+<p><img src="assets/ml-gif.gif" class="img-fluid figure-img"></p>
+<figcaption>Figure 1: Overview of ML methods</figcaption>
 </figure>
 </div>
 <p><strong>Relevant trade-offs in Machine Learning</strong></p>
@@ -326,7 +335,7 @@ window.Quarto = {
 </section>
 <section id="next-steps" class="level2">
 <h2 class="anchored" data-anchor-id="next-steps">Next steps</h2>
-<p>Now is time to start programming! Choose between R and Python to follow the course. We have prepared an introduction, so you can get started:</p>
+<p>Now is time to start programming! Choose your language, <code>R</code> or <code>Python</code> and follow the remainder of the course. If you have no experience with either (statistical) programming language, have a look at our crash intros! <span class="math inline">\(\rightarrow\)</span></p>
 <p><a href="./r-intro.html">An introduction to R programming</a></p>
 <p><a href="./python-intro.html">An introduction to Python programming</a></p>
 
