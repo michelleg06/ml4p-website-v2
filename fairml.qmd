@@ -3,12 +3,19 @@ title: "Algorithmic Fairness"
 format: html
 ---
 
-**This section will cover:**
+:::::: columns
+:::: {.column width="50%"}
+::: callout-tip
+## Concepts discussed in this session
 
 -   Common Machine Learning algorithms in (public policy) action
 -   Black box algorithms
 -   Biases
 -   Ethical challenges
+:::
+::::
+
+::::::
 
 <br>
 
@@ -24,7 +31,10 @@ In this video lecture, Dr. [Juba Ziani](https://www.juba-ziani.com/), Assistant 
 
 -   Fairness and Machine Learning: Limitations and Opportunities by Solon Barocas, Moritz Hardt, Arvind Narayanan. Available at: <https://fairmlbook.org/>
 
+::: callout-tip
 This lecture does not come with an applied R or Python exercise, but we do ask that you think about the different sources of bias and how they may come up in your (personal) research.
+:::
+
 
 ## Readings
 

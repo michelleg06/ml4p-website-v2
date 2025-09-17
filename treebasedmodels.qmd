@@ -10,14 +10,25 @@ library(reticulate)
 use_miniconda("/Users/lucas/Library/r-miniconda-arm64", required = TRUE)
 ```
 
-**This section will cover:**
+:::::: columns
+:::: {.column width="50%"}
+::: callout-tip
+## Concepts discussed in this session
 
 -   Decision Trees: a classification approach
 -   Ensemble learning: bagging and boosting.
 
+:::
+::::
+
+::: {.column width="50%"}
+![](assets/robot-pictures/RandomForestRobot.png){fig-align="center" width="380"}
+:::
+::::::
+
+
 <br>
 
-![](assets/robot-pictures/RandomForestRobot.png){fig-align="center" width="380"}
 
 
 ## A general overview of tree-based methods
@@ -44,13 +55,16 @@ Some key points to keep in mind when working through the practical exercise incl
 
 To conclude our Malawi case study, we will implement a Random Forest algorithm to our classification problem: given a set of features X (e.g. ownership of a toilet, size of household, etc.), how likely are we to correctly identify an individual's income class? Recall that this problem has already been approached using a linear regression model (and a lasso linear model) and a logistic classification (i.e. an eager learner model) and whilst there was no improvement between a linear and a lasso linear model, we did increase our model's predictive ability when we switched from a linear prediction to a classification approach. I had previously claimed that the improvement was marginal --- but since the model will be used to determine who gets and who doesn't get an income supplement (i.e. who's an eligible recipient of a cash transfer, as part of Malawi's social protection policies), any improvement is critical and we should try various methods until we find the one that best fits our data.
 
-Some discussion points before the practical:
+::: callout-tip
+Some discussion points before the practical example:
 
 -   Why did we decide to switch models (from linear to classification)?
 
 -   Intuitively, why did a classification model perform better than a linear regression at predicting an individual's social class based on their monthly per capita consumption?
 
 -   How would a Random Forest classification approach improve our predictive ability? (hint, the answer may be similar to the above one)
+
+:::
 
 ## Practical Example
 
@@ -59,10 +73,15 @@ As always, start by opening the libraries that you'll need to reproduce the scri
 ::: {.panel-tabset group="language"}
 ## R
 
-```{r, message=FALSE}
-rm(list = ls()) # this line cleans your Global Environment.
-setwd("/Users/lucas/Documents/UNU-CDO/courses/ml4p/ml4p-website-v2") # set your working directory
+```{r, echo=FALSE}
+setwd("/Users/lucas/Documents/UNU-CDO/courses/ml4p/ml4p-website-v2")
+```
 
+```{r, eval=FALSE}
+rm(list = ls()) # this line cleans your Global Environment.
+setwd("/Users/yourname/somefolder") # set your working directory
+```
+```{r, message=FALSE}
 # Do not forget to install a package with the install.packages() function if it's the first time you use it!
 
 library(dplyr) # core package for dataframe manipulation. Usually installed and loaded with the tidyverse, but sometimes needs to be loaded in conjunction to avoid warnings.
@@ -109,12 +128,14 @@ import numpy as np # a library for handling
 import pandas as pd # a library to help us easily navigate and manipulate dataframes
 import seaborn as sns # a data visualisation library
 import matplotlib.pyplot as plt # a data visualisation library
-
-
+```
+```{python, eval=FALSE}
 # Uploading data
-
+malawi = pd.read_csv('/Users/yourname/somefolder/data/malawi.csv')
+```
+```{python, echo=FALSE}
+# Uploading data
 malawi = pd.read_csv('/Users/lucas/Documents/UNU-CDO/courses/ml4p/ml4p-website-v2/data/malawi.csv')
-
 ```
 :::
 
@@ -454,7 +475,14 @@ dot_data = export_graphviz(tree,
                             proportion=True
                             )
 graph = gv.Source(dot_data) # gv.Source helps us display the DOT languag source of the graph (needed for rendering the image)
-graph.render('/Users/lucas/Documents/UNU-CDO/courses/ml4p/ml4p-website-v2/assets/tree_visualisation', format='png') # this will save the tree visualisation directly into your working folder
+```
+```{python, eval=FALSE}
+# this will save the tree visualisation directly into your working folder
+graph.render('/Users/yourname/somefolder/assets/tree_visualisation', format='png') 
+```
+```{python, echo=FALSE, results='hide'}
+# this will save the tree visualisation directly into your working folder
+graph.render('/Users/lucas/Documents/UNU-CDO/courses/ml4p/ml4p-website-v2/assets/tree_visualisation', format='png') 
 ```
 
 ![Decision Tree](assets/tree_visualisation.png){fig-align="center"}

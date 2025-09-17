@@ -247,10 +247,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#features-of-r" id="toc-features-of-r" class="nav-link active" data-scroll-target="#features-of-r">Features of R</a>
-  <ul class="collapse">
-  <li><a href="#examples-of-data-structures" id="toc-examples-of-data-structures" class="nav-link" data-scroll-target="#examples-of-data-structures">Examples of data structures:</a></li>
-  </ul></li>
+  <li><a href="#features-of-r" id="toc-features-of-r" class="nav-link active" data-scroll-target="#features-of-r">Features of R</a></li>
   <li><a href="#setting-up-the-rstudio-working-environment" id="toc-setting-up-the-rstudio-working-environment" class="nav-link" data-scroll-target="#setting-up-the-rstudio-working-environment">1. Setting up the Rstudio working environment</a></li>
   <li><a href="#r-base-commands-for-data-set-exploration" id="toc-r-base-commands-for-data-set-exploration" class="nav-link" data-scroll-target="#r-base-commands-for-data-set-exploration">2. R base commands for data set exploration</a></li>
   <li><a href="#objects-and-assignments" id="toc-objects-and-assignments" class="nav-link" data-scroll-target="#objects-and-assignments">3. Objects and assignments</a></li>
@@ -264,7 +261,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#reserved-names" id="toc-reserved-names" class="nav-link" data-scroll-target="#reserved-names">6. Reserved names</a>
   <ul class="collapse">
   <li><a href="#not-observed-data" id="toc-not-observed-data" class="nav-link" data-scroll-target="#not-observed-data">1. Not-observed data</a></li>
-  <li><a href="#if-else-ifelse-function-for-print-length-etc" id="toc-if-else-ifelse-function-for-print-length-etc" class="nav-link" data-scroll-target="#if-else-ifelse-function-for-print-length-etc">2. if, else, ifelse, function, for, print, length (etc…)*</a></li>
+  <li><a href="#if-else-ifelse-function-for-print-length-etc" id="toc-if-else-ifelse-function-for-print-length-etc" class="nav-link" data-scroll-target="#if-else-ifelse-function-for-print-length-etc">2. if, else, ifelse, function, for, print, length (etc…)</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -291,12 +288,37 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <p>For the purposes of this course, we will be working with the integrated development environment (IDE) Rstudio. Make sure you have <a href="https://www.rstudio.com/products/rstudio/download/">downloaded it</a> and have familiarised yourself with the interface before proceeding.</p>
+</div>
+</div>
 <section id="features-of-r" class="level2">
 <h2 class="anchored" data-anchor-id="features-of-r">Features of R</h2>
-<p>R is a statistical programming language. As such, it understands and categorises its input as <strong>data types</strong>:</p>
-<p><em>(Note that R is not too strict about data types, but you need to be able to identify them to use them in math operations.)</em></p>
-<p>Examples of data types:</p>
+<p>R is a statistical programming language. As such, it understands and categorises its input as <strong>data types</strong> and <strong>data structures</strong>.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>R is not too strict about data types, but you need to be able to identify them to use them in math operations.</p>
+</div>
+</div>
+<section id="data-types" class="level4">
+<h4 class="anchored" data-anchor-id="data-types">Data types</h4>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Numeric (or double): </span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>numeric_vector <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="fl">1.0</span>, <span class="fl">65.5</span>)</span>
@@ -335,9 +357,10 @@ Levels: female male</code></pre>
 <pre><code>[1] NA</code></pre>
 </div>
 </div>
-<p>… and <strong>data structures</strong>. A data structure is either homogeneous (all elements are of the same data type) or heterogeneous (elements can be of more than one data type).</p>
-<section id="examples-of-data-structures" class="level3">
-<h3 class="anchored" data-anchor-id="examples-of-data-structures">Examples of data structures:</h3>
+</section>
+<section id="data-structures" class="level4">
+<h4 class="anchored" data-anchor-id="data-structures">Data structures</h4>
+<p>A data structure is either homogeneous (all elements are of the same data type) or heterogeneous (elements can be of more than one data type).</p>
 <p><em>Vectors</em>: think of a row, or a column of the same element.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Vectors: </span></span>
@@ -501,9 +524,21 @@ The following object is masked from 'package:purrr':
     transpose</code></pre>
 </div>
 </div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <p>If you’re working with an imported data set, you should probably set up your working directory as well:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">"/Users/lucas/Documents/UNU-CDO/courses/ml4p/ml4p-website-v2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">"/Users/yourname/somefolder"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
 </div>
 <p>From the working directory, you can call documents: .csv files, .xls and .xlsx, images, .txt, .dta (yes, STATA files!), and more. You’ll need to use the right libraries to do so. For instance: <em>readxl</em> (from the Tidyverse) uses the function <em>read_excel()</em> to import .xlsx and .xls files. If you want to export a data frame in .xlsx format, you can use the package <em>write_xlsx()</em>.</p>
 </section>
@@ -608,12 +643,24 @@ F-statistic: 91.38 on 1 and 30 DF,  p-value: 1.294e-10</code></pre>
   37.285126   -5.344472 </code></pre>
 </div>
 </div>
-<p><em>If you want to read more about object oriented programming in R, check out <a href="https://adv-r.hadley.nz/oo.html">Hadley Whickam’s site</a></em></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If you want to read more about object oriented programming in R, check out <a href="https://adv-r.hadley.nz/oo.html">Hadley Whickam’s site</a>*</p>
+</div>
+</div>
 </section>
 <section id="plotting-with-and-without-special-libraries" class="level2">
 <h2 class="anchored" data-anchor-id="plotting-with-and-without-special-libraries">4. Plotting with and without special libraries</h2>
 <p>We had previously loaded a couple of libraries. Why did we do that if we’ve only used r base commands so far? We’re going to exemplify the power of libraries by drawing plots using r base, and ggplot2. Ggplot2 is the plotting function from the Tidyverse, and arguably one of the best data visualisation tools across programming languages. If you’d like to read more about why that is the case, check out the <a href="https://ggplot2.tidyverse.org/">Grammar of Graphics</a> site.</p>
-<p>Plotting with R base</p>
+<p><strong>Plotting with R base:</strong></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(mtcars<span class="sc">$</span>wt, mtcars<span class="sc">$</span>mpg, <span class="at">pch =</span> <span class="dv">14</span>, <span class="at">col =</span> <span class="st">"grey"</span>, <span class="at">main =</span><span class="st">"Mileage and Weight"</span>)</span>
 <span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(ols_model, <span class="at">col =</span><span class="st">"blue"</span>) <span class="co"># Note that to add a line of best fit, we had to call our previously estimate linear model, stored in the ols_model object-</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -628,7 +675,7 @@ F-statistic: 91.38 on 1 and 30 DF,  p-value: 1.294e-10</code></pre>
 <span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>p_rbase <span class="ot">&lt;-</span> <span class="fu">recordPlot</span>()</span>
 <span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a><span class="co"># plot.new() # don't forget to clean up your device afterwards!</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Plotting with ggplot2, using the grammar of graphics</p>
+<p><strong>Plotting with ggplot2, using the grammar of graphics:</strong></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Steps in the Grammar of Graphics</span></span>
 <span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 1: linking plot to dataset, </span></span>
@@ -944,43 +991,43 @@ F-statistic: 91.38 on 1 and 30 DF,  p-value: 1.294e-10</code></pre>
 </div>
 </section>
 <section id="if-else-ifelse-function-for-print-length-etc" class="level3">
-<h3 class="anchored" data-anchor-id="if-else-ifelse-function-for-print-length-etc">2. if, else, ifelse, function, for, print, length (etc…)*</h3>
-<pre><code>These words are reserved for control flow and looping. </code></pre>
+<h3 class="anchored" data-anchor-id="if-else-ifelse-function-for-print-length-etc">2. if, else, ifelse, function, for, print, length (etc…)</h3>
+<p>These words are reserved for control flow and looping.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb139"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb139-1"><a href="#cb139-1" aria-hidden="true" tabindex="-1"></a><span class="co"># if else statements</span></span>
-<span id="cb139-2"><a href="#cb139-2" aria-hidden="true" tabindex="-1"></a>meanheight <span class="ot">&lt;-</span> <span class="fl">174.358</span></span>
-<span id="cb139-3"><a href="#cb139-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb139-4"><a href="#cb139-4" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> ( meanheight <span class="sc">&lt;</span> <span class="dv">175</span>) {</span>
-<span id="cb139-5"><a href="#cb139-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(<span class="st">'very tall!'</span>)</span>
-<span id="cb139-6"><a href="#cb139-6" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
-<span id="cb139-7"><a href="#cb139-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(<span class="st">'average height'</span>)</span>
-<span id="cb139-8"><a href="#cb139-8" aria-hidden="true" tabindex="-1"></a>} </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb138"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb138-1"><a href="#cb138-1" aria-hidden="true" tabindex="-1"></a><span class="co"># if else statements</span></span>
+<span id="cb138-2"><a href="#cb138-2" aria-hidden="true" tabindex="-1"></a>meanheight <span class="ot">&lt;-</span> <span class="fl">174.358</span></span>
+<span id="cb138-3"><a href="#cb138-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb138-4"><a href="#cb138-4" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> ( meanheight <span class="sc">&lt;</span> <span class="dv">175</span>) {</span>
+<span id="cb138-5"><a href="#cb138-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(<span class="st">'very tall!'</span>)</span>
+<span id="cb138-6"><a href="#cb138-6" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb138-7"><a href="#cb138-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(<span class="st">'average height'</span>)</span>
+<span id="cb138-8"><a href="#cb138-8" aria-hidden="true" tabindex="-1"></a>} </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "very tall!"</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb141"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb141-1"><a href="#cb141-1" aria-hidden="true" tabindex="-1"></a><span class="co"># a note on using if else: else should be on the same line as if, otherwise it is not recognised</span></span>
-<span id="cb141-2"><a href="#cb141-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb141-3"><a href="#cb141-3" aria-hidden="true" tabindex="-1"></a><span class="co"># home-made functions</span></span>
-<span id="cb141-4"><a href="#cb141-4" aria-hidden="true" tabindex="-1"></a>f1 <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
-<span id="cb141-5"><a href="#cb141-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">sum</span>(x<span class="sc">+</span><span class="dv">1</span>))</span>
-<span id="cb141-6"><a href="#cb141-6" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb141-7"><a href="#cb141-7" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">f1</span>(<span class="dv">5</span>)) <span class="co"># returns value of x+1 when x = 5</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb140"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb140-1"><a href="#cb140-1" aria-hidden="true" tabindex="-1"></a><span class="co"># a note on using if else: else should be on the same line as if, otherwise it is not recognised</span></span>
+<span id="cb140-2"><a href="#cb140-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb140-3"><a href="#cb140-3" aria-hidden="true" tabindex="-1"></a><span class="co"># home-made functions</span></span>
+<span id="cb140-4"><a href="#cb140-4" aria-hidden="true" tabindex="-1"></a>f1 <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
+<span id="cb140-5"><a href="#cb140-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">sum</span>(x<span class="sc">+</span><span class="dv">1</span>))</span>
+<span id="cb140-6"><a href="#cb140-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb140-7"><a href="#cb140-7" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">f1</span>(<span class="dv">5</span>)) <span class="co"># returns value of x+1 when x = 5</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 6</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb143"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb143-1"><a href="#cb143-1" aria-hidden="true" tabindex="-1"></a><span class="co"># for loops</span></span>
-<span id="cb143-2"><a href="#cb143-2" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(starwars<span class="sc">$</span>height) <span class="co"># if it is not integer or numeric, then transform it! </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb142"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb142-1"><a href="#cb142-1" aria-hidden="true" tabindex="-1"></a><span class="co"># for loops</span></span>
+<span id="cb142-2"><a href="#cb142-2" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(starwars<span class="sc">$</span>height) <span class="co"># if it is not integer or numeric, then transform it! </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "integer"</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb145"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb145-1"><a href="#cb145-1" aria-hidden="true" tabindex="-1"></a>starwars<span class="sc">$</span>height <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">as.character</span>(starwars<span class="sc">$</span>height)) <span class="co"># transforming the height vector to numeric</span></span>
-<span id="cb145-2"><a href="#cb145-2" aria-hidden="true" tabindex="-1"></a>starwars<span class="sc">$</span>height_judge <span class="ot">=</span> <span class="cn">NA</span> <span class="co"># if you're using a new object within a for loop, make sure you initialize it before running it</span></span>
-<span id="cb145-3"><a href="#cb145-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb145-4"><a href="#cb145-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(starwars<span class="sc">$</span>height)) {</span>
-<span id="cb145-5"><a href="#cb145-5" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb145-6"><a href="#cb145-6" aria-hidden="true" tabindex="-1"></a>    starwars<span class="sc">$</span>height_judge[i] <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(starwars<span class="sc">$</span>height[i]<span class="sc">&lt;</span><span class="dv">100</span>, <span class="st">"Short"</span>, <span class="st">"Tall"</span>)</span>
-<span id="cb145-7"><a href="#cb145-7" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb145-8"><a href="#cb145-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(starwars[<span class="fu">c</span>(<span class="st">"name"</span>, <span class="st">"height_judge"</span>, <span class="st">"height"</span>)])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb144"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb144-1"><a href="#cb144-1" aria-hidden="true" tabindex="-1"></a>starwars<span class="sc">$</span>height <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">as.character</span>(starwars<span class="sc">$</span>height)) <span class="co"># transforming the height vector to numeric</span></span>
+<span id="cb144-2"><a href="#cb144-2" aria-hidden="true" tabindex="-1"></a>starwars<span class="sc">$</span>height_judge <span class="ot">=</span> <span class="cn">NA</span> <span class="co"># if you're using a new object within a for loop, make sure you initialize it before running it</span></span>
+<span id="cb144-3"><a href="#cb144-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb144-4"><a href="#cb144-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(starwars<span class="sc">$</span>height)) {</span>
+<span id="cb144-5"><a href="#cb144-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb144-6"><a href="#cb144-6" aria-hidden="true" tabindex="-1"></a>    starwars<span class="sc">$</span>height_judge[i] <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(starwars<span class="sc">$</span>height[i]<span class="sc">&lt;</span><span class="dv">100</span>, <span class="st">"Short"</span>, <span class="st">"Tall"</span>)</span>
+<span id="cb144-7"><a href="#cb144-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb144-8"><a href="#cb144-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(starwars[<span class="fu">c</span>(<span class="st">"name"</span>, <span class="st">"height_judge"</span>, <span class="st">"height"</span>)])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 87 × 3
    name               height_judge height
@@ -998,8 +1045,20 @@ F-statistic: 91.38 on 1 and 30 DF,  p-value: 1.294e-10</code></pre>
 # ℹ 77 more rows</code></pre>
 </div>
 </div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <p>You can download the R script by clicking on the button below.</p>
 <p><a class="btn btn-primary" download="" href="scripts/Download Intro to R script (.R).R"> Download Intro to R script (.R) </a></p>
+</div>
+</div>
 <!--DISQUS COMMENTS SCRIPT-->
 <div id="disqus_thread">
 

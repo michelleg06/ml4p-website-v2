@@ -23,12 +23,12 @@ When you open the IDE VSCode, you'll receive a prompt to start a new project. Pl
 
 A **Python Virtual Environment**, also referred to as venv(s), is there to help us decouple and isolate package installs and manage them, independently from pkgs that are provided by the system or used by other projects. Although not strictly necessary, it is a good practice that will save us a few headaches in the future.
 
-To create a virtual environment, once you've opened a new blank project in VSC, click on shift + cmd + P (or F1) to open the Command Palette (it should display from the top of VSC). Type "Python" and select create python terminal. In the terminal, type \`\` python -m venv venv '' and that's it! You'll notice the appearance of a venv folder in your dedicated project folder.
+To create a virtual environment, once you've opened a new blank project in VSC, click on ```shift + cmd + P``` (or F1) to open the Command Palette (it should display from the top of VSC). Type "Python" and select create python terminal. In the terminal, type  ``python -m venv venv`` and that's it! You'll notice the appearance of a venv folder in your dedicated project folder.
 
-Now, you'll need to install and load the libraries you'll need for your project. To install them, use the python terminal you have opened. It should be displayed in the bottom of the working environment. Use the following (which should work with both Windows and Macbook, although Mac users can also use the Homebrew package manager):
+Now, you'll need to install and load the libraries you'll need for your project. To install them, use the python terminal you have opened. It should be displayed in the bottom of the working environment. Use the following command (which should work with both Windows and Macbook, although Mac users can also use the Homebrew package manager):
 
-```         
-pip install pkg_name 
+```{python, eval=FALSE}      
+pip install package_name 
 ```
 
 ```{bash, include=FALSE}
@@ -44,8 +44,9 @@ pip install graphviz
 pip install skimpy
 ```
 
+Now, we can load the libraries
+
 ```{python}
-# Now, we can load the libraries
 
 import numpy as np # can be used to perform a wide variety of mathematical operations on arrays.
 import pandas as pd # mainly used for data analysis and associated manipulation of tabular data in DataFrames
@@ -53,6 +54,8 @@ import matplotlib as mpl # comprehensive library for creating static, animated, 
 import sklearn as sk #  implement machine learning models and statistical modelling.
 
 ```
+
+## Basics
 
 With some basic libraries open, let's start with a brief introduction to Python programming. Like R, it is object oriented programming. But we call its elements differently. Python uses the following list of elements:
 
@@ -85,9 +88,9 @@ print(x)
 
 If you're working with a VSC script, you'll want to select a snippet of the script and use shift + enter to only run that snippet (and not the whole code chunk).
 
-Some basics:
+Now let us go over some basics.
 
-## Arithmetic operators
+### Arithmetic operators
 
 ```{python}
 5 + 1 
@@ -99,7 +102,7 @@ Some basics:
 
 ```
 
-**Keywords and comments**
+### Keywords and comments
 
 ```{Python}
 
@@ -128,6 +131,8 @@ print(many_strings)
 
 ```
 
+## Working with datasets
+
 Let's use a toy dataset from the sklearn package to practice some basic estimations.
 
 ```{python}
@@ -155,9 +160,7 @@ pandas_diabetes.head() # print the first 4 observations of the variables (glimps
 
 ```
 
-If you're working with VSC and you'd like to get a nice display of your data:
-
-install the pkg 'tabulate' (pip install tabulate) using the terminal. You may have to open a new bash terminal (that is not using the Python REPL) to install packages. If that is the case (i.e. you could not pip install in the terminal you are using), you can 'split' the terminal using the interface split prompt.
+If you're working with VSC and you'd like to get a nice display of your data, install the pkg 'tabulate' (``pip install tabulate``) using the terminal. You may have to open a new bash terminal (that is not using the Python REPL) to install packages. If that is the case (i.e. you could not pip install in the terminal you are using), you can 'split' the terminal using the interface split prompt.
 
 ```{python}
 # this prints the dataframe nicely (but remember to only print the head/first observations, otherwise you display a large table!)
@@ -165,9 +168,13 @@ print(pandas_diabetes.head().to_markdown())
 
 ```
 
-Some basic operations and estimation of a linear model:
+::: {.callout-tip}
+Indexing with pandas is done using the .iloc\[\] call.
+:::
 
-*Indexig with pandas is done using the .iloc\[\] call.* To estimate a linear model (OLS), you'll need to split your data into a dependent Y and independent X variables.
+## Some basic operations and estimation of a linear model
+
+To estimate a linear model (OLS), you'll need to split your data into a dependent Y and independent X variables.
 
 Luckily for us, because the diabetes toy dataframe is from the sklearn library, you can use the target and data functions. For the same reason, we will use the diabetes dataset and not the pandas-converted dataset.
 
@@ -221,7 +228,9 @@ print(lm_2.summary()) # print linear model parameters
 
 This displayed output contains all the information we may need to interpret the suitability of our linear model.
 
-We're at the end of this brief intro to Python. Notice that there's a forward structure throughout. We create an object X, which we define to be of class, say, pandas. It's class will let us use that class/library's functions by calling them after a dot: X.summary() will display a summary of the X object. \*\* Visualisation with matplotlib \*\*
+We're at the end of this brief intro to Python. Notice that there's a forward structure throughout. We create an object X, which we define to be of class, say, pandas. It's class will let us use that class/library's functions by calling them after a dot: X.summary() will display a summary of the X object. 
+
+## Visualisation with matplotlib
 
 ```{python}
 import matplotlib.pyplot as plt
@@ -284,6 +293,8 @@ def French_talk(name,age):
 French_talk("Saruman",1000)
 ```
 
-You can download the R script by clicking on the button below.
+::: {.callout-tip}
+You can download the Python script by clicking on the button below.
 
 <a class="btn btn-primary" download href="scripts/Intro2Python.py"> Download Intro to Python script </a>
+:::

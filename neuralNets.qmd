@@ -10,7 +10,21 @@ library(reticulate)
 use_miniconda("/Users/lucas/Library/r-miniconda-arm64", required = TRUE)
 ```
 
+:::::: columns
+:::: {.column width="50%"}
+::: callout-tip
+## Concepts discussed in this session
+
+-   Neural Network Fundamentals
+-   Model Implementation and Evaluation
+-   Key performance metrics
+:::
+::::
+
+::: {.column width="50%"}
 ![](assets/robot-pictures/NeuralNetRobot2.png){fig-align="center" width="380"}
+:::
+::::::
 
 ## What are neural networks?
 
@@ -31,11 +45,15 @@ Unfortunately, we are unable to share the dataset ourselves. However, if you wis
 ::: {.panel-tabset group="language"}
 ## R
 
-```{r, message=FALSE}
+```{r, echo=FALSE}
+setwd("/Users/lucas/Documents/UNU-CDO/courses/ml4p/ml4p-website-v2")
+```
+
+```{r, eval=FALSE}
 rm(list = ls()) # this line cleans your Global Environment.
-
-setwd("/Users/lucas/Documents/UNU-CDO/courses/ml4p/ml4p-website-v2") # set your working directory
-
+setwd("/Users/yourname/somefolder") # set your working directory
+```
+```{r, message=FALSE}
 # do not forget to install neuralnet and scales, which are packages we haven't used before
 library(tidyverse) # our favourite data wrangling ackagy 
 library(neuralnet) # a package specific for neural networks
@@ -414,13 +432,16 @@ import seaborn as sns # a data visualisation library
 import matplotlib.pyplot as plt # a data visualisation library
 from scipy.stats import randint # generate random integer
 from graphviz import Digraph
-
-
-# Uploading data
-
-SHARE = pd.read_csv('/Users/lucas/Documents/UNU-CDO/courses/ml4p/ml4p-website-v2/data/SHARE_subset.csv')
-
 ```
+```{python, eval=FALSE}
+# Uploading data
+malawi = pd.read_csv('/Users/yourname/somefolder/data/SHARE_subset.csv')
+```
+```{python, echo=FALSE}
+# Uploading data
+SHARE = pd.read_csv('/Users/lucas/Documents/UNU-CDO/courses/ml4p/ml4p-website-v2/data/SHARE_subset.csv')
+```
+
 
 ### 1. Overview of the data
 

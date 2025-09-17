@@ -9,12 +9,19 @@ library(reticulate)
 
 use_miniconda("/Users/lucas/Library/r-miniconda-arm64", required = TRUE)
 ```
-
-**This section will cover:**
+:::::: columns
+:::: {.column width="50%"}
+::: callout-tip
+## Concepts discussed in this session
 
 -   Logistic regression
 -   Confusion matrix
 -   Performance metrics: Accuracy, Recall, Precision (...)
+:::
+::::
+
+::::::
+
 
 <br>
 
@@ -34,17 +41,22 @@ After watching the video, below you'll find a continuation of our previous exerc
 
 ## Practical Example
 
-We will continue to work with the Malawi dataset, which can be downloaded in the (Prediction Policy Problems)\[session_1.qmd\] tab of this website.
+We will continue to work with the Malawi dataset, which can be downloaded in the [Prediction Policy Problems](session_1.qmd) tab of this website.
 
 ### 1. Preliminaries: working directory, libraries, data upload
 
 ::: {.panel-tabset group="language"}
 ## R
 
-```{r, message=FALSE}
-rm(list = ls()) # this line cleans your Global Environment.
-setwd("/Users/lucas/Documents/UNU-CDO/courses/ml4p/ml4p-website-v2") # set your working directory
+```{r, echo=FALSE}
+setwd("/Users/lucas/Documents/UNU-CDO/courses/ml4p/ml4p-website-v2")
+```
 
+```{r, eval=FALSE}
+rm(list = ls()) # this line cleans your Global Environment.
+setwd("/Users/yourname/somefolder") # set your working directory
+```
+```{r, message=FALSE}
 # Do not forget to install a package with the install.packages() function if it's the first time you use it!
 # install.packages(caTools, plotROC) # these guys are new for us 
 
@@ -86,12 +98,14 @@ import pandas as pd # a library to help us easily navigate and manipulate datafr
 import seaborn as sns # a data visualisation library
 import matplotlib.pyplot as plt # a data visualisation library
 import statsmodels.api as sm # computation of linear and logistic regressions
-
-
+```
+```{python, eval=FALSE}
 # Uploading data
-
+malawi = pd.read_csv('/Users/yourname/somefolder/data/malawi.csv')
+```
+```{python, echo=FALSE}
+# Uploading data
 malawi = pd.read_csv('/Users/lucas/Documents/UNU-CDO/courses/ml4p/ml4p-website-v2/data/malawi.csv')
-
 ```
 :::
 
@@ -339,7 +353,9 @@ m <- train(
 )
 ```
 
+::: {.callout-note}
 Notice the warning. If we want to report the "Accuracy" metric, we should remove the twoClassSummary parameter specification in the TrControl object.
+:::
 
 ```{r}
 # print the model's performance metrics
@@ -524,9 +540,7 @@ How did our classification model do? Is a logistic regression the right algorith
 
 ## Practice at home
 
-As before, you can use the Bolivia dataset to try your hand at a logistic model. The data can be downloaded in the [Practice at home](predictionpolicy.qmd) section in the Prediction Policy Problems webpage of this site. <br>
-
-Let us know you are completing the tasks by answering a simple question via this [Qualtrics link](https://maastrichtuniversity.eu.qualtrics.com/jfe/form/SV_5bPRxhgDBqCAzxc). <br>
+As before, you can use the Bolivia dataset to try your hand at a logistic model. The data can be downloaded in the "Practice at home" section in the [Prediction Policy Problems](session_1.qmd) page of this site. <br>
 
 It is important for us to know that you are engaging with the course. Sending an answer - even if it is incorrect - to our Qualtrics question lets us know just that. So please say hi on Qualtrics! (And on our blog, too.)
 

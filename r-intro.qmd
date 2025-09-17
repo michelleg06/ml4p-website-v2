@@ -3,15 +3,19 @@ title: "An Introduction to R Programming"
 format: html
 ---
 
+::: {.callout-note icon="false"}
 For the purposes of this course, we will be working with the integrated development environment (IDE) Rstudio. Make sure you have [downloaded it](https://www.rstudio.com/products/rstudio/download/) and have familiarised yourself with the interface before proceeding.
+:::
 
 ## Features of R
 
-R is a statistical programming language. As such, it understands and categorises its input as **data types**:
+R is a statistical programming language. As such, it understands and categorises its input as **data types** and **data structures**.
 
-*(Note that R is not too strict about data types, but you need to be able to identify them to use them in math operations.)*
+::: {.callout-note icon="false"}
+R is not too strict about data types, but you need to be able to identify them to use them in math operations.
+:::
 
-Examples of data types:
+#### Data types
 
 ```{r}
 # Numeric (or double): 
@@ -38,9 +42,10 @@ print(factor_vector)
 NA
 ```
 
-... and **data structures**. A data structure is either homogeneous (all elements are of the same data type) or heterogeneous (elements can be of more than one data type).
 
-### Examples of data structures:
+#### Data structures
+
+A data structure is either homogeneous (all elements are of the same data type) or heterogeneous (elements can be of more than one data type).
 
 *Vectors*: think of a row, or a column of the same element.
 
@@ -124,11 +129,13 @@ library(data.table)
 
 ```
 
+::: {.callout-tip}
 If you're working with an imported data set, you should probably set up your working directory as well:
 
-```{r}
-setwd("/Users/lucas/Documents/UNU-CDO/courses/ml4p/ml4p-website-v2")
+```{r, eval=FALSE}
+setwd("/Users/yourname/somefolder")
 ```
+:::
 
 From the working directory, you can call documents: .csv files, .xls and .xlsx, images, .txt, .dta (yes, STATA files!), and more. You'll need to use the right libraries to do so. For instance: *readxl* (from the Tidyverse) uses the function *read_excel()* to import .xlsx and .xls files. If you want to export a data frame in .xlsx format, you can use the package *write_xlsx()*.
 
@@ -167,13 +174,15 @@ If you would like to see the results from your regression, you do not need to ru
 ols_model$coefficients
 ```
 
-*If you want to read more about object oriented programming in R, check out [Hadley Whickam's site](https://adv-r.hadley.nz/oo.html)*
+::: {.callout-tip}
+If you want to read more about object oriented programming in R, check out [Hadley Whickam's site](https://adv-r.hadley.nz/oo.html)*
+:::
 
 ## 4. Plotting with and without special libraries
 
 We had previously loaded a couple of libraries. Why did we do that if we've only used r base commands so far? We're going to exemplify the power of libraries by drawing plots using r base, and ggplot2. Ggplot2 is the plotting function from the Tidyverse, and arguably one of the best data visualisation tools across programming languages. If you'd like to read more about why that is the case, check out the [Grammar of Graphics](https://ggplot2.tidyverse.org/) site.
 
-Plotting with R base
+**Plotting with R base:**
 
 ```{r}
 plot(mtcars$wt, mtcars$mpg, pch = 14, col = "grey", main ="Mileage and Weight")
@@ -183,7 +192,7 @@ p_rbase <- recordPlot()
 # plot.new() # don't forget to clean up your device afterwards!
 ```
 
-Plotting with ggplot2, using the grammar of graphics
+**Plotting with ggplot2, using the grammar of graphics:**
 
 ```{r}
 # Steps in the Grammar of Graphics
@@ -316,11 +325,10 @@ mean(as.integer(starwars$height), na.rm = TRUE) # read as integer, ignore NAs :)
 # missing values (NA) are regarded by R as non comparables, even to themselves, so if you ever encounter a missing values in a vector, make sure tto explicitly tell the function you are using what to do with them.
 ```
 
-### 2. if, else, ifelse, function, for, print, length (etc...)\*
+### 2. if, else, ifelse, function, for, print, length (etc...)
 
-```         
 These words are reserved for control flow and looping. 
-```
+
 
 ```{r}
 # if else statements
@@ -352,9 +360,11 @@ print(starwars[c("name", "height_judge", "height")])
 
 ```
 
+::: callout-tip
 You can download the R script by clicking on the button below.
 
 <a class="btn btn-primary" download href="scripts/Download Intro to R script (.R).R"> Download Intro to R script (.R) </a>
+::: 
 
 <!--DISQUS COMMENTS SCRIPT-->
 
