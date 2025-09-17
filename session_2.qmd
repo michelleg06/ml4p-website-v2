@@ -1,5 +1,6 @@
 ---
-title: "Lasso: Feature Selection and Cross-Validation"
+title: "Lasso"
+subtitle: "Feature Selection and Cross-Validation"
 format: 
   html:
     html-math-method: katex
@@ -23,17 +24,24 @@ library(reticulate)
 use_miniconda("/Users/lucas/Library/r-miniconda-arm64", required = TRUE)
 ```
 
-**This section will cover:**
+:::{.columns}
+
+:::{.column width="50%"}
+:::{.callout-tip}
+## Concepts discussed in this session
 
   - Introduction to Lasso
-  
   - Cross-validation
-  
   - Pipelines
-  
- <br>
+:::
+:::
 
-## Lasso linear regression
+:::{.column width="50%"}
+![](assets/robot-pictures/lasso-robot.png)
+:::
+:::
+
+## Lasso
 
 An OLS regression is not the only model that can be written in linear form:
 
@@ -54,7 +62,7 @@ $$
 = \arg\min_{\alpha,\boldsymbol{\beta}}
 \left\{
 \sum_{i=1}^n \left( Y_i - \alpha - \sum_{j=1}^k \beta_j X_{ij} \right)^2
-\right\}.
+\right\}
 $$
 
 :::{.callout-important icon="true" appearance="simple"}
@@ -355,17 +363,20 @@ Broadly speaking, it is a technique that allows us to assess the performance of 
 
 Split the input dataset into $k$ groups
 
-    - For each group:
+- For each group:
 
-        - Take one group as the reserve or test data set.
+  - Take one group as the reserve or test data set.
 
-        - Use remaining groups as the training dataset.
+  - Use remaining groups as the training dataset.
 
-        - Fit the model on the training set and evaluate the performance of the model using the test set.
+  - Fit the model on the training set and evaluate the performance of the model using the test set.
 
-TL;DR We're improving our splitting technique (re: train/test datasets)!
+:::{.callout-note icon=false}
+## TL;DR 
+We're improving our splitting technique (re: train/test datasets)!
+:::
 
-![Cross-Validation: An Illustration by Eugenia Anello](assets/cv.png)
+![Cross-Validation: An Illustration by Eugenia Anello](assets/cv.png){width=80%}
 
 ```{r}
 # Use Lasso with cross-validation to find the best lambda
@@ -954,3 +965,27 @@ The model performance has improved, but only marginally. However, there are stil
 # A final note 
 There is some discussion over whether k-fold or really any cross-validation technique is optimal for choosing the lambda parameter in Lasso models (see for example, this [Coursera video](https://www.coursera.org/learn/ml-regression), or the TL;DR [Stack Exchange](https://stats.stackexchange.com/questions/353185/why-using-cross-validation-is-not-a-good-option-for-lasso-regression) post). We cannot give you a general answer to this question. Just make sure to make an informed choice of which `cv` technique you'll implement in your model.
 :::
+
+
+<!--DISQUS COMMENTS SCRIPT-->
+
+::: {#disqus_thread}
+:::
+
+```{=html}
+<script>
+    var disqus_config = function () {
+    this.page.identifier = "session_2.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+
+    
+    (function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+    s.src = 'https://unu-merit.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();
+</script>
+```
+
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>

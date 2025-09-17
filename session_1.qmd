@@ -1,50 +1,59 @@
 ---
-title: "Prediction Policy Problems"
 format: html
 ---
 
-```{r, echo=FALSE}
+```{r setup, echo=FALSE}
 #| echo: false
 library(reticulate)
 
 use_miniconda("/Users/lucas/Library/r-miniconda-arm64", required = TRUE)
 ```
 
-**This section will cover:**
+# Prediction Policy Problems
 
--   Prediction Policy problems
+:::::::::::::::::::::::: columns
+:::: {.column width="50%"}
+::: callout-tip
+## Concepts discussed in this session
 
--   Inference vs. prediction for policy analysis
+-   Prediction Policy Problems:
 
--   Prediction framework: training - test data
+    -   Causal inference vs. prediction for policy analysis
+
+-   Data partitioning: test and train sets
 
 -   Training error vs. test error
 
 -   Assessing accuracy: bias-variance trade-off
+:::
+::::
 
-<br>
-
+::: {.column width="50%"}
 ![](assets/robot-pictures/predpod.png){fig-align="center" width="380"}
+:::
+:::::::::::::::::::::::: 
 
 ## Introducing the Prediction Policy Framework
 
-<!-- In the video-lecture below you'll be given a brief introduction to the prediction policy framework, and a primer on machine learning. Please take a moment to watch the 20 minute video. -->
+In the video-lecture below you'll be given a brief introduction to the prediction policy framework, and a primer on machine learning. Please take a moment to watch the 20 minute video.
 
-<!-- {{< video https://youtu.be/sFbKe4O0tEQ >}} -->
-
-### Predicting social assistance beneficiaries
+## Predicting social assistance beneficiaries
 
 A key challenge in designing social policies is identifying individuals in need of social assistance. With tight budgets, it's crucial to allocate resources efficiently, targeting benefits to those who need them most. However, identifying needs can be difficult, and misclassifications can have severe and irreversible effects on people in need.
 
-Consider a social protection program that allocates food vouchers to families with children at risk of malnutrition, or a program that provides needs-based school grants. What happens when limited resources are given to those who don't need them, while those who need them most are excluded? Case Study: Predicting Cash-Transfer Programme Beneficiaries in Malawi
+Consider a social protection program that allocates food vouchers to families with children at risk of malnutrition, or a program that provides needs-based school grants. What happens when limited resources are given to those who don't need them, while those who need them most are excluded?
 
-In this section, we'll work with real-world data from Malawi to predict beneficiaries of a cash-transfer program: individuals living in poverty who need government assistance to make ends meet. The data comes from Malawi's Living Standards Measurement Study 2019/2020, publicly available at the [World Bank data catalogue](https://www.google.com/url?q=https%3A%2F%2Fmicrodata.worldbank.org%2Findex.php%2Fcatalog%2F3818). The dataset comprises responses from 11,434 households to a comprehensive list of questions regarding household composition, economic activities, assets, savings, education, and more. Note that the data set is a *.dta* STATA file.
+::: {.callout-note icon="false"}
+## Case Study
 
-Each row in the tabular[^1] data represents a household, while each column represents a question. The values show the household's response, and the column headers carry the name and number of the question in the questionnaire. For example, the variable `hh_f10` refers to the household questionnaire **(hh)**, the housing module **(module F)**, and question number **10**. By looking up this question in the questionnaire, we find that the values in the column `hh_f10` refer to the question **"How many separate rooms do the members of your household occupy?"**
+Predicting Cash-Transfer Program Beneficiaries in Malawi
+:::
 
-[^1]: Table consisting of rows and columns.
+In this section, we'll work with real-world data from Malawi to predict beneficiaries of a cash-transfer program: individuals living in poverty who need government assistance to make ends meet. The data comes from Malawi's Living Standards Measurement Study 2019/2020, publicly available at the [World Bank data catalogue](https://www.google.com/url?q=https%3A%2F%2Fmicrodata.worldbank.org%2Findex.php%2Fcatalog%2F3818). The dataset comprises responses from $11,434$ households to a comprehensive list of questions regarding household composition, economic activities, assets, savings, education, and more. Note that the data set is in *.dta* format, also known as a STATA file.
 
-#### Discussion Points
+Each row in the tabular[^1] data represents a household, while each column represents a question. The values show the household's response, and the column headers carry the name and number of the question in the questionnaire. For example, the variable `hh_f10` refers to the household questionnaire **(hh)**, the housing module **(module F)**, and question number **10**. When looking up this question in the questionnaire, we find that the values in the column `hh_f10` refer to the question **"How many separate rooms do the members of your household occupy?"**
+
+### Discussion Points
 
 In the next sessions, we'll discuss the following key points:
 
@@ -54,13 +63,13 @@ In the next sessions, we'll discuss the following key points:
 
 -   Which variables and characteristics should we include in the prediction model to make a significant difference?
 
--   Programmatically, what type of characteristics do we want to consider for the prediction model?
+-   Programmatically, what type of characteristics do we want to consider for the prediction model? (session 2)
 
--   Technically, how do we select which variables to include in a prediction model?
+-   Technically, how do we select which variables to include in a prediction model? (session 1 and session 2)
 
 -   What are the practical implications of the bias-variance trade-off in this application?
 
--   What are the potential risks of a data-driven targeting approach?
+-   What are the potential risks of a data-driven targeting approach? (session 1, session 2, and session 3
 
 These points will serve as our starting point for critically thinking about the use of machine learning in public policies.
 
@@ -68,13 +77,11 @@ Please share your questions and feedback with the community in the discussion bo
 
 ## Practical Example
 
-You can download the dataset by clicking on the button below.
+You can download the data set by clicking on the button below.
 
-<a class="btn btn-primary" download href="data/malawi.dta"> Download Malawi.dta </a>
+<a class="btn btn-primary" download href="data/malawi.dta"> Malawi.dta </a>
 
-<br>
-
-The script below is a step by step on how to go about coding a predictive model using a *linear regression*. Despite its simplicity and transparency, i.e. the ease with which we can interpret its results, a linear model is not without challenges in machine learning.
+The script below is a step by step on how to go about programming a predictive model using a *linear regression* approach. Despite its simplicity and transparency, i.e. the ease with which we can interpret its results, a linear model is not without challenges in machine learning.
 
 ### 1. Preliminaries: working directory, libraries, data upload.
 
@@ -130,15 +137,32 @@ from sklearn.preprocessing import StandardScaler      # Feature scaling and norm
 ```
 :::
 
-**Loading the dataset** The data set comes as .dta file (STATA file) and not as a standard comma separated file (.csv). While the file has the same tabular structure, STATA files have variable labels, i.e. short texts that describe the variables with rather cryptic variable names. We can preserve these variable lables and store them as a separate object that we can use for quick variable look-ups.
+**Loading the dataset**
+
+The data set comes as *.dta* file (STATA) and not as a standard comma separated file (.csv). While the file has the same tabular structure, STATA files also include variable labels, i.e. short texts that describe the variables with rather cryptic variable names. We can preserve these variable lables and store them as a separate object that we can use for quick variable look-ups.
+
+::: callout-caution
+## Setting the working directory
+
+Usually, after we load/import the libraries we're going to be working with, we set the path to the working directory. That is, the path to the folder where we have stored the data we'll work with. If you start your script as a project, this is not necessary (the path is predetermined). For simplicity's sake, we will skip this step in this and all future scripts. Just know that you may have to include it.
+
+**R**
+
+-   `setwd(Users/yourusername/Documents/)`
+
+**Python** 🐍
+
+-   `import os`
+
+-   `os.chdir("/Users/yourusername/Documents/")`
+:::
 
 ::: {.panel-tabset group="language"}
 ## R
 
 ```{r}
-
-# Set working directory
-setwd('/Users/lucas/Documents/UNU-CDO/courses/ml4p/ml4p-website-v2')
+#| echo: true
+#| eval: true
 
 # Read the Stata file with labels preserved
 malawi <- read_dta("data/malawi.dta")
@@ -147,23 +171,38 @@ malawi <- read_dta("data/malawi.dta")
 variable_labels <- sapply(malawi, function(x) attr(x, "label"))
 
 # List all variables and their corresponding labels. For more details, check the questionnaire. Variable names correspond to the question numbers (hh=household module; com=community module)
-print(variable_labels)
+```
 
+```{r}
+#| echo: true
+#| eval: false
+print(variable_labels)
+```
+
+```{r}
+#| echo: false
+#| eval: true
+#| output: asis
+cat("<details><summary>Click to view all variable labels</summary>\n<pre>\n")
+for(i in seq_along(variable_labels)) {
+  cat(names(variable_labels)[i], "\n")
+  cat(variable_labels[i], "\n\n")
+}
+cat("</pre>\n</details>")
 ```
 
 ## Python
 
 ```{python}
 
-# Set working directory
-os.chdir('/Users/lucas/Documents/UNU-CDO/courses/ml4p/ml4p-website-v2')
-
 # Load malawi.dta variable labels
 iterator = pd.read_stata('data/malawi.dta', iterator=True)
 variable_labels = iterator.variable_labels()
 
 # List all variables and their corresponding labels. For more details, check the questionnaire. Variable names correspond to the question numbers (hh=household module; com=community module)
+
 print(variable_labels)
+
 
 # Read the Stata(.dta) file an import is a pandas dataframe
 df = pd.read_stata('data/malawi.dta')
@@ -265,7 +304,7 @@ skimpy.skim(df)
 
 The output shows that most of the variables are of type categorical, coded with numbers. However, the 'numbers' area ssigned arbitrarily and a ranking of numbers might not be meaningful. For instance `district` = 2 is not 'more' than `district` = 1, they're simply different districts. What's more, many ML (machine learning) models require a binary encoding for categorical variables.
 
-::: {.panel-tabset group="language"}
+:::: {.panel-tabset group="language"}
 ## R
 
 ```{r}
@@ -353,34 +392,30 @@ malawi <- data.frame(predict(dummy_vars, newdata = malawi))
   
 cat("Dataset now has", ncol(malawi), "columns after dummy variable creation\n")
 
-# Another Sanity Check
-for(var in names(malawi)) {
-  cat(sprintf("%-20s %s\n", 
-              paste0(var, " (", class(malawi[[var]]), "):"), 
-              attr(malawi[[var]], "label") %||% "No label"))
-}
+## Another Sanity Check (un-comment the lines below for a long display and at your own visual risk...)
+#for(var in names(malawi)) {
+#  cat(sprintf("%-20s %s\n", 
+#              paste0(var, " (", class(malawi[[var]]), "):"), 
+#              attr(malawi[[var]], "label") %||% "No label"))
+#}
 
 # Convert binary variables to factors using sapply (after dummyVars we lost the correct object type again, oops)
 binary_vars <- sapply(malawi, function(x) length(unique(x[!is.na(x)])) == 2)
 malawi[binary_vars] <- lapply(malawi[binary_vars], as.factor)
 
-cat("
-How R stores dummy variables:
-    E.g. For poor.Poor:
-
-1 = the household IS poor
-0 = the household is NOT poor
-
-R's dummyVars() with fullRank = TRUE creates binary (0/1) dummy variables where:
-
-The variable name format is: original_variable.category_name
-1 means that observation belongs to that category
-0 means it doesn't belong to that category
-The first category is dropped to avoid multicollinearity (that's why we don't see poor.NotPoor or similar)
-
-")
-
 ```
+
+::: callout-tip
+## How R stores dummy variables
+
+For example: `poor.Poor`
+
+$1$ = the household IS poor <br> $0$ = the household is NOT poor
+
+R's `dummyVars()` with fullRank = TRUE creates binary (0/1) dummy variables where:
+
+The variable name format is: `original_variable.category_name` <br> $1$ means that observation belongs to that category<br> $0$ means it doesn't belong to that category <br> The first category is dropped to avoid multicollinearity(that's why we don't see poor.NotPoor or similar)
+:::
 
 ## Python
 
@@ -397,13 +432,13 @@ df = pd.get_dummies(df, drop_first=True)
 # Note that we get one binary variable for each category of the categorical variable. The first category is dropped to avoid multi-collinearity.
 
 ```
-:::
+::::
 
-The summary output also indicated that we have missing values. In our case, the variable `dist_roaod` has 8 missing values ('NA' values -\> Not Available). Many machine learning models cannot be trained when missing values are present (several exceptions exist).
+The summary output also indicated that we have missing values. In our case, the variable `dist_roaod` has 8 missing values (`NA` values $\rightarrow$ Not Available). Many machine learning models cannot be trained when missing values are present (several exceptions exist).
 
 Dealing with missingness is a non-trivial task: First and foremost, we should assess whether there is a pattern to missingness and if so, what that means to what we can learn from our (sub)population. If there is no discernible pattern, we can proceed to delete the missing values or impute them. A more detailed explanation and course of action can be found [here](https://stefvanbuuren.name/fimd/ch-introduction.html).
 
-In our application, we'll remove the NA values from the data.
+In our application, we'll remove the `NA` values from the data set.
 
 ::: {.panel-tabset group="language"}
 ## R
@@ -419,11 +454,11 @@ df = df.dropna()
 ```
 :::
 
-To finalise our exploration of the dataset, we should:
+To finalize our exploration of the data set, we should:
 
--   visualize the target variable (a.k.a. outcome of interest)
+-   Visualize the target variable (a.k.a. outcome of interest)
 
--   have a look at correlations
+-   Have a look at correlations among them
 
 ::: {.panel-tabset group="language"}
 ## R
@@ -432,14 +467,19 @@ To finalise our exploration of the dataset, we should:
 
 # Histogram of the target variable
 ggplot(malawi, aes(x = rexpaggpc)) +
- geom_histogram(binwidth = 600) +
+ geom_histogram(binwidth = 600, color="cornflowerblue") +
  labs(title = 'Distribution of Consumption p.c.',
       x = 'Consumption p.c.',
-      y = 'Frequency')
+      y = 'Frequency') +
+  theme_bw()
 
 ```
 
 ```{r}
+
+# Summary statistics for rexpaggpc
+
+skim(malawi$rexpaggpc)
 
 # Summary statistics for rexpaggpc using tidy syntax (notice our fun pipe operator, we'll talk about this syntax in the future)
 
@@ -467,7 +507,7 @@ corrplot(pearson_corr_matrix, method = "circle", type = "upper",
 
 The first column visualizes the correlation coefficients with `rexpaggpc` (consumption per capita), the target variable. The results shows strong correlations of the target variable with the household size, assets (tables etc.), some sanitary and housing categories, as well as region indicators. Not surprisingly, consumption per capita is highly correlated with the household poverty status, a binary indicator that is based on consumption levels and that will be used as the target variable in our next session.
 
-We can also spot some correlation coefficients that equal zero. In some situations, the data generating mechanism can create predictors that only have a single unique value (i.e. a 'zero-variance predictor'). For many ML models (excluding tree-based models), this may cause the model to crash or the fit to be unstable. Here, the only one we’ve spotted is not in relation to our target variable. But we do observe some near-zero-variance predictors. Besides uninformative, these can also create unstable model fits. There’s a few strategies to deal with these; the quickest solution is to remove them. A second option, which is especially interesting in scenarios with a large number of variables, is to work with penalized models (Ridge and Lasso regressions). We’ll discuss this option at a later stage.
+We can also spot some correlation coefficients that equal zero. In some situations, the data generating mechanism can create predictors that only have a single unique value (i.e. a 'zero-variance predictor'). For many ML models (excluding tree-based models), this may cause the model to crash or the fit to be unstable. Here, the only one we’ve spotted is not in relation to our target variable. But we do observe some near-zero-variance predictors. Besides uninformative, these can also create unstable model fits. There’s a few strategies to deal with these; the quickest solution is to remove them. A second option, which is especially interesting in scenarios with a large number of variables, is to work with penalized models (Ridge and Lasso regressions). We’ll discuss this option in [session 2](session_2.qmd).
 
 ## Python
 
@@ -475,7 +515,7 @@ We can also spot some correlation coefficients that equal zero. In some situatio
 
 # Histogram of the target variable
 plt.figure(figsize=(10, 5))
-sns.histplot(df['rexpaggpc'], kde=False)
+sns.histplot(df['rexpaggpc'], kde=False, color='cornflowerblue')
 plt.title('Distribution of Consumption p.c.')
 plt.xlabel('Consumption p.c.')
 plt.ylabel('Frequency')
@@ -515,11 +555,11 @@ We can also spot some correlation coefficients that equal zero. In some situatio
 
 We now have a general idea of the structure of the data we are working with, and what we’re trying to predict: per capita consumption, which we believe is a proxy for poverty prevalence. The next step is create a simple linear model (OLS) to predict the target variable using the variables in our dataset, and introduce the elements with which we will evaluate our model.
 
-##### Data Partinioning
+##### Data Partitioning
 
 When we want to build predictive models for machine learning purposes, it is important to have (at least) two data sets. A training data set from which our model will learn, and a test data set containing the same features as our training data set; we use the second dataset to see how well our predictive model extrapolates to other samples (i.e. is it generalizable?). To split our main data set into two, we will work with a 80/20 split.
 
-The 80/20 split has its origins in the Pareto Principle, which states that 'in most cases, 80% of effects from from 20% of causes'. Though there are other test/train splitting options, this partitioning method is a good place to start, and indeed standard in the machine learning field.
+The 80/20 split has its origins in the Pareto Principle, which states that "in most cases, 80% of effects from from 20% of causes". Though there are other test/train splitting options, this partitioning method is a good place to start, and indeed standard in the machine learning field.
 
 **Feature organization**
 
@@ -529,7 +569,6 @@ Our data contains the variables we want to predict, i.e. the target variables (c
 ## R
 
 ```{r}
-
 
 target <- malawi[c('rexpaggpc', 'poor.Poor')]
 
@@ -541,7 +580,6 @@ malawi <- malawi[!names(malawi) %in% c('rexpaggpc', 'poor.Poor')]
 Next, we split the data into 80% training and test data using createDataPartition() from caret. We will use 80% of the data for training and 20% for testing. We will also set a random seed via `set.seed()` to ensure that the results are reproducible.
 
 ```{r}
-
 # Set seed for reproducibility
 set.seed(1234)
 
@@ -633,7 +671,7 @@ X_test = scaler.transform(X_test)
 ```
 :::
 
-#### Orinary Least Squares \[OLS\] (a simple linear regression)
+#### Orinary Least Squares (OLS, or linear regression)
 
 We can now run our first prediction model!
 
@@ -652,7 +690,7 @@ names(single_value_cols[single_value_cols])
 # What to do with it? 
 
 # Let's inspect it first:
-names(single_value_cols[single_value_cols])
+
 str(Train_df$hh_f10.9)
 # two-factors?! This happens often when we split the data and "accidentally" end up with a train or test data with only one category for a two category var.
 # See the actual values
@@ -665,17 +703,30 @@ Test_df <- Test_df[, -which(names(Test_df) == "hh_f10.9")] # same here, both dat
 # Check our dfs
 cat("Train_df dimensions:", dim(Train_df), "\n")
 cat("Test_df dimensions:", dim(Test_df), "\n")
-# One variable less than before, we're good to go.
 
+# One variable less than before, we're good to go.
 
 # Now fit your model
 linear <- lm(Train_target$rexpaggpc ~ ., data = Train_df)
 
 ```
 
-In R, we can retrieve the model's fit metrics (and more) in one go, inclduing: - Coefficients - Standard errors - t-statistics - p-values - Model fit statistics
+In R, we can retrieve the model's fit metrics (and more) in one go, inclduing:
+
+-   Coefficients
+
+-   Standard errors
+
+-   t-statistics
+
+-   p-values
+
+-   Model fit statistics
 
 ```{r}
+# Print the linear model's metrics using modelsummary
+#modelsummary(linear, output = "gt")
+
 # Print the linear model's metrics using modelsummary (notice our beautiful pipe operators are at it again here)
 modelsummary(
   list("linear (Test_df)" = linear),
@@ -695,16 +746,17 @@ modelsummary(
     row_group.as_column = TRUE
   )
 
-
 ```
 
 Or alternatively, just the coefficients (for those following both R and Python that would like to keep things as similar as possible)
 
 ```{r}
+# eval: false
 
 # Just coefficients
-coef(linear)
+# coef(linear)
 
+# uncomment and print the line at your own visual risk!
 ```
 
 **Feature importance**
@@ -720,7 +772,7 @@ coef_data <- data.frame(
 )
 
 ggplot(coef_data, aes(x = Coefficient, y = reorder(Feature, Coefficient))) +
- geom_col() +
+ geom_col(color="grey", fill="cornflowerblue") +
  labs(title = "Feature Importance",
       x = "Coefficient", 
       y = "Feature") +
@@ -734,6 +786,7 @@ Which variable coefficients exhibit the highest and lowest values?
 coefs <- sort(coef(linear)[-1])  # Exclude intercept
 head(coefs, 5)  # Lowest
 tail(coefs, 5)  # Highest
+
 ```
 
 ## Python
@@ -755,9 +808,10 @@ How relevant are my predictors?
 
 ```{python}
 # Plot coefficients (feature importance)
-def plot_feature_importances(model):
+def plot_feature_importance(model):
+    plt.figure(figsize=(15, 10))
     n_features=df.shape[1]
-    plt.barh(np.arange(n_features),model.coef_ , align='center')
+    plt.barh(np.arange(n_features),model.coef_ , align='center', color='cornflowerblue')
     plt.yticks(np.arange(n_features),df.columns.values)
     #reduce y-axis font size
     plt.yticks(fontsize=6)
@@ -765,10 +819,9 @@ def plot_feature_importances(model):
     plt.ylabel("Feature")
     plt.ylim(-1, n_features)
     plt.title("Feature importance")
-    #increase figure size
-    plt.figure(figsize=(15, 10))
+    plt.tight_layout()
     plt.show()
-plot_feature_importances(linear)
+plot_feature_importance(linear)
 
 ```
 
@@ -814,7 +867,7 @@ summary(residuals)
 max_residual_r <- max(residuals)
 ```
 
-Recall that the residual is estimated as the true (observed) value minus the predicted value. Thus: the max(imum) error of `{r} max_residual_r` suggests that the model under-predicted expenditure by this amount for at least one observation. From the estimation of the predicted residuals we obtain the popular measure of performance evaluation known as the Root Mean Squared Error (RMSE, for short).
+Recall that the residual is estimated as the true (observed) value minus the predicted value. Thus: the max(imum) error of `{r} format(round(max_residual_r, 0), scientific=FALSE, big.mark=",")` suggests that the model under-predicted expenditure by this amount for at least one observation. From the estimation of the predicted residuals we obtain the popular measure of performance evaluation known as the Root Mean Squared Error (RMSE, for short).
 
 ```{r}
 #Manually
@@ -828,7 +881,7 @@ rmse_insample_caret <- RMSE(y_pred_train, Train_target$rexpaggpc)
 
 ```
 
-The RMSE (`{r} round(rmse_insample_caret, 0)`) gives us an absolute number that indicates how much our predicted values deviate from the true (observed) number. This is all in reference to the target variable. Think of the question: How far, on average, are the residuals away from zero? Generally speaking, the lower the value, the better the model fit. Besides being a good measure of goodness of fit, the RMSE is also useful for comparing the ability of our model to make predictions on different (e.g. test) data sets. The in-sample RMSE should be close or equal to the out-of-sample RMSE. In this case, our RMSE is \~`{r} round(rmse_insample_caret, 0)` units away from zero.
+The RMSE (`{r} format(round(rmse_insample_caret, 0), scientific=FALSE, big.mark=",")`) gives us an absolute number that indicates how much our predicted values deviate from the true (observed) number. This is all in reference to the target variable. Think of the question: How far, on average, are the residuals away from zero? Generally speaking, the lower the value, the better the model fit. Besides being a good measure of goodness of fit, the RMSE is also useful for comparing the ability of our model to make predictions on different (e.g. test) data sets. The in-sample RMSE should be close or equal to the out-of-sample RMSE. In this case, our RMSE is \~`{r} format(round(rmse_insample_caret, 0), scientific=FALSE, big.mark=",")` units away from zero.
 
 ## Python
 
@@ -848,17 +901,28 @@ residuals.describe()
 #| echo: false
 # Store specific values for inline use
 max_residual_py = residuals.max()
-
 ```
 
-Recall that the residual is estimated as the true (observed) value minus the predicted value. Thus: the max(imum) error of `{python} max_residual_py` suggests that the model under-predicted expenditure by *this* amount for at least one observation. From the estimation of the predicted residuals we obtain the popular measure of performance evaluation known as the Root Mean Squared Error (RMSE, for short).
+```{r}
+#| echo: false
+# Convert Python values to R for inline use
+max_residual_py_r <- py$max_residual_py
+```
+
+Recall that the residual is estimated as the true (observed) value minus the predicted value. Thus: the max(imum) error of `{r} format(round(max_residual_py_r, 0), scientific=FALSE, big.mark=",")` suggests that the model under-predicted expenditure by *this* amount for at least one observation. From the estimation of the predicted residuals we obtain the popular measure of performance evaluation known as the Root Mean Squared Error (RMSE, for short).
 
 ```{python}
 # Calculate the RMSE for the training dataset, or the in-sample RMSE
 rmse_insample_py = root_mean_squared_error(y_train, y_pred_train)
 ```
 
-The RMSE (`{python} round(rmse_insample_py, 0)`) gives us an absolute number that indicates how much our predicted values deviate from the true (observed) number. This is all in reference to the target variable. Think of the question: How far, on average, are the residuals away from zero? Generally speaking, the lower the value, the better the model fit. Besides being a good measure of goodness of fit, the RMSE is also useful for comparing the ability of our model to make predictions on different (e.g. test) data sets. The in-sample RMSE should be close or equal to the out-of-sample RMSE. In this case, our RMSE is \~`{python} round(rmse_insample_py, 0)` units away from zero.
+```{r}
+#| echo: false
+# Convert Python RMSE to R for inline use
+rmse_insample_py_r <- py$rmse_insample_py
+```
+
+The RMSE (`{r} format(round(rmse_insample_py_r, 0), scientific=FALSE, big.mark=",")`) gives us an absolute number that indicates how much our predicted values deviate from the true (observed) number. This is all in reference to the target variable. Think of the question: How far, on average, are the residuals away from zero? Generally speaking, the lower the value, the better the model fit. Besides being a good measure of goodness of fit, the RMSE is also useful for comparing the ability of our model to make predictions on different (e.g. test) data sets. The in-sample RMSE should be close or equal to the out-of-sample RMSE. In this case, our RMSE is \~`{r} format(round(rmse_insample_py_r, 0), scientific=FALSE, big.mark=",")` units away from zero.
 :::
 
 **R-squared**
@@ -880,7 +944,13 @@ r2_train = r2_score(y_train, linear.predict(X_train))
 print(r2_train)
 ```
 
-The estimated (Multiple) R-squared of `{python round(r2_train, 3)}` tells us that our model predicts around `{python round(r2_train * 100, 1)}` percent of the variation in the target variable (consumption per capita). Also note that when we have a large number of predictors, it’s best to look at the Adjusted R-squared, which corrects or adjusts for this by only increasing when a new feature improves the model more so than what would be expected by chance.
+```{r}
+#| echo: false
+# Convert Python R-squared to R for inline use
+r2_train_py_r <- py$r2_train
+```
+
+The estimated (Multiple) R-squared of `{r} round(r2_train_py_r, 3)` tells us that our model predicts around `{r} round(r2_train_py_r * 100, 1)` percent of the variation in the target variable (consumption per capita). Also note that when we have a large number of predictors, it's best to look at the Adjusted R-squared, which corrects or adjusts for this by only increasing when a new feature improves the model more so than what would be expected by chance.
 :::
 
 #### Out-of-sample predictions
@@ -897,11 +967,12 @@ y_pred <- predict(linear, Test_df)
 
 # In summary, train and test prediction quality of the model
 cat("Root mean squared error on training set:", sprintf("%.2f", RMSE(y_pred_train, Train_target$rexpaggpc)), "\n")
+
 cat("R2 on training set:", sprintf("%.2f", summary(linear)$r.squared), "\n")
 
 cat("Root mean squared error on test set:", sprintf("%.2f", RMSE(y_pred, Test_target$rexpaggpc)), "\n")
-cat("R2 on test set:", sprintf("%.2f", cor(Test_target$rexpaggpc, y_pred)^2), "\n")
 
+cat("R2 on test set:", sprintf("%.2f", cor(Test_target$rexpaggpc, y_pred)^2), "\n")
 ```
 
 ## Python
@@ -920,7 +991,7 @@ print("R2 on test set: %.2f" % r2_score(y_test, y_pred))
 ```
 :::
 
-The summary statistics for the predictions with the train and test datasets are not so close to one another. This is an indication that our model doesn't necessarily extrapolate well to other datasets. Compared to the observed summary statistics of the target variable, they’re relatively close, with the largest deviations observed at the minimum and maximum values.
+The summary statistics for the predictions with the train and test datasets are close to one another. This is an indication that our model extrapolates well to other datasets. Compared to the observed summary statistics of the target variable, they’re relatively close, with the largest deviations observed at the minimum and maximum values.
 
 **What do we mean by bias in a model?**
 
@@ -932,9 +1003,11 @@ It is the observed variability of our model prediction for a given data point (h
 
 Hence, consistent in and out-of-sample RMSE scores = bias/variance balance. This describes the **bias-variance trade-off**. We can reduce the bias by overfitting the model to the training data, but that comes at the expense of increased variance. Finding the optimal balance between bias and variance is the key challenge of any prediction model.
 
-#### A final task
+::: callout-note
+## A final task
 
-We are almost done with **Session 1**. Before we close the session, we need to store our data and our prediction model for the next session. Fitting our OLS model is fast and could be easily reproduced in the next session. However, for large models and more complicated settings, it can take very long to find and fit the best model. After building a complicated model, we want to make sure to save it securely for future deployment.
+We are almost done with **Session 1**. Before we give up on this exercise, we need to store our data and our prediction model for the next session. Fitting our OLS model is fast and could be easily reproduced in the next session. However, for large models and more complicated settings, it can take very long to find and fit the best model. After building a complicated model, we want to make sure to save it securely for future deployment.
+:::
 
 ::: {.panel-tabset group="language"}
 ## R
@@ -984,17 +1057,7 @@ with open('linear_model.pkl', 'wb') as f:
 
 -   Kleinberg, J., Ludwig, J., Mullainathan, S. and Obermeyer, Z., 2015. Prediction policy problems. American Economic Review, 105(5), pp.491-95.
 
-## Assignment:
-
--   Why is this a prediction policy problem? What would be a causal inference problem in this setting?
-
--   Which variables would you include in the model? How would you select the predictors?
-
--   Give an example of a variable that should not be included.
-
--   Try to improve the baseline model. You can select other predictors or/and transform them (e.g., use quadratic transformations of predictors or interact predictors). Report and share your model specification and performance indicators with your cohort. Are there any noteworthy patterns?
-
-Note: Your assignment will be shared with another course participant, and you will receive someone else's assignment. Responses can be concise, and it usually helps if you can share your code. Try to make it as easy as possible for your reviewer to read your code and responses! If you don't know a response and you are lost, formulate questions so that your reviewer can try to help you. Please also use the Forum to post your questions. The cohort wants to help and learn from your discussions. For instance, if you and your reviewer can resolve questions, post them. Or if you have received a helpful explanation from your reviewer, please also share it with the group.
+[^1]: Table consisting of rows and columns.
 
 <!--DISQUS COMMENTS SCRIPT-->
 
@@ -1004,7 +1067,7 @@ Note: Your assignment will be shared with another course participant, and you wi
 ```{=html}
 <script>
     var disqus_config = function () {
-    this.page.identifier = "predictionpolicy.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    this.page.identifier = "session_1.html"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
     };
 
     
@@ -1018,3 +1081,4 @@ Note: Your assignment will be shared with another course participant, and you wi
 ```
 
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
