@@ -190,10 +190,7 @@ toc: false
     </p>
   </div>
 </div>
-
 ```
-
-
 
 ```{=html}
 <style>

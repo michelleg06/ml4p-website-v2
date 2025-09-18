@@ -175,20 +175,19 @@ To conclude the course, there will be a **Collaborative Policy Challenge**, whic
 ## Course Contents
 
 1.  [Introduction to Machine Learning for Public Policy](/introduction.qmd)
-2.  Gentle Introduction to [R and Rstudio](r-intro.qmd), and [Python](/python-intro.qmd)
-3.  [Prediction Framework/OLS](session_1.qmd)
-4.  [Lasso/Regularization/Parameter tuning](session_2.qmd)
-5.  [Classification](classification.qmd)
-7.  [Tree-based Methods](treebasedmodels.qmd)
-8.  [Fair Machine Learning](fairml.qmd)
-9.  [Neural Networks](neuralNets.qmd)
+<!-- 2.  Gentle Introduction to [R and Rstudio](r-intro.qmd), and [Python](/python-intro.qmd) -->
+2.  [Prediction Framework/OLS](session_1.qmd)
+3.  [Lasso/Regularization/Parameter tuning](session_2.qmd)
+4.  [Classification](classification.qmd)
+5.  [Tree-based Methods](treebasedmodels.qmd)
 6.  [Forecasting (Coming soon)](session_5.qmd) 
-10. [More complex architectures (Coming soon)](session_8.qmd)
-11. [Transformer Models (Coming soon)](session_9.qmd)
-12. [Policy data/data biases/synthetic data (Coming soon)](session_10.qmd)
-13. [Agents (Coming soon)](session_11.qmd)
-14. [Alignment (Coming soon)](session_12.qmd)
-15. [Causality (Coming soon)](session_13.qmd)
+7.  [Fair Machine Learning](fairml.qmd)
+8.  [ML and Causality (Coming soon)](session_7.qmd)
+9.  [Neural Networks](neuralNets.qmd)
+10. [More complex architectures and pre-trained models (Coming soon)](session_9.qmd)
+11. [NLP - Classification (Coming soon)](session_10.qmd)
+12. [NLP - Querying Text Databases (Coming soon)](session_11.qmd)
+13. [Public data, biases, and synthetic data (Coming soon)](session_12.qmd)
 
 
 ```{=html}

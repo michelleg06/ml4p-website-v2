@@ -13,11 +13,12 @@ At its core, machine learning is primarily interested in making sense of complex
 
 -   The content is introductory. However, if it is a good stepping stone for more advanced projects. We are happy to provide advice on how to move forward with learning content or project implementation if that is the case.
 
-- Every so often, we (the [coordinators](/about.qmd)) offer a guided and interactive version of this course. Feel free to reach out to us for more information on dates or specific use-cases via our [contact form](/contact.qmd) or email us at [machinelearning4publicpolicy@gmail.com](mailto:machinelearning4publicpolicy@gmail.com).
+-   Every so often, we (the [coordinators](/about.qmd)) offer a guided and interactive version of this course. Feel free to reach out to us for more information on dates or specific use-cases via our [contact form](/contact.qmd) or email us at [machinelearning4publicpolicy\@gmail.com](mailto:machinelearning4publicpolicy@gmail.com).
 
-- We also host *collaborative* policy challenges, for which we encourage course participants from different fields to form groups and tackle societal challenges posed by an international organization using `machine learning` techniques. For more on this, check out the [policy challenge](/policy-challenge-2024.qmd) tab on our website.
+-   We also host *collaborative* policy challenges, for which we encourage course participants from different fields to form groups and tackle societal challenges posed by an international organization using `machine learning` techniques. For more on this, check out the [policy challenge](/policy-challenge-2024.qmd) tab on our website.
 
 ## Quick Intro
+
 ### How does a Machine Learn?
 
 Machine learning is classified in three major branches:
@@ -28,12 +29,13 @@ This course is primarily concerned with supervised learning. Supervised learning
 
 We can rewrite this in a general functional form as:
 
-$$Y = f(X) + u$$ 
+$$Y = f(X) + u$$
 
 where $u$ is an error term.
 
-:::{.callout-tip collapse="true"}
+::: {.callout-tip collapse="true"}
 ## A quick note
+
 Note that we do impose linearity on the supervised learning fomulation.
 :::
 
@@ -52,11 +54,8 @@ Reinforcement learning is categorized as Artificial Intelligence. It is more foc
 3.  Not knowing where the consequences of actions, including reward signals, play out over extended time periods.
 
 ::: {.content-visible when-format="html"}
-
 ![Figure 1: Overview of ML methods](assets/ml-gif.gif)
-
 :::
-
 
 **Relevant trade-offs in Machine Learning**
 

@@ -1,7 +1,6 @@
 ---
 title: "Contact"
 format: html
-
 ---
 
 ```{=html}
@@ -81,7 +80,6 @@ Send
 </form>
 
 </div>
-
 
 ```{=html}
 <style>
