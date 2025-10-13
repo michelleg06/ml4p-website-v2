@@ -3,6 +3,7 @@ project:
 
 website:
   title: "Machine Learning for Public Policy"
+  favicon: "/assets/favicon.png"
   navbar:
     logo: "/assets/ML4PP.png"
     left:

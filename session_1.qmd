@@ -11,7 +11,7 @@ use_miniconda("/Users/lucas/Library/r-miniconda-arm64", required = TRUE)
 
 # Prediction Policy Problems
 
-:::::::::::::::::::::::: columns
+:::::: columns
 :::: {.column width="50%"}
 ::: callout-tip
 ## Concepts discussed in this session
@@ -31,7 +31,7 @@ use_miniconda("/Users/lucas/Library/r-miniconda-arm64", required = TRUE)
 ::: {.column width="50%"}
 ![](assets/robot-pictures/predpod.png){fig-align="center" width="380"}
 :::
-:::::::::::::::::::::::: 
+::::::
 
 ## Introducing the Prediction Policy Framework
 
@@ -52,6 +52,8 @@ Predicting Cash-Transfer Program Beneficiaries in Malawi
 In this section, we'll work with real-world data from Malawi to predict beneficiaries of a cash-transfer program: individuals living in poverty who need government assistance to make ends meet. The data comes from Malawi's Living Standards Measurement Study 2019/2020, publicly available at the [World Bank data catalogue](https://www.google.com/url?q=https%3A%2F%2Fmicrodata.worldbank.org%2Findex.php%2Fcatalog%2F3818). The dataset comprises responses from $11,434$ households to a comprehensive list of questions regarding household composition, economic activities, assets, savings, education, and more. Note that the data set is in *.dta* format, also known as a STATA file.
 
 Each row in the tabular[^1] data represents a household, while each column represents a question. The values show the household's response, and the column headers carry the name and number of the question in the questionnaire. For example, the variable `hh_f10` refers to the household questionnaire **(hh)**, the housing module **(module F)**, and question number **10**. When looking up this question in the questionnaire, we find that the values in the column `hh_f10` refer to the question **"How many separate rooms do the members of your household occupy?"**
+
+[^1]: Table consisting of rows and columns.
 
 ### Discussion Points
 
@@ -1057,7 +1059,26 @@ with open('linear_model.pkl', 'wb') as f:
 
 -   Kleinberg, J., Ludwig, J., Mullainathan, S. and Obermeyer, Z., 2015. Prediction policy problems. American Economic Review, 105(5), pp.491-95.
 
-[^1]: Table consisting of rows and columns.
+## Assignment
+
+Please complete all tasks and submit your responses [here](https://classroom.google.com/c/NzAwMjkzOTA5MTM5/a/NzgxMDQ3OTc4OTA2/details) (make sure to join the class first using the link we have sent you). Once submitted, your work will be matched with another course participant for peer review. Please use the blog if you have questions that you can’t resolve or for general feedback. 
+
+We will also share an anonymized summary on the blog so we can all get to know each other’s policy interests better.
+
+**1. A Prediction Problem from Your World**
+
+Describe a policy problem you care about and explain why it is a prediction problem — what needs to be predicted, and how that prediction could inform better policy decisions. You don’t have to write a long text, but we appreciate getting to know you and what motivates you better.
+
+**2. Choosing the Right Predictors**
+
+List 3–5 variables you would include in a model for your problem, and briefly explain why. Then give one example of a variable you must not include for this problem, and briefly explain why.
+
+**3. Improving the Baseline Model**
+
+Using the Session 1 case study, make one small improvement to the baseline model — for example, add or transform a variable, adjust hyperparameters, or test a new model.
+Report your specification, performance indicators, and a short explanation of what you did and what changed.
+
+
 
 <!--DISQUS COMMENTS SCRIPT-->
 
@@ -1081,4 +1102,3 @@ with open('linear_model.pkl', 'wb') as f:
 ```
 
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-
